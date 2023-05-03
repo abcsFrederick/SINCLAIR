@@ -26,4 +26,4 @@ hs_err_pid*
 site/
 
 # ignore data
-# data_storage
+data_storage
