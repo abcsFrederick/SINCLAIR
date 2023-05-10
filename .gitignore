@@ -36,3 +36,6 @@ work/
 
 # tmp ignore testing fastqs
 test_dir/*/*/*.gz
+
+# tmp files
+*Delete*
