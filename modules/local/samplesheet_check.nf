@@ -3,15 +3,15 @@ process SAMPLESHEET_CHECK {
     label 'process_low'
 
     input:
-    path samplesheet
+    path (samplesheet)
 
-    outptu:
-    path '*.valid.csv', emit:csv
+    output:
+    path '*_samplesheet.csv', emit:csv
     
     script:
     """
     check_samplesheet.py \\
     $samplesheet \\
-    samplesheet.valid.csv
+    project
     """
 }

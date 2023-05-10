@@ -1,0 +1,18 @@
+id,name,feature_type,read,pattern,sequence
+CD4,CD4,Antibody Capture,R2,5PNNNNNNNNNN(BC),AACAAGACCCTTGAG
+CD8,CD8,Antibody Capture,R2,5PNNNNNNNNNN(BC),TACCCGTAATAGCGT
+Hashtag1,Rep1,Antibody Capture,R2,5P(BC),ACCCACCAGTAAGAC
+Hashtag2,Rep2,Antibody Capture,R2,5P(BC),GGTCGAGAGCATTCA
+
+#Primary difference between this and standard CITESeq is the use of non-specific antibodies as the cell hashtags, to be used for downstream in silico demultiplexing. File structure is the same
+
+#Reference: https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/feature-bc-analysis#feature-ref
+
+#id: Unique ID for tracking feature counts, must not clash with gene names
+#name: Human readable name used in Loupe Cell Browser 
+#sequence: Oligo-tag sequence attached to the antibody used for counts. Provided by sequencing group
+#feature_type: Description of data type. Must match the labels available here: 
+	#https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/feature-bc-analysis#feature-types
+#read: specifies if feature barcode is in R1 or R2. Most often in R2
+#pattern: defines how to locate the barcode in the read sequence. Further reading:
+	#https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/using/feature-bc-analysis#pattern
