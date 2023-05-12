@@ -17,6 +17,7 @@ import gzip
 import re
 from os import listdir
 from os.path import isfile, join
+import json
 
 def parse_args(args=None):
     Description = "Samplesheet file - check its contents."
@@ -127,7 +128,9 @@ def check_samplesheet(file_in, file_out):
                         
                         # check lane, readype and extension
                         laneID=postID.split("_")[0]
-                        if not laneID.isnumeric():
+                        try:
+                            print(float(laneID))
+                        except ValueError:
                             print_error("Input file laneID must be numeric: %s" %fileid)
                             
                         accepted_read_type=["R1","R2","I1","I2"]
@@ -144,26 +147,56 @@ def check_samplesheet(file_in, file_out):
                         print_error("All input files within given dir must have the same sample ID %s" %sample_list)
 
                 ## Auto-detect paired-end/single-end
-                sample_info = []  ## [DATATYPE, READTYPE, INPUTDIR]
+                sample_info = []  ## [READTYPE, INPUTDIR]
                 if READTYPE == "paired":  ## Paired-end short reads
-                    sample_info = ["gex","0", INPUTDIR]
+                    sample_info = ["0", INPUTDIR]
                 elif READTYPE == "single":  ## Single-end short reads
-                    sample_info = ["gex","1", INPUTDIR]
+                    sample_info = ["1", INPUTDIR]
+                else:
+                    print_error("Invalid combination of columns provided!", "Line", line)
+
+            ###################################################################################################
+            # ATAC: check manifest
+            ###################################################################################################
+            if DATATYPE == "atac":
+                ## Check input dir exists
+                if os.path.exists(INPUTDIR):
+                    # check all files in input
+                    onlyfiles = [f for f in listdir(INPUTDIR) if isfile(join(INPUTDIR, f))]
+                    sample_list=list()
+                        
+                    # for every tile
+                    for fileid in onlyfiles:
+
+                        # ensure that the file follows the structure
+                        ## [Sample Name]_S1_L00[Lane Number]_[Read Type]_001.fastq.gz
+                        # create sample list - will check all samples are the same name
+                        sampleID=fileid.split("_S1")[0]
+                        sample_list.append(sampleID)
+
+                ## Auto-detect paired-end/single-end
+                sample_info = []  ## [READTYPE, INPUTDIR]
+                if READTYPE == "paired":  ## Paired-end short reads
+                    sample_info = ["0", INPUTDIR]
+                elif READTYPE == "single":  ## Single-end short reads
+                    sample_info = ["1", INPUTDIR]
                 else:
                     print_error("Invalid combination of columns provided!", "Line", line)
 
             ###################################################################################################
             # ALL: Create SAMPLE DICT
             ###################################################################################################
-            ## Create sample mapping dictionary = { sample: [ single_end, INPUTDIR ] }
+            ## Create sample mapping dictionary = { sample: data_tyoe: [single_end, INPUTDIR ] }
             if SAMPLE not in sample_mapping_dict:
                 sample_mapping_dict[SAMPLE] = {}
-                sample_mapping_dict[SAMPLE][DATATYPE] = [sample_info]
+            
+            if DATATYPE not in sample_mapping_dict[SAMPLE]:
+                sample_mapping_dict[SAMPLE][DATATYPE] = {}
             else:
                 if sample_info in sample_mapping_dict[SAMPLE][DATATYPE]:
                     print_error("Samplesheet contains duplicate sample names!", "Line", line)
-                else:
-                    sample_mapping_dict[SAMPLE][DATATYPE].append(sample_info)
+
+            sample_mapping_dict[SAMPLE][DATATYPE] = [sample_info]
 
     ###################################################################################################
     # ALL: Create OUTPUT
@@ -173,18 +206,43 @@ def check_samplesheet(file_in, file_out):
     ## hash creation
     if len(sample_mapping_dict) > 0:
         for sample in sorted(sample_mapping_dict.keys()):
+            dt_string=""
             for dt in sorted(sample_mapping_dict[sample].keys()):
                 # GEX samplesheet
                 if dt=="gex":
                     fname=file_out + "_gex_samplesheet.csv"
                     if not os.path.isfile(fname):
-                        with open(file_out, "w") as fout:
+                        with open(fname, "w") as fout:
                             fout.write(",".join(["sample","gex_input_dir"]) + "\n")
                             fout.close()
                     with open(fname, 'a+') as fout:
-                        print(sample_mapping_dict[sample][dt])
-                        for dt, rt, idir in sample_mapping_dict[sample][dt]:
+                        for rt, idir in sample_mapping_dict[sample][dt]:
                             fout.write(sample + "," + idir + "\n")
+                            fout.close()
+                # ATAC samplesheet
+                if dt=="atac":
+                    fname=file_out + "_atac_samplesheet.csv"
+                    if not os.path.isfile(fname):
+                        with open(fname, "w") as fout:
+                            fout.write(",".join(["sample","atac_input_dir"]) + "\n")
+                            fout.close()
+                    with open(fname, 'a+') as fout:
+                        for rt, idir in sample_mapping_dict[sample][dt]:
+                            fout.write(sample + "," + idir + "\n")
+                            fout.close()
+                # dictionary
+                vals=sample_mapping_dict[sample][dt]
+                dt_string=dt_string + dt + str(vals).replace("[[","-").replace("]]","") + "|"
+            
+            # # write out sample line for dict
+            # fname_d=file_out + "_dict.csv"
+            # if not os.path.isfile(fname_d):
+            #     with open(fname_d, "w") as fout_d:
+            #         fout_d.write(sample +":"+ dt_string[:-1] + "\n")
+            # else:
+            #     with open(fname_d, 'a+') as fout_d:
+            #         fout_d.write(sample +":"+ dt_string[:-1] + "\n")
+            # fout_d.close()
     else:
         print_error("No entries to process!", "Samplesheet: {}".format(file_in))
 
