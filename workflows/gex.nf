@@ -17,14 +17,15 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
 Assign local subworkflows
 =======================================================================================================
 */
-include { INPUT_CHECK                               } from '../subworkflows/input_check'
+include { INPUT_CHECK_GEX                               } from '../subworkflows/input_check'
 
 /*
 =======================================================================================================
 Assign Local Modules
 =======================================================================================================
 */
-include { SAMPLESHEET_CHECK                         } from '../modules/local/samplesheet_check.nf'
+include { SAMPLESHEET_CHECK                             } from '../modules/local/samplesheet_check.nf'
+include { CELLRANGER_COUNT                              } from '../modules/local/cellranger_count_gex.nf'
 
 /*
 =======================================================================================================
@@ -33,13 +34,28 @@ RUN MAIN WORKFLOW
 */
 workflow GEX_EXQC {
     main:
-        // Set output path to relative
+        // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
-
-        // Read in samplesheet
-        INPUT_CHECK (
+        
+        // Read in samplesheet, create metadata
+        INPUT_CHECK_GEX (
             ch_input
         )
+        
+        ch_meta = INPUT_CHECK_GEX.out.gex_samplesheet
+            .splitCsv( header:true, sep:',', strip:true )
+            .map { row ->
+                    def id = row["sample"]
+                    def inDir = row["gex_input_dir"]
+                    return [ id, inDir ]
+                }
+        
+        // Run cellranger count
+        CELLRANGER_COUNT (
+            ch_meta,
+            params.genome_dir
+        )
+
     emit:
-        samplesheet        = INPUT_CHECK.out.samplesheet
+        samplesheet        = INPUT_CHECK_GEX.out.gex_samplesheet
 }
