@@ -8,13 +8,29 @@
 
 */
 
+// Using DSL-2
+nextflow.enable.dsl=2
+
+log.info """\
+         s c R N A S E Q - N F   P I P E L I N E  
+         ===================================
+         NF version   : $nextflow.version
+         profile      : $workflow.profile
+         start time   : $workflow.start
+         launchDir    : $workflow.launchDir
+         workdDir     : $workflow.workDir
+         """
+         .stripIndent()
+
+//
+
 /*
 ===================================================================
     Identify workflows
 ===================================================================
 */
 include { GEX_EXQC                               } from './workflows/gex'
-// include { ATAC_EXQC                           } from '.workflows/sCRNA_atac'
+include { ATAC_EXQC                              } from './workflows/atac'
 // include { VDJ_EXQC                            } from '.workflows/sCRNA_vdj'
 // include { CITE_EXQC                           } from '.workflows/sCRNA_cite'
 
@@ -26,6 +42,13 @@ workflow GEX {
         GEX_EXQC ()
     emit:
         samplesheet         = GEX_EXQC.out.samplesheet
+}
+
+workflow ATAC {
+    main:
+        ATAC_EXQC ()
+    emit:
+        samplesheet         = ATAC_EXQC.out.samplesheet
 }
 
 // //

@@ -6,7 +6,8 @@ process SAMPLESHEET_CHECK {
     path (samplesheet)
 
     output:
-    path '*_samplesheet.csv', emit:csv
+    path '*gex_samplesheet.csv'                  , optional:true, emit:gex_samplesheet
+    path '*atac_samplesheet.csv'                 , optional:true, emit:atac_samplesheet
     
     script:
     """
