@@ -1,4 +1,4 @@
-process SEURAT_SINGLE {
+process BATCHC_RPCA {
     tag "${id}"
 
     input:

@@ -1,10 +1,12 @@
-process SEURAT_SINGLE {
+process BATCHC_INT {
     tag "${id}"
 
     input:
     tuple val(id), val(inDir)
-    path(h5)
+    path(singleRDS)
     val(species)
+    val(int_params)
+    path(contrast)
     path(Rlib_dir)
 
     output:
@@ -13,10 +15,12 @@ process SEURAT_SINGLE {
     script:
     def args = task.ext.args ?: ''
     """
-    Rscript scRNA.R \
+    Rscript integrateBatches.R \
+		$singleRDS \
+        seuratIntegrated.rds  \
         $species \
-        $id \
-        $h5 \
-        $Rlib_dir
+        $contrasts \
+        $int_params \
+        $Rlib_dir \
     """
 }

@@ -1,4 +1,4 @@
-process SEURAT_SINGLE {
+process BATCHC_HARMONY {
     tag "${id}"
 
     input:

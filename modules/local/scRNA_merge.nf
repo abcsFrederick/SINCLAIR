@@ -1,4 +1,4 @@
-process SEURAT_SINGLE {
+process SEURAT_MERGE {
     tag "${id}"
 
     input:
