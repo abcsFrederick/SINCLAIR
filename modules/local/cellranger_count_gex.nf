@@ -6,7 +6,7 @@ process CELLRANGER_COUNT {
     val(genome_dir)
 
     output:
-    path '*/outs'                  , emit:cr_outDir
+    path '*/outs/filtered_feature_bc_matrix.h5'                  , emit:h5
     
     script:
     def args = task.ext.args ?: ''

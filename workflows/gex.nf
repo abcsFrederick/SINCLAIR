@@ -26,6 +26,7 @@ Assign Local Modules
 */
 include { SAMPLESHEET_CHECK                             } from '../modules/local/samplesheet_check.nf'
 include { CELLRANGER_COUNT                              } from '../modules/local/cellranger_count_gex.nf'
+include { SEURAT_SINGLE                                 } from '../modules/local/scRNA_single.nf'
 
 /*
 =======================================================================================================
@@ -55,6 +56,15 @@ workflow GEX_EXQC {
             ch_meta,
             params.genome_dir
         )
+
+        // // Run Seurat for individual samples
+        // SEURAT_SINGLE (
+        //     ch_meta,
+        //     CELLRANGER_COUNT.out.h5,
+        //     params.species,
+        //     params.group_tab,
+        //     params.Rlib_dir
+        // )
 
     emit:
         samplesheet        = INPUT_CHECK_GEX.out.gex_samplesheet
