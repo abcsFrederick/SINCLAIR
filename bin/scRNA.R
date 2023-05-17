@@ -1,5 +1,3 @@
-#!/usr/bin/env R
-
 loc = "/data/CCBR_Pipeliner/db/PipeDB/scrna4.2Rlibs"
 library(htmltools,lib.loc=loc)
 library(Seurat,lib.loc=loc)
@@ -36,41 +34,41 @@ sample = groupFile$V3[groupFile$V1 == tail(strsplit(h5,"/")[[1]],3)[1] & groupFi
 print(groupFile[groupFile$V3 == sample & groupFile$V4 == "vdj",])
 
 if (nrow(groupFile[groupFile$V3 == sample & groupFile$V4 == "vdj",]) > 0 ) {
-
-tcrSamples = groupFile$V1[groupFile$V3 == sample & groupFile$V4 == "vdj"]
-tcrSamples = paste0("cellrangerOut/",tcrSamples,"/outs")
-
-so = import_vdj(input = so, vdj_dir = tcrSamples,  filter_paired = FALSE  )
-
+  
+  tcrSamples = groupFile$V1[groupFile$V3 == sample & groupFile$V4 == "vdj"]
+  tcrSamples = paste0("cellrangerOut/",tcrSamples,"/outs")
+  
+  so = import_vdj(input = so, vdj_dir = tcrSamples,  filter_paired = FALSE  )
+  
 }
 
 
 ###Run Seurat Clustering 
 seuratClustering = function(so){
-
-
-
-so$Sample = tail(strsplit(h5,"/")[[1]],1)
-
-
-
-so <- RunPCA(object = so, features = VariableFeatures(object = so), do.print = TRUE, pcs.print = 1:5,genes.print = 0,verbose=F,npcs = 30)
-
-npcs = 30
-
-
-so <- FindNeighbors(so,dims = 1:npcs)
-so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.1,algorithm = 3)
-so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.2,algorithm = 3)
-so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.5,algorithm = 3)
-so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.6,algorithm = 3)
-so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.8,algorithm = 3)
-
-
-so <- RunUMAP(so,dims = 1:npcs,n.components = 3L)
-
-
-return(so)
+  
+  
+  
+  so$Sample = tail(strsplit(h5,"/")[[1]],1)
+  
+  
+  
+  so <- RunPCA(object = so, features = VariableFeatures(object = so), do.print = TRUE, pcs.print = 1:5,genes.print = 0,verbose=F,npcs = 30)
+  
+  npcs = 30
+  
+  
+  so <- FindNeighbors(so,dims = 1:npcs)
+  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.1,algorithm = 3)
+  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.2,algorithm = 3)
+  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.5,algorithm = 3)
+  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.6,algorithm = 3)
+  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.8,algorithm = 3)
+  
+  
+  so <- RunUMAP(so,dims = 1:npcs,n.components = 3L)
+  
+  
+  return(so)
 }
 
 
@@ -81,14 +79,14 @@ doublets <-function(dfso){
   npcs = 10
   dfso <- RunUMAP(dfso, verbose=TRUE,dims = 1:npcs)
   
-          
+  
   sweep.res.list_kidney <- paramSweep_v3(dfso,PCs = 1:10, sct = T)
   sweep.stats_kidney <- summarizeSweep(sweep.res.list_kidney, GT = FALSE)
   print("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
   bcmvn_kidney <- find.pK(sweep.stats_kidney)
   ## pK Identification (ground-truth) ------------------------------------------------------------------------------------------
-
- 
+  
+  
   ## Homotypic Doublet Proportion Estimate -------------------------------------------------------------------------------------
   homotypic.prop <- modelHomotypic(dfso$annot)
   perc = 0.005 * (length(colnames(dfso))/1000)
@@ -99,21 +97,21 @@ doublets <-function(dfso){
   dfso <- doubletFinder_v3(dfso, pN = 0.25, pK = 0.09, nExp = nExp_poi, reuse.pANN = FALSE,PCs = 1:10,sct = T)
   pAAN=tail(names(dfso@meta.data),2)[1]
   dfso <- doubletFinder_v3(dfso, pN = 0.25, pK = 0.09, nExp = nExp_poi.adj, reuse.pANN = pAAN,PCs = 1:10,sct = T)
- 
+  
   return(dfso)
 }
 
 #convertHumanGeneList <- function(x){
-  
- # require("biomaRt")
-  #human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
-  #mouse = useMart("ensembl", dataset = "mmusculus_gene_ensembl")
-  
- # genesV2 = getLDS(attributes = c("hgnc_symbol"), filters = "hgnc_symbol", values = x , mart = human, attributesL = c("mgi_symbol"), martL = mouse, uniqueRows=T)
-  
- # humanx <- unique(genesV2[, 2])
-  
- # return(humanx)
+
+# require("biomaRt")
+#human = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+#mouse = useMart("ensembl", dataset = "mmusculus_gene_ensembl")
+
+# genesV2 = getLDS(attributes = c("hgnc_symbol"), filters = "hgnc_symbol", values = x , mart = human, attributesL = c("mgi_symbol"), martL = mouse, uniqueRows=T)
+
+# humanx <- unique(genesV2[, 2])
+
+# return(humanx)
 #}
 
 
@@ -142,13 +140,13 @@ so <- RunMiQC(so, percent.mt = "percent.mt", nFeature_RNA = "nFeature_RNA", post
 so = subset(so, miQC.keep == "keep")
 
 if(ref=="hg38"){
-s.genes <- cc.genes$s.genes
-g2m.genes <- cc.genes$g2m.genes
+  s.genes <- cc.genes$s.genes
+  g2m.genes <- cc.genes$g2m.genes
 }
 
 if(ref=="mm10"){
-s.genes <- convertHumanGeneList(cc.genes$s.genes)
-g2m.genes <- convertHumanGeneList(cc.genes$g2m.genes)
+  s.genes <- convertHumanGeneList(cc.genes$s.genes)
+  g2m.genes <- convertHumanGeneList(cc.genes$g2m.genes)
 }
 
 
@@ -163,36 +161,36 @@ so = seuratClustering(so)
 
 print("so")
 runSingleR = function(obj,refFile,fineORmain){
-obj = DietSeurat(obj, graphs = "umap")
-sce = as.SingleCellExperiment(obj,assay = "SCT")
-ref = refFile
-s = SingleR(test = sce, ref = ref,labels = ref[[fineORmain]])
-return(s$pruned.labels)
-print(head(s$pruned.labels))
+  obj = DietSeurat(obj, graphs = "umap")
+  sce = as.SingleCellExperiment(obj,assay = "SCT")
+  ref = refFile
+  s = SingleR(test = sce, ref = ref,labels = ref[[fineORmain]])
+  return(s$pruned.labels)
+  print(head(s$pruned.labels))
 }
 
 
 if(ref == "hg38"){
-so$HPCA_main <- runSingleR(so,celldex::HumanPrimaryCellAtlasData(),"label.main")
-so$HPCA <-  runSingleR(so,celldex::HumanPrimaryCellAtlasData(),"label.fine")
-so$BP_encode_main <-  runSingleR(so,celldex::BlueprintEncodeData(),"label.main")
-so$BP_encode <-  runSingleR(so,celldex::BlueprintEncodeData(),"label.fine")
-so$monaco_main <-  runSingleR(so,celldex::MonacoImmuneData(),"label.main")
-so$monaco <-     runSingleR(so,celldex::MonacoImmuneData(),"label.fine")
-so$immu_cell_exp_main <-  runSingleR(so,celldex::DatabaseImmuneCellExpressionData(),"label.main")
-so$immu_cell_exp <- runSingleR(so,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
-so$annot = so$HPCA_main
+  so$HPCA_main <- runSingleR(so,celldex::HumanPrimaryCellAtlasData(),"label.main")
+  so$HPCA <-  runSingleR(so,celldex::HumanPrimaryCellAtlasData(),"label.fine")
+  so$BP_encode_main <-  runSingleR(so,celldex::BlueprintEncodeData(),"label.main")
+  so$BP_encode <-  runSingleR(so,celldex::BlueprintEncodeData(),"label.fine")
+  so$monaco_main <-  runSingleR(so,celldex::MonacoImmuneData(),"label.main")
+  so$monaco <-     runSingleR(so,celldex::MonacoImmuneData(),"label.fine")
+  so$immu_cell_exp_main <-  runSingleR(so,celldex::DatabaseImmuneCellExpressionData(),"label.main")
+  so$immu_cell_exp <- runSingleR(so,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
+  so$annot = so$HPCA_main
 }
 
 if(ref == "mm10"){
-
-so$immgen_main <-  runSingleR(so,celldex::ImmGenData(),"label.main")
-so$immgen <- runSingleR(so,celldex::ImmGenData(),"label.fine")
-so$mouseRNAseq_main <-  runSingleR(so,celldex::MouseRNAseqData(),"label.main")
-so$mouseRNAseq <- runSingleR(so,celldex::MouseRNAseqData(),"label.fine")
-
-so$annot = so$immgen_main
-
+  
+  so$immgen_main <-  runSingleR(so,celldex::ImmGenData(),"label.main")
+  so$immgen <- runSingleR(so,celldex::ImmGenData(),"label.fine")
+  so$mouseRNAseq_main <-  runSingleR(so,celldex::MouseRNAseqData(),"label.main")
+  so$mouseRNAseq <- runSingleR(so,celldex::MouseRNAseqData(),"label.fine")
+  
+  so$annot = so$immgen_main
+  
 }
 
 print("anot")
@@ -210,6 +208,7 @@ so=subset(so,cells=names(so$DF_hi.lo)[so$DF_hi.lo =="Singlet"])
 
 
 saveRDS(so,outFile)
+
 
 
 
