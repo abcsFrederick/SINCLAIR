@@ -12,6 +12,7 @@ if [[ $resume == "Y" ]]; then
     -entry $datatype \
     -profile biowulf \
     --input assets/input_manifest.csv \
+    --contrast assets/contrast_manifest.csv \
     --outdir /data/sevillas2/scRNA_test \
     --species $species \
 
@@ -20,8 +21,10 @@ elif [[ $resume == "N" ]]; then
     -entry $datatype \
     -profile biowulf \
     --input assets/input_manifest.csv \
+    --contrast assets/contrast_manifest.csv \
     --outdir /data/sevillas2/scRNA_test \
     --species $species
 fi
 
 # sh run_scRNA.sh hg19 GEX Y
+# sh run_scRNA.sh hg19 GEX N
