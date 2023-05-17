@@ -1,46 +1,58 @@
-loc = "/data/CCBR_Pipeliner/db/PipeDB/scrna4.2Rlibs"
-library(htmltools,lib.loc=loc)
-library(Seurat,lib.loc=loc)
-library(stringr)#,lib.loc=loc)
-library("DoubletFinder",lib.loc=loc)
-library(SingleR,lib.loc=loc)
-library(scRNAseq,lib.loc=loc)
-library(SingleCellExperiment,lib.loc=loc)
-library(celldex,lib.loc=loc)
-library(Orthology.eg.db,lib.loc=loc)
-library(org.Mm.eg.db,lib.loc=loc)
-library(org.Hs.eg.db,lib.loc=loc)
-library(flexmix,lib.loc=loc)
-library(SeuratWrappers,lib.loc=loc)
-library(djvdj,lib.loc=loc)
+.libPaths( c("/data/CCBR_Pipeliner/db/PipeDB/scrna5",.libPaths()))
+
+
+library(Seurat)
+library(stringr)
+library("DoubletFinder")
+library(SingleR)
+library(scRNAseq)
+library(SingleCellExperiment)
+library(celldex)
+library(Orthology.eg.db)
+library(org.Mm.eg.db)
+library(org.Hs.eg.db)
+library(djvdj)
+
+options(future.globals.maxSize = 1e9)
+
 
 args <- commandArgs(trailingOnly = T)
 
 
-h5 = as.character(args[1])
+CRfolder =  as.character(args[1]) 
+h5 = as.character(paste0(CRfolder,"/outs/filtered_feature_bc_matrix.h5") )
 ref =  as.character(args[2])  
-outFile = as.character(args[3])
+qcDefault = as.character(args[3])
+outFile = as.character(args[4])
+
 rnaCounts = Read10X_h5(h5)
+
+
+
 
 if(class(rnaCounts) == "list") {rnaCounts = rnaCounts$'Gene Expression'}
 
 so <- CreateSeuratObject(rnaCounts)
 
 
+
 groupFile = read.delim("groups.tab",header=F,stringsAsFactors = F)
+sample = groupFile$V3[groupFile$V1 == CRfolder & groupFile$V4 == "gex"]
 
-sample = groupFile$V3[groupFile$V1 == tail(strsplit(h5,"/")[[1]],3)[1] & groupFile$V4 == "gex"]
+so$Sample = sample
+so$groups =  groupFile$V2[groupFile$V3 == sample & groupFile$V4 == "gex"]
+print(head(so$groups))
 
-print(groupFile[groupFile$V3 == sample & groupFile$V4 == "vdj",])
 
 if (nrow(groupFile[groupFile$V3 == sample & groupFile$V4 == "vdj",]) > 0 ) {
-  
-  tcrSamples = groupFile$V1[groupFile$V3 == sample & groupFile$V4 == "vdj"]
-  tcrSamples = paste0("cellrangerOut/",tcrSamples,"/outs")
-  
-  so = import_vdj(input = so, vdj_dir = tcrSamples,  filter_paired = FALSE  )
-  
+
+tcrSamples = groupFile$V1[groupFile$V3 == sample & groupFile$V4 == "vdj"]
+tcrSamples = paste0("cellrangerOut/",tcrSamples,"/outs")
+
+so = import_vdj(input = so, vdj_dir = tcrSamples,  filter_paired = FALSE  )
+
 }
+
 
 
 ###Run Seurat Clustering 
@@ -203,7 +215,7 @@ so=subset(so,cells=names(so$DF_hi.lo)[so$DF_hi.lo =="Singlet"])
 
 
 
-
+so = UpdateSeuratObject(so)
 
 
 
