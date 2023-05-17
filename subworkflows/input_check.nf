@@ -13,11 +13,18 @@ RUN MAIN WORKFLOW
 workflow INPUT_CHECK_GEX {
     take:
         samplesheet
-    
+        contrast_samplesheet
+
     main:
-        SAMPLESHEET_CHECK (samplesheet)
+        SAMPLESHEET_CHECK (
+            samplesheet,
+            contrast_samplesheet
+        )
+
     emit:
         gex_samplesheet = SAMPLESHEET_CHECK.out.gex_samplesheet
+        contrast_samplesheet = SAMPLESHEET_CHECK.out.contrast_samplesheet
+
 }
 
 workflow INPUT_CHECK_ATAC {

@@ -1,4 +1,5 @@
 sample,data_type,read_category,input_dir
 WB_Lysis_1,gex,paired,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/WB_Lysis_1
 WB_Lysis_2,gex,paired,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/WB_Lysis_2
+WB_Lysis_3,gex,paired,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/WB_Lysis_3
 WB_Lysis_1,atac,paired,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/WB_Lysis_1
