@@ -19,4 +19,9 @@ process SEURAT_SINGLE {
         $h5 \
         $Rlib_dir
     """
+
+    stub:
+    """
+    touch ${id}_seurat_object.rds
+    """
 }

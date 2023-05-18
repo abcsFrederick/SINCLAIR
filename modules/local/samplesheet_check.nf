@@ -18,4 +18,12 @@ process SAMPLESHEET_CHECK {
     $contrast_samplesheet \\
     project
     """
+
+    stub:
+    """
+    check_samplesheet.py \\
+    $samplesheet \\
+    $contrast_samplesheet \\
+    project
+    """
 }

@@ -1,6 +1,7 @@
 species=$1
 datatype=$2
 resume=$3
+args=$4
 
 module load nextflow
 
@@ -15,6 +16,7 @@ if [[ $resume == "Y" ]]; then
     --contrast assets/contrast_manifest.csv \
     --outdir /data/sevillas2/scRNA_test \
     --species $species \
+    $args
 
 elif [[ $resume == "N" ]]; then
     nextflow run main.nf \
@@ -23,8 +25,11 @@ elif [[ $resume == "N" ]]; then
     --input assets/input_manifest.csv \
     --contrast assets/contrast_manifest.csv \
     --outdir /data/sevillas2/scRNA_test \
-    --species $species
+    --species $species \
+    $args
 fi
 
 # sh run_scRNA.sh hg19 GEX Y
 # sh run_scRNA.sh hg19 GEX N
+# sh run_scRNA.sh hg19 GEX Y -stub-run
+# sh run_scRNA.sh hg19 GEX N -stub-run

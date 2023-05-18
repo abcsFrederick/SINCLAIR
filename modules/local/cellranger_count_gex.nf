@@ -18,6 +18,11 @@ process CELLRANGER_COUNT {
         --transcriptome=${genome_dir} \
         --localcores=$task.cpus \
         --localmem=$localmem \
-        $args
+    """
+
+    stub:
+    """
+    mkdir $id/outs
+    touch filtered_feature_bc_matrix.h5
     """
 }
