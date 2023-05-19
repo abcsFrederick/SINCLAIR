@@ -6,8 +6,9 @@ editor_options:
 params:
   ref: "hg19"
   sampleid: "WB_Lysis_1"
-  h5: "~/../../Volumes/data/scRNA/gex/WB_Lysis_1/WB_Lysis_1/outs/filtered_feature_bc_matrix.h5" 
+  h5: "~/../../Volumes/data-1/scRNA_test/cellranger_counts/WB_Lysis_1/outs/filtered_feature_bc_matrix.h5"
   shared_source: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.2.2_scRNA"
+  pkg_info: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
 ---
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
@@ -16,6 +17,7 @@ ref= params$ref
 sampleid = params$sampleid
 h5 = params$h5 
 shared_source=params$shared_source
+pkg_info=params$pkg_info
 ```
 
 ```{r, handle_pkg, message=FALSE, echo=FALSE, include=FALSE}
@@ -31,33 +33,28 @@ if (testing=="Y"){
 assign(".lib.loc", library_db_loc, envir = environment(.libPaths))
 .libPaths()
 
-# set list of packages
-list.of.packages=c("htmltools","stringr","DoubletFinder","SingleR","scRNAseq",
-                   "SingleCellExperiment","Orthology.eg.db","org.Mm.eg.db","org.Hs.eg.db",
-                   "flexmix","djvdj","Matrix")
-# list.of.packages.bc=c("remotes","devtools")
-list.of.packages.bc=c("hdf5r")
-list.of.packages.cr=c("Seurat","R.utils")
-list.of.packages.gh=c("satijalab/seurat-wrappers")
-list.of.packages.gh_names=c("SeuratWrappers")
+# read in package info
+pkg_df=read.csv(pkg_info)
+pkg_df=subset(pkg_df,scrna=="Y")
 
-#install as needed
-new.packages <- list.of.packages.bc[!(list.of.packages.bc %in% installed.packages()[,"Package"])]
-new.packages
-if(length(new.packages)) BiocManager::install(new.packages)
+# for each package check installation, if present then load library
+for (rowid in rownames(pkg_df)){
+  pkg=pkg_df[rowid,"pkg"]
+  source=pkg_df[rowid,"source"]
+  version=pkg_df[rowid,"version"]
+  gh_name=pkg_df[rowid,"gh_name"]
+  
+  need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
 
-new.packages <- list.of.packages.cr[!(list.of.packages.cr %in% installed.packages()[,"Package"])]
-new.packages
-if(length(new.packages)) install.packages(new.packages)
+  if (source=="bc" & !is.null(need_install)) BiocManager::install(pkg,version=version)
+  if (source=="cr" & !is.null(need_install)) install.packages(pkg,version=version)
+  if (source=="gh" & !is.null(need_install)) remotes::install_github(gh_name,version=version)
 
-new.packages <- list.of.packages.gh[!(list.of.packages.gh_names %in% installed.packages()[,"Package"])]
-new.packages
-if(length(new.packages)) remotes::install_github(new.packages)
+  invisible(lapply(pkg, library, character.only = TRUE))
+}
 
-# load packages
-invisible(lapply(list.of.packages.bc, library, character.only = TRUE))
-invisible(lapply(list.of.packages.cr, library, character.only = TRUE))
-invisible(lapply(list.of.packages.gh_names, library, character.only = TRUE))
+# print pkg info
+DT::datatable(pkg_df)
 
 # source functions
 source("scRNA_functions.R")
@@ -74,7 +71,7 @@ if(class(rnaCounts) == "list") {
 }
 
 # crear object
-so <- CreateSeuratObject(rnaCounts,min.cells=1)
+so <- CreateSeuratObject(rnaCounts)
 
 # determine percent mito
 so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^[M,m]T-")
@@ -102,7 +99,7 @@ so_labeled$DF_hi.lo = dfso[[tail(names(dfso@meta.data),1)]]
 so_singlet=subset(so_labeled,cells=names(so_labeled$DF_hi.lo)[so_labeled$DF_hi.lo =="Singlet"])
 
 #save file
-fpath=paste0(sampleid,".rds")
+fpath=paste0(sampleid,"_seurat_object.rds")
 saveRDS(so_singlet,fpath)
 
 ```

@@ -114,3 +114,51 @@ LABEL_SO<-function(so_in){
   }
   return(so_in)
 }
+
+runSingleR = function(obj,refFile,fineORmain){
+  avg = AverageExpression(obj,assays = "SCT")
+  avg = as.data.frame(avg)
+  ref = refFile
+  s = SingleR(test = as.matrix(avg),ref = ref,labels = ref[[fineORmain]])
+  
+  clustAnnot = s$labels
+  names(clustAnnot) = colnames(avg)
+  names(clustAnnot) = gsub("SCT.","",names(clustAnnot))
+  
+  obj$clustAnnot = clustAnnot[match(obj$seurat_clusters,names(clustAnnot))]
+  return(obj$clustAnnot)
+}
+
+runInt = function(obj,npcs){
+  if(ncol(obj@assays$integrated@scale.data)!=ncol(obj@assays$integrated@data)){
+    obj = ScaleData(obj)
+  }
+  obj <- RunPCA(object = obj, npcs = npcs, verbose = FALSE)
+  obj <- FindNeighbors(obj,dims = 1:npcs)
+  
+  for (res in resolution){
+    obj <- FindClusters(obj,dims = 1:npcs, print.output = 0, resolution = res,algorithm = 3)#
+  }
+  colnames(obj@meta.data) = gsub("integrated_snn_res","SLM_int_snn_res",colnames(obj@meta.data))
+  colnames(obj@meta.data) = gsub("SCT_snn_res","SLM_SCT_snn_res",colnames(obj@meta.data))
+  
+  obj <- RunUMAP(object = obj, reduction = "pca",
+                 dims = 1:npcs,n.components = 3)
+  
+  if(ref == "hg38" || ref == "hg19"){
+    obj$clustAnnot_HPCA_main <- runSingleR(obj,celldex::HumanPrimaryCellAtlasData(),"label.main")
+    obj$clustAnnot_HPCA <-  runSingleR(obj,celldex::HumanPrimaryCellAtlasData(),"label.fine")
+    obj$clustAnnot_BP_encode_main <-  runSingleR(obj,celldex::BlueprintEncodeData(),"label.main")
+    obj$clustAnnot_BP_encode <-  runSingleR(obj,celldex::BlueprintEncodeData(),"label.fine")
+    obj$clustAnnot_monaco_main <-  runSingleR(obj,celldex::MonacoImmuneData(),"label.main")
+    obj$clustAnnot_monaco <- runSingleR(obj,celldex::MonacoImmuneData(),"label.fine")
+    obj$clustAnnot_immu_cell_exp_main <-  runSingleR(obj,celldex::DatabaseImmuneCellExpressionData(),"label.main")
+    obj$clustAnnot_immu_cell_exp <- runSingleR(obj,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
+  } else if(ref == "mm10"){
+    obj$clustAnnot_immgen_main <-  runSingleR(obj,celldex::ImmGenData(),"label.main")
+    obj$clustAnnot_immgen <- runSingleR(obj,celldex::ImmGenData(),"label.fine")
+    obj$clustAnnot_mouseRNAseq_main <-  runSingleR(obj,celldex::MouseRNAseqData(),"label.main")
+    obj$clustAnnot_mouseRNAseq <- runSingleR(obj,celldex::MouseRNAseqData(),"label.fine")
+  }
+  return(obj)
+}
