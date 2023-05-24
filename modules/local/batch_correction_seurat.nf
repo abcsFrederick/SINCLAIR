@@ -1,13 +1,12 @@
-process BATCHC_INT {
-    tag "${id}"
+process SEURAT_INTEGRATION {
+    tag "${contrast_id}"
 
     input:
-    tuple val(id), val(inDir)
-    path(singleRDS)
-    val(species)
+    tuple val(contrast_id), val(ct1), val(ct2)
     val(int_params)
-    path(contrast)
+    val(species)
     path(Rlib_dir)
+    path(Rpkg)
 
     output:
     path '*.rds'                  , emit:rds
@@ -16,11 +15,15 @@ process BATCHC_INT {
     def args = task.ext.args ?: ''
     """
     Rscript integrateBatches.R \
-		$singleRDS \
-        seuratIntegrated.rds  \
         $species \
-        $contrasts \
-        $int_params \
+        $ct1,$ct2 \
+        $int_params\
         $Rlib_dir \
+        $Rpkg
+    """
+
+    stub:
+    """
+    touch ${contrast_id}_seurat_object.rds
     """
 }

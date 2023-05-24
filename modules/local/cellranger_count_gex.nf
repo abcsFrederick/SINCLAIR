@@ -22,7 +22,7 @@ process CELLRANGER_COUNT {
 
     stub:
     """
-    mkdir $id/outs
-    touch filtered_feature_bc_matrix.h5
+    mkdir -p $id/outs
+    touch $id/outs/filtered_feature_bc_matrix.h5
     """
 }

@@ -6,9 +6,10 @@ process SEURAT_SINGLE {
     path(h5)
     val(species)
     path(Rlib_dir)
+    path(Rpkg)
 
     output:
-    path '*.rds'                  , emit:rds
+    tuple val(id), path ("*.rds")                  , emit:rds
     
     script:
     def args = task.ext.args ?: ''
@@ -17,7 +18,8 @@ process SEURAT_SINGLE {
         $species \
         $id \
         $h5 \
-        $Rlib_dir
+        $Rlib_dir \
+        $Rpkg
     """
 
     stub:
