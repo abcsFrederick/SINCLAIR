@@ -10,6 +10,7 @@ process SAMPLESHEET_CHECK {
     path '*gex_samplesheet.csv'                      , optional:true, emit:gex_samplesheet
     path '*atac_samplesheet.csv'                     , optional:true, emit:atac_samplesheet
     path '*contrast_samplesheet.csv'                 , emit:contrast_samplesheet
+    path '*group_samplesheet.csv'                    , emit:group_samplesheet
     
     script:
     """
