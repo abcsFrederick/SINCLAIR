@@ -18,6 +18,8 @@ import re
 from os import listdir
 from os.path import isfile, join
 import json
+import pandas as pd
+import numpy as np
 
 def parse_args(args=None):
     Description = "Samplesheets check - check both the samplesheet and contrast sheet contents."
@@ -76,7 +78,6 @@ def remove_output_files(fname):
     if os.path.isfile(fname):
         os.remove(fname)
     
-
 def check_samplesheet(file_in_s, file_in_c, file_out):
     """
     1) This function checks that the samplesheet follows the following structure:
@@ -235,23 +236,13 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
     with open(file_in_c, "r") as fin:
         ## Check header
         MIN_COLS = 2
-        HEADER = ["contrast1", "contrast2"]
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
-        if header[: len(HEADER)] != HEADER:
-            print("ERROR: Please check samplesheet header -> {} != {}".format(",".join(header), ",".join(HEADER)))
-            sys.exit(1)
 
         ## Check sample entries
         for line in fin:
             lspl = [x.strip().strip('"') for x in line.strip().split(",")]
 
             # Check valid number of columns per row
-            if len(lspl) < len(HEADER):
-                print_error(
-                    "Invalid number of columns (minimum = {})!".format(len(HEADER)),
-                    "Line",
-                    line,
-                )
             num_cols = len([x for x in lspl if x])
             if num_cols < MIN_COLS:
                 print_error(
@@ -259,33 +250,18 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
                     "Line",
                     line,
                 )
-
-            # split lines
-            CONTRAST1, CONTRAST2 = lspl[: len(HEADER)]
             
-            ## Check contrast name entries
-            CONTRAST1 = CONTRAST1.replace(" ", "_")
-            if not CONTRAST1:
-                print_error("CONTRAST1 entry has not been specified!", "Line", line)
+            for cid in lspl:
+                if cid not in group_mapping_dict:
+                    print_error("CONTRAST entry is not listed in the sample manifest. Check names!", "Line", line)
 
-            CONTRAST2 = CONTRAST2.replace(" ", "_")
-            if not CONTRAST2:
-                print_error("CONTRAST2 entry has not been specified!", "Line", line)
-
-            if CONTRAST1 == CONTRAST2:
-                print_error("CONTRAST entries are the same!", "Line", line)
-
-            if CONTRAST1 not in group_mapping_dict:
-                print_error("CONTRAST1 entry is not listed in the sample manifest. Check names!", "Line", line)
-
-            if CONTRAST2 not in group_mapping_dict:
-                print_error("CONTRAST2 entry is not listed in the sample manifest. Check names!", "Line", line)
-
-            ###################################################################################################
-            # ALL: Create SAMPLE DICT
-            ###################################################################################################
-            ## Create contrast mapping dictionary = { [contrast1: contrast2_A, contrast2_B] }
-            contrast_mapping_dict.setdefault(CONTRAST1, []).append(CONTRAST2)
+        ###################################################################################################
+        # ALL: Create Contrast DF
+        ###################################################################################################
+        contrast_df=pd.read_csv(file_in_c)
+        cols_to_cat = contrast_df.columns.values.tolist()
+        contrast_df['key'] = contrast_df.astype(str).agg('-'.join,axis=1)
+        contrast_df['key'] = contrast_df['key'].str.replace("-nan", "")
 
     ###################################################################################################
     # ALL: Create OUTPUT
@@ -294,7 +270,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
     remove_output_files(file_out + "_gex_samplesheet.csv")
     remove_output_files(file_out + "_contrast_samplesheet.csv")
     remove_output_files(file_out + "_atac_samplesheet.csv")
-    remove_output_files(file_out + "_groups_samplesheet.csv")
+    remove_output_files(file_out + "*_groups_samplesheet.csv")
     
     # Write validated samplesheet with appropriate columns for cellranger
     for sample in sorted(mani_mapping_dict.keys()):
@@ -325,26 +301,20 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
     # Write validated contrast samplesheet
     fname=file_out + "_contrast_samplesheet.csv"
     if not os.path.isfile(fname):
-        with open(fname, "w") as fout:
-            fout.write(",".join(["contrast1","contrast2"]) + "\n")
-            fout.close()
-    for contrast1 in sorted(contrast_mapping_dict.keys()):
-        for contrast2 in contrast_mapping_dict[contrast1]:
-            with open(fname, 'a+') as fout:
-                fout.write(contrast1 + "," + contrast2 + "\n")
-                fout.close()
+        contrast_df.to_csv(fname, sep=',',index=False)
 
-    # Write validated group samplesheet
+    # Write validated group samplesheets
     fname=file_out + "_groups_samplesheet.csv"
-    if not os.path.isfile(fname):
-        with open(fname, "w") as fout:
-            fout.write(",".join(["groupID","sampleID"]) + "\n")
-            fout.close()
-    for groupid in sorted(group_sample_mapping_dict.keys()):
-        with open(fname, 'a+') as fout:
-            for sid in group_sample_mapping_dict[groupid]:
-                fout.write(groupid + "," + sid + "\n")
+    with open(fname, "w") as fout:
+        fout.write(",".join(["keyid","sampleid"]) + "\n")
         fout.close()
+    for keyid in contrast_df['key']:
+        with open(fname, 'a+') as fout:
+            gid_list=keyid.split("-")
+            for gid in gid_list:
+                for sid in group_sample_mapping_dict[gid]:
+                    fout.write(keyid + "," + sid + "\n")
+    fout.close()
 
 def main(args=None):
     args = parse_args(args)
