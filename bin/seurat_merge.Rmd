@@ -1,0 +1,112 @@
+---
+title: "merge Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+params:
+  ref: "hg19"
+  rds: "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/work/1f/a18fc5718d3a7869da2340149254e3/sample2_seurat_object.rds, /gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/work/da/ca761f3d5b389f1333736ec5ae1dfe/sample4_seurat_object.rds"
+  gid: "group1_group2"
+  shared_source: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
+  pkg_info: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  testing: "Y"
+---
+
+```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
+# set up params
+ref= params$ref
+rds_files=strsplit(params$rds,",")[[1]]
+gid = params$gid
+shared_source=params$shared_source
+pkg_info=params$pkg_info
+testing = params$testing
+```
+
+
+```{r, handle_pkg, message=FALSE, include=FALSE, echo=FALSE}
+# set library dir, load this and remove any other dirs to avoid confusion
+# between personally created pkgs and the pipeline package
+if (testing=="Y"){
+  # saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
+  library_db_loc = paste0("~/../../Volumes/",shared_source)
+}else {
+  library_db_loc = paste0("/data/",shared_source)
+}
+assign(".lib.loc", library_db_loc, envir = environment(.libPaths))
+.libPaths()
+
+# read in package info
+pkg_df=read.csv(pkg_info)
+pkg_df=subset(pkg_df,merge=="Y")
+pkg_df
+
+# for each package check installation, if present then load library
+for (rowid in rownames(pkg_df)){
+  pkg=pkg_df[rowid,"package"]
+  source=pkg_df[rowid,"source"]
+  version=pkg_df[rowid,"version"]
+  gh_name=pkg_df[rowid,"gh_name"]
+  
+  need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
+
+  if (source=="bc" & length(need_install)!=0) BiocManager::install(pkg,version=version)
+  if (source=="cr" & length(need_install)!=0) install.packages(pkg,version=version)
+  if (source=="gh" & length(need_install)!=0) remotes::install_github(gh_name,version=version)
+
+  invisible(lapply(pkg, library, character.only = TRUE))
+}
+
+# source functions
+source("scRNA_functions.R")
+
+# set options
+options(future.globals.maxSize = 1e12)
+```
+
+
+library(Seurat)
+library(stringr)
+library(SingleR)
+library(scRNAseq)
+library(SingleCellExperiment)
+library(celldex)
+library(Orthology.eg.db)
+
+
+```{r, readfiles, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
+# read in individuals RDS files
+readObj = list()
+for (obj in rds_files) {
+  sampleID=strsplit(basename(obj),"_seurat")[[1]][1]
+  assign(paste0("S_",sampleID),readRDS(obj))
+  readObj = append(readObj,paste0("S_",sampleID))  
+}
+
+# compine te list
+combinedObj.list=list()
+i=1
+for (p in readObj){
+  combinedObj.list[[p]] <- eval(parse(text = readObj[[i]])) 
+  combinedObj.list[[p]]$Sample = names(combinedObj.list)[i]
+  i <- i + 1
+ }
+```
+
+```{r merge_objs, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
+
+reference.list <- combinedObj.list[unlist(readObj)]
+
+# set features
+selectFeatures <- SelectIntegrationFeatures(object.list = reference.list, 
+                                            nfeatures = 3000)
+
+# merge the objects
+combinedObj.integratedRNA = merge(reference.list[[1]],reference.list[2:length(reference.list)])
+VariableFeatures(combinedObj.integratedRNA) = selectFeatures
+
+# save RDS files
+fpath=paste0(gid,"_seurat_object.rds")
+saveRDS(combinedObj.integratedRNA,fpath)
+```
+
+
