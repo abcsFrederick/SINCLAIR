@@ -1,14 +1,15 @@
 ---
-title: "R Notebook"
+title: "scRNA Notebook"
 output: html_notebook
 editor_options: 
   chunk_output_type: console
 params:
   ref: "hg19"
   sampleid: "WB_Lysis_1"
-  h5: "~/../../Volumes/data-1/scRNA_test/cellranger_counts/WB_Lysis_1/outs/filtered_feature_bc_matrix.h5"
-  shared_source: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.2.2_scRNA"
+  h5: "~/../../Volumes/data/scRNA_test/cellranger_counts/sample1/outs/filtered_feature_bc_matrix.h5"
+  shared_source: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
   pkg_info: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  testing: "Y"
 ---
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
@@ -18,12 +19,12 @@ sampleid = params$sampleid
 h5 = params$h5 
 shared_source=params$shared_source
 pkg_info=params$pkg_info
+testing = params$testing
 ```
 
-```{r, handle_pkg, message=FALSE, echo=FALSE, include=FALSE}
+```{r, handle_pkg, message=FALSE, include=FALSE}
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
-testing="Y"
 if (testing=="Y"){
   # saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
   library_db_loc = paste0("~/../../Volumes/",shared_source)
@@ -35,56 +36,63 @@ assign(".lib.loc", library_db_loc, envir = environment(.libPaths))
 
 # read in package info
 pkg_df=read.csv(pkg_info)
-pkg_df=subset(pkg_df,scrna=="Y")
+pkg_df=subset(pkg_df,preprocess=="Y")
+pkg_df
 
 # for each package check installation, if present then load library
 for (rowid in rownames(pkg_df)){
-  pkg=pkg_df[rowid,"pkg"]
+  pkg=pkg_df[rowid,"package"]
   source=pkg_df[rowid,"source"]
   version=pkg_df[rowid,"version"]
   gh_name=pkg_df[rowid,"gh_name"]
   
   need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
 
-  if (source=="bc" & !is.null(need_install)) BiocManager::install(pkg,version=version)
-  if (source=="cr" & !is.null(need_install)) install.packages(pkg,version=version)
-  if (source=="gh" & !is.null(need_install)) remotes::install_github(gh_name,version=version)
+  if (source=="bc" & length(need_install)!=0) BiocManager::install(pkg,version=version)
+  if (source=="cr" & length(need_install)!=0) install.packages(pkg,version=version)
+  if (source=="gh" & length(need_install)!=0) remotes::install_github(gh_name,version=version)
 
   invisible(lapply(pkg, library, character.only = TRUE))
 }
-
-# print pkg info
-DT::datatable(pkg_df)
 
 # source functions
 source("scRNA_functions.R")
 ```
 
-```{r, pre-processing, message=FALSE, echo=FALSE, include=FALSE, warning=FALSE}
+```{r, pre-processing, message=FALSE, include=FALSE, warning=FALSE}
 # read in h5 file
 rnaCounts = Read10X_h5(h5)
 
-# if this is a multi-data type project, select only gex
-if(class(rnaCounts) == "list") {
-  print("--More than one data type received")
-  rnaCounts = rnaCounts$'Gene Expression'
+# create S object
+if (testing=="Y"){
+  library(SeuratData)
+  InstallData("pbmc3k")
+  data("pbmc3k")
+  so=pbmc3k
+} else {
+  so <- CreateSeuratObject(rnaCounts)
 }
-
-# crear object
-so <- CreateSeuratObject(rnaCounts)
 
 # determine percent mito
 so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^[M,m]T-")
+FeatureScatter(so, feature1 = "nFeature_RNA", feature2 = "percent.mt")
 
 # run QC, subset for features meeting critera
-so <- RunMiQC(so, percent.mt = "percent.mt",
+so <- RunMiQC(so, 
+              percent.mt = "percent.mt",
               nFeature_RNA = "nFeature_RNA", 
               posterior.cutoff = 0.7,
               model.slot = "flexmix_model") 
+PlotMiQC(so, 
+         color.by = "miQC.probability") + 
+  ggplot2::scale_color_gradient(low = "grey", high = "purple")
+
+# subset
 so_sub = subset(so, miQC.keep == "keep")
+so_sub
 ```
 
-```{r, processing, message=FALSE, echo=FALSE, include=FALSE, warning=FALSE}
+```{r, processing, message=FALSE, include=FALSE, warning=FALSE}
 # Process data
 so_processed = PROCESS_SO(so_sub)
 
@@ -101,5 +109,4 @@ so_singlet=subset(so_labeled,cells=names(so_labeled$DF_hi.lo)[so_labeled$DF_hi.l
 #save file
 fpath=paste0(sampleid,"_seurat_object.rds")
 saveRDS(so_singlet,fpath)
-
 ```

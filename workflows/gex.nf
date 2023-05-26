@@ -27,8 +27,8 @@ Assign Local Modules
 */
 include { SAMPLESHEET_CHECK                             } from '../modules/local/samplesheet_check.nf'
 include { CELLRANGER_COUNT                              } from '../modules/local/cellranger_count_gex.nf'
-include { SEURAT_SINGLE                                 } from '../modules/local/scRNA_single.nf'
-include { SEURAT_MERGE                                 } from '../modules/local/scRNA_merge.nf'
+include { SEURAT_PREPROCESS                             } from '../modules/local/seurat_preprocess.nf'
+include { SEURAT_MERGE                                  } from '../modules/local/seurat_merge.nf'
 // include { BATCH_CORRECT_INT                             } from '../modules/local/batch_correction_seurat.nf'
 
 /*
@@ -64,7 +64,7 @@ workflow GEX_EXQC {
         )
 
         // Run Seurat for individual samples
-        SEURAT_SINGLE (
+        SEURAT_PREPROCESS (
             ch_meta,
             CELLRANGER_COUNT.out.h5,
             params.species,
@@ -88,18 +88,16 @@ workflow GEX_EXQC {
                     def sample = row["sampleid"]
                     return [sample, key]
                 }
-            .combine(SEURAT_SINGLE.out.rds, by: 0)
+            .combine(SEURAT_PREPROCESS.out.rds, by: 0)
             .map { sample, key, rds_file -> tuple( key, rds_file ) }
             .groupTuple()
-            .view()
 
 
         SEURAT_MERGE (
             ch_groups,
-            // INPUT_CHECK_GEX.out.contrast_samplesheet,
-            // params.species,
-            // params.Rlib_dir,
-            // params.Rpkg
+            params.species,
+            params.Rlib_dir,
+            params.Rpkg
         )
 
         // Run batch corrections
