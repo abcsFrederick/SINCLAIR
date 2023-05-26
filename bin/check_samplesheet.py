@@ -156,7 +156,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
                                 
                     # for every file, check file exists and is properly formatted
                     for fileid in onlyfiles:
-                        sample_list=check_files(INPUTDIR)
+                        sample_list=check_files(fileid)
 
                     # ensure all samples names are the same
                     if(len(set(sample_list)) != 1):
