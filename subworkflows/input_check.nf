@@ -24,7 +24,7 @@ workflow INPUT_CHECK_GEX {
     emit:
         gex_samplesheet = SAMPLESHEET_CHECK.out.gex_samplesheet
         contrast_samplesheet = SAMPLESHEET_CHECK.out.contrast_samplesheet
-
+        group_samplesheet = SAMPLESHEET_CHECK.out.group_samplesheet
 }
 
 workflow INPUT_CHECK_ATAC {

@@ -28,6 +28,8 @@ Assign Local Modules
 include { SAMPLESHEET_CHECK                             } from '../modules/local/samplesheet_check.nf'
 include { CELLRANGER_COUNT                              } from '../modules/local/cellranger_count_gex.nf'
 include { SEURAT_SINGLE                                 } from '../modules/local/scRNA_single.nf'
+include { SEURAT_MERGE                                 } from '../modules/local/scRNA_merge.nf'
+// include { BATCH_CORRECT_INT                             } from '../modules/local/batch_correction_seurat.nf'
 
 /*
 =======================================================================================================
@@ -46,6 +48,7 @@ workflow GEX_EXQC {
         )
         
         // create metadata
+        // creates GEX mapped input of sample:gex_input_dir
         ch_meta = INPUT_CHECK_GEX.out.gex_samplesheet
             .splitCsv( header:true, sep:',', strip:true )
             .map { row ->
@@ -54,40 +57,54 @@ workflow GEX_EXQC {
                     return [ id, inDir ]
                 }
 
-        ch_contrast = INPUT_CHECK_GEX.out.contrast_samplesheet
-            .splitCsv( header:true, sep:',', strip:true )
-            .map { row ->
-                    def contrast1 = row["contrast1"]
-                    def contrast2 = row["contrast2"]
-                    return [ contrast1, contrast2 ]
-                }
-
         // Run cellranger count
         CELLRANGER_COUNT (
             ch_meta,
             params.genome_dir
         )
 
-        // // Run Seurat for individual samples
-        // SEURAT_SINGLE (
-        //     ch_meta,
-        //     CELLRANGER_COUNT.out.h5,
-        //     params.species,
-        //     params.Rlib_dir
-        // )
+        // Run Seurat for individual samples
+        SEURAT_SINGLE (
+            ch_meta,
+            CELLRANGER_COUNT.out.h5,
+            params.species,
+            params.Rlib_dir,
+            params.Rpkg
+        )
 
-        // // Run Merge TBD from AA
-        // SEURAT_MERGE (
-        //     ch_meta,
-        //     CELLRANGER_COUNT.out.h5,
-        //     params.species,
-        //     params.Rlib_dir
-        // )
+        // creates metadata
+        // creates tuple of group_id_key: all RDS files from INPUT_CHECK_GEX
+        //// which matches those samples
+        //// example: INPUT_CHECK_GEX.out.group_samplesheet; SEURAT_SINGLE.out.rds
+        //// example: sample1:group1_group2; sample1:sample1.rds
+        //// example: sample1:group1_group2_group3; sample1:sample1.rds
+        //// example: sample2:group1_group2; sample2:sample2.rds
+        //// output: group1_group2: [sample1.rds,sample2.rds]
+        //// output: group1_group2_group3: [sample1.rds]
+        ch_groups = INPUT_CHECK_GEX.out.group_samplesheet
+            .splitCsv( header:true, sep:',', strip:true )
+            .map { row ->
+                    def key = row["keyid"]
+                    def sample = row["sampleid"]
+                    return [sample, key]
+                }
+            .combine(SEURAT_SINGLE.out.rds, by: 0)
+            .map { sample, key, rds_file -> tuple( key, rds_file ) }
+            .groupTuple()
+            .view()
 
-        // // Run batch corrections
-        // BATCHC_INT (
-        //     ch_contrast,
-        //     SEURAT_MERGE.out.rds,
+
+        SEURAT_MERGE (
+            ch_groups,
+            // INPUT_CHECK_GEX.out.contrast_samplesheet,
+            // params.species,
+            // params.Rlib_dir,
+            // params.Rpkg
+        )
+
+        // Run batch corrections
+        // BATCH_CORRECT_INT (
+        //     ch_contrast, SEURAT_SINGLE.out.rds.collect(),
         //     params.species,
         //     params.seurat_integration,
         //     params.Rlib_dir
