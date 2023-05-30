@@ -14,12 +14,14 @@ params:
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
 # set up params
-ref= params$ref
-rds_files=strsplit(params$rds,",")[[1]]
-gid = params$gid
+testing = params$testing
 shared_source=params$shared_source
 pkg_info=params$pkg_info
-testing = params$testing
+rds_files=strsplit(params$rds,",")[[1]]
+
+ref= params$ref
+
+gid = params$gid
 ```
 
 
@@ -55,9 +57,6 @@ for (rowid in rownames(pkg_df)){
 
   invisible(lapply(pkg, library, character.only = TRUE))
 }
-
-# source functions
-source("scRNA_functions.R")
 
 # set options
 options(future.globals.maxSize = 1e12)
