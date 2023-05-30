@@ -4,9 +4,9 @@ site_author: Samantha Sevilla, Ph.D.
 site_description: >-
   TechDev project
 # Repository
-repo_name: CCBR/CCBRTechDevCookieCutter
-repo_url: https://github.com/CCBR/CCBRTechDevCookieCutter
-edit_uri: https://github.com/CCBR/CCBRTechDevCookieCutter/edit/main/docs/
+repo_name: CCBR/TechDev_scRNASeq_Dev2023
+repo_url: https://github.com/CCBR/TechDev_scRNASeq_Dev2023
+edit_uri: https://github.com/CCBR/TechDev_scRNASeq_Dev2023/edit/main/docs/
 
 # Copyright
 copyright: Copyright &copy; 2023 CCBR
