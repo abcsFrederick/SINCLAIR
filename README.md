@@ -5,4 +5,4 @@ The pipeline is designed to run single cell RNA Sequencing analysis on a variety
 
 For comments/suggestions/advice please reach out to [Samantha Chill](mailto:samantha.sevilla@nih.gov).
 
-For detailed documentation on running the pipeline view the [documentation](https://CCBR.github.io/scRNAseq/) page.
+For detailed documentation on running the pipeline view the [documentation](https://CCBR.github.io/TechDev_scRNASeq_Dev2023) page.
