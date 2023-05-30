@@ -72,7 +72,8 @@ workflow GEX_EXQC {
             params.species,
             params.Rlib_dir,
             params.Rpkg,
-            params.seurat_preprocess
+            params.seurat_preprocess,
+            params.scRNA_functions
         )
 
         // creates metadata

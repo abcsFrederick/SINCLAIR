@@ -5,8 +5,10 @@ process SEURAT_PREPROCESS {
     tuple val(id), val(inDir)
     path(h5)
     val(species)
-    path(Rlib_dir)
-    path(Rpkg)
+    val(Rlib_dir)
+    path(Rpkg_config)
+    path(rmd)
+    path(scRNA_functions)
 
     output:
     tuple val(id), path ("*.rds")                  , emit:rds
@@ -15,15 +17,15 @@ process SEURAT_PREPROCESS {
     script:
     def args = task.ext.args ?: ''
     """
-    Rscript -e 'rmarkdown::render("seurat_preprocess.Rmd",
-        params=list(species=$species,
-            id=$id,
-            h5=$h5,
-            Rlib_dir=$Rlib_dir,
-            Rpkg=$Rpkg,
+    Rscript -e 'rmarkdown::render("${rmd}",
+        params=list(species="$species",
+            sampleid="$id",
+            h5="$h5",
+            Rlib_dir="$Rlib_dir",
+            Rpkg_config="$Rpkg_config",
+            scRNA_functions="$scRNA_functions",
             testing="N"),
-        output_file = "${id}.html"
-        output_dir = $task.workDir'
+        output_file = "${id}.html")'
     """
 
     stub:
