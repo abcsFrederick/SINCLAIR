@@ -29,7 +29,9 @@ include { SAMPLESHEET_CHECK                             } from '../modules/local
 include { CELLRANGER_COUNT                              } from '../modules/local/cellranger_count_gex.nf'
 include { SEURAT_PREPROCESS                             } from '../modules/local/seurat_preprocess.nf'
 include { SEURAT_MERGE                                  } from '../modules/local/seurat_merge.nf'
-// include { BATCH_CORRECT_INT                             } from '../modules/local/batch_correction_seurat.nf'
+// include { BATCH_CORRECT_SEURAT                          } from '../modules/local/batch_correction_seurat.nf'
+// include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
+// include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
 
 /*
 =======================================================================================================
@@ -69,7 +71,8 @@ workflow GEX_EXQC {
             CELLRANGER_COUNT.out.h5,
             params.species,
             params.Rlib_dir,
-            params.Rpkg
+            params.Rpkg,
+            params.seurat_preprocess
         )
 
         // creates metadata
@@ -81,47 +84,50 @@ workflow GEX_EXQC {
         //// example: sample2:group1_group2; sample2:sample2.rds
         //// output: group1_group2: [sample1.rds,sample2.rds]
         //// output: group1_group2_group3: [sample1.rds]
-        ch_groups = INPUT_CHECK_GEX.out.group_samplesheet
-            .splitCsv( header:true, sep:',', strip:true )
-            .map { row ->
-                    def key = row["keyid"]
-                    def sample = row["sampleid"]
-                    return [sample, key]
-                }
-            .combine(SEURAT_PREPROCESS.out.rds, by: 0)
-            .map { sample, key, rds_file -> tuple( key, rds_file ) }
-            .groupTuple()
+        // ch_groups = INPUT_CHECK_GEX.out.group_samplesheet
+        //     .splitCsv( header:true, sep:',', strip:true )
+        //     .map { row ->
+        //             def key = row["keyid"]
+        //             def sample = row["sampleid"]
+        //             return [sample, key]
+        //         }
+        //     .combine(SEURAT_PREPROCESS.out.rds, by: 0)
+        //     .map { sample, key, rds_file -> tuple( key, rds_file ) }
+        //     .groupTuple()
 
 
-        SEURAT_MERGE (
-            ch_groups,
-            params.species,
-            params.Rlib_dir,
-            params.Rpkg
-        )
+        // SEURAT_MERGE (
+        //     ch_groups,
+        //     params.species,
+        //     params.Rlib_dir,
+        //     params.Rpkg
+        // )
 
         // Run batch corrections
-        // BATCH_CORRECT_INT (
-        //     ch_contrast, SEURAT_SINGLE.out.rds.collect(),
+        // BATCH_CORRECT_SEURAT (
+        //     ch_groups,
         //     params.species,
         //     params.seurat_integration,
-        //     params.Rlib_dir
+        //     params.Rlib_dir,
+        //     params.Rpkg
         // )
         
         // // Run batch corrections
         // BATCHC_RPCA (
-        //     ch_meta,
-        //     CELLRANGER_COUNT.out.h5,
+        //     ch_groups,
         //     params.species,
-        //     params.Rlib_dir
+        //     params.seurat_integration,
+        //     params.Rlib_dir,
+        //     params.Rpkg
         // )
 
         // // Run batch corrections
         // BATCHC_HARMONY (
-        //     ch_meta,
-        //     CELLRANGER_COUNT.out.h5,
+        //     ch_groups,
         //     params.species,
-        //     params.Rlib_dir
+        //     params.seurat_integration,
+        //     params.Rlib_dir,
+        //     params.Rpkg
         // )
     emit:
         samplesheet        = INPUT_CHECK_GEX.out.gex_samplesheet
