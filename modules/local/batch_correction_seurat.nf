@@ -2,7 +2,7 @@ process SEURAT_INTEGRATION {
     tag "${contrast_id}"
 
     input:
-    tuple val(contrast_id), val(ct1), val(ct2)
+    tuple val(contrast_id), val(rds)
     val(int_params)
     val(species)
     path(Rlib_dir)
@@ -16,7 +16,7 @@ process SEURAT_INTEGRATION {
     """
     Rscript integrateBatches.R \
         $species \
-        $ct1,$ct2 \
+        $rds \
         $int_params\
         $Rlib_dir \
         $Rpkg
