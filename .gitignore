@@ -45,3 +45,4 @@ test.sh
 
 # R files
 */.Rhistory
+.Rproj.user
