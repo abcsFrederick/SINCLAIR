@@ -4,22 +4,22 @@ output: html_notebook
 editor_options: 
   chunk_output_type: console
 params:
-  ref: "hg19"
+  species: "hg19"
   sampleid: "WB_Lysis_1"
   h5: "~/../../Volumes/data/scRNA_test/cellranger_counts/sample1/outs/filtered_feature_bc_matrix.h5"
-  shared_source: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
-  pkg_info: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  Rlib_dir: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
+  Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
   testing: "Y"
 ---
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
 # set up params
-ref= params$ref
-sampleid = params$sampleid
-h5 = params$h5 
-shared_source=params$shared_source
-pkg_info=params$pkg_info
 testing = params$testing
+Rlib_dir=params$Rlib_dir
+Rpkg_config=params$Rpkg_config
+h5 = params$h5 
+species= params$species
+sampleid = params$sampleid
 ```
 
 ```{r, handle_pkg, message=FALSE, include=FALSE}
@@ -27,15 +27,16 @@ testing = params$testing
 # between personally created pkgs and the pipeline package
 if (testing=="Y"){
   # saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
-  library_db_loc = paste0("~/../../Volumes/",shared_source)
+  library_db_loc = paste0("~/../../Volumes/",Rlib_dir)
 }else {
-  library_db_loc = paste0("/data/",shared_source)
+  library_db_loc = paste0("/data/",Rlib_dir)
 }
+print(paste0("Using the lib.loc location: ",library_db_loc))
 assign(".lib.loc", library_db_loc, envir = environment(.libPaths))
 .libPaths()
 
 # read in package info
-pkg_df=read.csv(pkg_info)
+pkg_df=read.csv(Rpkg_config)
 pkg_df=subset(pkg_df,preprocess=="Y")
 pkg_df
 
@@ -45,18 +46,23 @@ for (rowid in rownames(pkg_df)){
   source=pkg_df[rowid,"source"]
   version=pkg_df[rowid,"version"]
   gh_name=pkg_df[rowid,"gh_name"]
-  
-  need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
 
-  if (source=="bc" & length(need_install)!=0) BiocManager::install(pkg,version=version)
-  if (source=="cr" & length(need_install)!=0) install.packages(pkg,version=version)
-  if (source=="gh" & length(need_install)!=0) remotes::install_github(gh_name,version=version)
+  # need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
+  # if (length(need_install)!=0){
+  #   print(paste0("Installing: ", pkg))
+  #   if (source=="bc") BiocManager::install(pkg)
+  #   if (source=="cr") install.packages(pkg,version=version)
+  #   if (source=="gh") remotes::install_github(gh_name,version=version)
+  # }
 
+  print(paste0("Loading: ",pkg))
   invisible(lapply(pkg, library, character.only = TRUE))
 }
 
 # source functions
 source("scRNA_functions.R")
+
+# additional options
 ```
 
 ```{r, pre-processing, message=FALSE, include=FALSE, warning=FALSE}
@@ -64,43 +70,46 @@ source("scRNA_functions.R")
 rnaCounts = Read10X_h5(h5)
 
 # create S object
-if (testing=="Y"){
-  library(SeuratData)
-  InstallData("pbmc3k")
-  data("pbmc3k")
-  so=pbmc3k
+if (testing=="T"){
+  pbmc.data=Read10X(data.dir="~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/data_storage/10xFQ/filtered_gene_bc_matrices/hg19/")
+  so = CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 } else {
-  so <- CreateSeuratObject(rnaCounts)
+  so <- CreateSeuratObject(counts=rnaCounts)
 }
 
+# add metadata
+so$Sample = sampleid
+
 # determine percent mito
+## http://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/miQC.html
 so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^[M,m]T-")
 FeatureScatter(so, feature1 = "nFeature_RNA", feature2 = "percent.mt")
 
 # run QC, subset for features meeting critera
-so <- RunMiQC(so, 
+so_qc <- RunMiQC(so, 
               percent.mt = "percent.mt",
               nFeature_RNA = "nFeature_RNA", 
               posterior.cutoff = 0.7,
-              model.slot = "flexmix_model") 
-PlotMiQC(so, 
+              model.slot = "flexmix_model")
+PlotMiQC(so_qc, 
          color.by = "miQC.probability") + 
   ggplot2::scale_color_gradient(low = "grey", high = "purple")
+VlnPlot(so_qc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
 # subset
-so_sub = subset(so, miQC.keep == "keep")
-so_sub
+so_filt = subset(so_qc, miQC.keep == "keep")
+so_filt
 ```
 
 ```{r, processing, message=FALSE, include=FALSE, warning=FALSE}
 # Process data
-so_processed = PROCESS_SO(so_sub)
+so_processed = MAIN_PROCESS_SO(so_filt, species)
 
 # Label data
-so_labeled = LABEL_SO(so_processed)
+so_labeled = MAIN_LABEL_SO(so_processed,species)
 
 # ID doublets
-dfso = doublets(so_labeled)
+dfso = PROCESS_DOUBLETS(so_labeled)
 
 #label and filter
 so_labeled$DF_hi.lo = dfso[[tail(names(dfso@meta.data),1)]]
