@@ -3,7 +3,7 @@ datatype=$2
 resume=$3
 args=$4
 
-module load nextflow
+module load nextflow/23.04.1
 
 echo "--Workflow started: $datatype"
 
