@@ -95,9 +95,8 @@ so_qc <- RunMiQC(so,
               posterior.cutoff = 0.7,
               model.slot = "flexmix_model")
 print(so_qc)
-PlotMiQC(so_qc, 
-         color.by = "miQC.probability") + 
-  ggplot2::scale_color_gradient(low = "grey", high = "purple")
+#PlotMiQC(so_qc, color.by = "miQC.probability") + 
+  #ggplot2::scale_color_gradient(low = "grey", high = "purple")
 VlnPlot(so_qc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
 # subset
