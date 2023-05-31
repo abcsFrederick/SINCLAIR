@@ -4,30 +4,32 @@ process SEURAT_MERGE {
     input:
     tuple val(gid), val(rdsFiles)
     val(species)
-    path(Rlib_dir)
-    val(Rpkg_config)    
+    val(Rlib_dir)
+    path(Rpkg_config)
+    path(rmd)
+    path(scRNA_functions)  
 
     output:
-    tuple val(gid), path ("*.rds")                  , emit:rds
-    
+    tuple val(gid), path ("*.rds")                , emit:rds
+    tuple val(id), path ("*.pdf")                 , emit:logs
+
     script:
     def args = task.ext.args ?: ''
     """
-    echo $rdsFiles > ${gid}.rds
-
-    Rscript -e 'rmarkdown::render("seurat_merge.Rmd",
+    Rscript -e 'rmarkdown::render("${rmd}",
         params=list(species=$species,
             rdsFiles=$rdsFiles,
             gid=$gid,
-            Rlib_dir=$Rlib_dir,
-            Rpkg=$Rpkg,
+            Rlib_dir="$Rlib_dir",
+            Rpkg_config="$Rpkg_config",
+            scRNA_functions="$scRNA_functions",
             testing="N"),
-        output_file = "${id}.html"
-        output_dir = $task.workDir'
+        output_file = "${gid}.pdf")'
     """
 
     stub:
     """
     echo $rdsFiles > ${gid}_merged.rds
+    touch ${gid}.pdf
     """
 }

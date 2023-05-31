@@ -1,44 +1,45 @@
 ---
 title: "merge Notebook"
-output: html_notebook
+output: 
+  pdf_document: 
+    toc: yes
 editor_options: 
   chunk_output_type: console
 params:
-  ref: "hg19"
-  rds: "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/work/1f/a18fc5718d3a7869da2340149254e3/sample2_seurat_object.rds, /gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/work/da/ca761f3d5b389f1333736ec5ae1dfe/sample4_seurat_object.rds"
+  species: "hg19"
+  rds: "/data/sevillas2/scRNA_test/seurat/sample2_seurat_object.rds, /data/sevillas2/scRNA_test/seurat/sample4_seurat_object.rds"
   gid: "group1_group2"
-  shared_source: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
-  pkg_info: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
+  Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  scRNA_functions: "scRNA_functions.R"
   testing: "Y"
 ---
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
 # set up params
-testing = params$testing
-shared_source=params$shared_source
-pkg_info=params$pkg_info
+species= params$species
 rds_files=strsplit(params$rds,",")[[1]]
 
-ref= params$ref
-
 gid = params$gid
+Rlib_dir=params$Rlib_dir
+Rpkg_config=params$Rpkg_config
+testing = params$testing
 ```
 
 
-```{r, handle_pkg, message=FALSE, include=FALSE, echo=FALSE}
+```{r, handle_pkg, message=FALSE}
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
-if (testing=="Y"){
-  # saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
-  library_db_loc = paste0("~/../../Volumes/",shared_source)
-}else {
-  library_db_loc = paste0("/data/",shared_source)
-}
-assign(".lib.loc", library_db_loc, envir = environment(.libPaths))
+## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
+print(paste0("Using the lib.loc location: ",Rlib_dir))
+assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
 .libPaths()
 
+# load shared objects
+#dyn.load('/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA/KernSmooth/libs/KernSmooth.so')
+
 # read in package info
-pkg_df=read.csv(pkg_info)
+pkg_df=read.csv(Rpkg_config)
 pkg_df=subset(pkg_df,merge=="Y")
 pkg_df
 
@@ -48,29 +49,29 @@ for (rowid in rownames(pkg_df)){
   source=pkg_df[rowid,"source"]
   version=pkg_df[rowid,"version"]
   gh_name=pkg_df[rowid,"gh_name"]
-  
+
   need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
+  if (length(need_install)!=0){
+    print(paste0("Installing: ", pkg))
+    if (source=="bc") BiocManager::install(pkg)
+    if (source=="cr") install.packages(pkg,version=version,repos = "http://cran.us.r-project.org",
+                                       local = FALSE)
+    if (source=="gh") remotes::install_github(gh_name,version=version,local = FALSE)
+  }
 
-  if (source=="bc" & length(need_install)!=0) BiocManager::install(pkg,version=version)
-  if (source=="cr" & length(need_install)!=0) install.packages(pkg,version=version)
-  if (source=="gh" & length(need_install)!=0) remotes::install_github(gh_name,version=version)
-
+  print(paste0("Loading: ",pkg))
   invisible(lapply(pkg, library, character.only = TRUE))
 }
+
+# source functions
+source(scRNA_functions)
+
+# additional options
+tinytex::install_tinytex(force = TRUE)
 
 # set options
 options(future.globals.maxSize = 1e12)
 ```
-
-
-library(Seurat)
-library(stringr)
-library(SingleR)
-library(scRNAseq)
-library(SingleCellExperiment)
-library(celldex)
-library(Orthology.eg.db)
-
 
 ```{r, readfiles, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
 # read in individuals RDS files
@@ -93,14 +94,14 @@ for (p in readObj){
 
 ```{r merge_objs, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
 
-reference.list <- combinedObj.list[unlist(readObj)]
+specieserence.list <- combinedObj.list[unlist(readObj)]
 
 # set features
-selectFeatures <- SelectIntegrationFeatures(object.list = reference.list, 
+selectFeatures <- SelectIntegrationFeatures(object.list = specieserence.list, 
                                             nfeatures = 3000)
 
 # merge the objects
-combinedObj.integratedRNA = merge(reference.list[[1]],reference.list[2:length(reference.list)])
+combinedObj.integratedRNA = merge(specieserence.list[[1]],specieserence.list[2:length(specieserence.list)])
 VariableFeatures(combinedObj.integratedRNA) = selectFeatures
 
 # save RDS files
