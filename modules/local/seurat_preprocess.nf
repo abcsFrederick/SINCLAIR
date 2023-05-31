@@ -11,8 +11,8 @@ process SEURAT_PREPROCESS {
     path(scRNA_functions)
 
     output:
-    tuple val(id), path ("*.rds")                  , emit:rds
-    tuple val(id), path ("*.html")                 , emit:logs
+    tuple val(id), path ("*.rds")                 , emit:rds
+    tuple val(id), path ("*.pdf")                 , emit:logs
     
     script:
     def args = task.ext.args ?: ''
@@ -25,12 +25,12 @@ process SEURAT_PREPROCESS {
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",
             testing="N"),
-        output_file = "${id}.html")'
+        output_file = "${id}.pdf")'
     """
 
     stub:
     """
     touch ${id}_seurat_object.rds
-    touch ${id}.html
+    touch ${id}.pdf
     """
 }

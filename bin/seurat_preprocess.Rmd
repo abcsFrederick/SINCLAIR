@@ -1,19 +1,21 @@
 ---
 title: "scRNA Notebook"
-output: html_notebook
+output: 
+  pdf_document: 
+    toc: yes
 editor_options: 
   chunk_output_type: console
 params:
   species: "hg19"
   sampleid: "WB_Lysis_1"
   h5: "~/../../Volumes/data/scRNA_test/cellranger_counts/sample1/outs/filtered_feature_bc_matrix.h5"
-  Rlib_dir: "~/../../Volumes/CCBR_Pipeliner-1/db/PipeDB/Rlibrary_4.3_scRNA"
-  Rpkg_config: "~/../../Volumes/CCBR_Pipeliner-1/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
+  Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
   scRNA_functions: "scRNA_functions.R"
   testing: "Y"
 ---
 
-```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
+```{r, prep_args, message=FALSE}
 # set up params
 testing = params$testing
 Rlib_dir=params$Rlib_dir
@@ -24,16 +26,13 @@ sampleid = params$sampleid
 scRNA_functions = params$scRNA_functions
 ```
 
-```{r, handle_pkg, message=FALSE, include=FALSE}
+```{r, handle_pkg, message=FALSE}
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
 ## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
 print(paste0("Using the lib.loc location: ",Rlib_dir))
 assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
 .libPaths()
-
-# load shared objects
-#dyn.load('/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA/KernSmooth/libs/KernSmooth.so')
 
 # read in package info
 pkg_df=read.csv(Rpkg_config)
@@ -64,9 +63,10 @@ for (rowid in rownames(pkg_df)){
 source(scRNA_functions)
 
 # additional options
+tinytex::install_tinytex(force = TRUE)
 ```
 
-```{r, pre-processing, message=FALSE, include=FALSE, warning=FALSE}
+```{r, pre-processing, message=FALSE}
 # read in h5 file
 rnaCounts = Read10X_h5(h5)
 
@@ -87,7 +87,7 @@ so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^[M,m]T-")
 FeatureScatter(so, feature1 = "nFeature_RNA", feature2 = "percent.mt")
 ```
 
-```{r, QC, message=FALSE, include=FALSE, warning=FALSE}
+```{r, QC, message=FALSE}
 # run QC, subset for features meeting critera
 so_qc <- RunMiQC(so, 
               percent.mt = "percent.mt",
@@ -104,7 +104,7 @@ so_filt = subset(so_qc, miQC.keep == "keep")
 so_filt
 ```
 
-```{r, processing, message=FALSE, include=FALSE, warning=FALSE}
+```{r, processing, message=FALSE}
 # Process data
 so_processed = MAIN_PROCESS_SO(so_filt, species)
 
