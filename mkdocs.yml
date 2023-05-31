@@ -6,7 +6,7 @@ site_description: >-
 # Repository
 repo_name: CCBR/TechDev_scRNASeq_Dev2023
 repo_url: https://github.com/CCBR/TechDev_scRNASeq_Dev2023
-edit_uri: https://github.com/CCBR/TechDev_scRNASeq_Dev2023/edit/main/docs/
+edit_uri: https://github.com/CCBR/TechDev_scRNASeq_Dev2023/edit/feature/gex_only/docs/
 
 # Copyright
 copyright: Copyright &copy; 2023 CCBR
