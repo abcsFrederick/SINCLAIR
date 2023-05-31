@@ -119,6 +119,6 @@ so_labeled$DF_hi.lo = dfso[[tail(names(dfso@meta.data),1)]]
 so_singlet=subset(so_labeled,cells=names(so_labeled$DF_hi.lo)[so_labeled$DF_hi.lo =="Singlet"])
 
 #save file
-fpath=paste0(sampleid,"_seurat_object.rds")
+fpath=paste0(sampleid,"_seurat_preprocess.rds")
 saveRDS(so_singlet,fpath)
 ```

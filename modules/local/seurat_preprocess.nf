@@ -25,12 +25,12 @@ process SEURAT_PREPROCESS {
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",
             testing="N"),
-        output_file = "${id}.pdf")'
+        output_file = "${id}_seurat_preprocess.pdf")'
     """
 
     stub:
     """
-    touch ${id}_seurat_object.rds
-    touch ${id}.pdf
+    touch ${id}_seurat_preprocess.rds
+    touch ${id}_seurat_preprocess.pdf
     """
 }
