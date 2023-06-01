@@ -53,6 +53,7 @@ so$Sample = sample
 #so$groups =  groupFile$V2[groupFile$V3 == sample & groupFile$V4 == "gex"]
 print(head(so$Sample))
 
+
 if (nrow(groupFile[groupFile$V3 == sample & groupFile$V4 == "vdj",]) > 0 ) {
 
 tcrSamples = groupFile$V1[groupFile$V3 == sample & groupFile$V4 == "vdj"]
@@ -96,7 +97,11 @@ s.genes <- convertHumanGeneList(cc.genes$s.genes)
 g2m.genes <- convertHumanGeneList(cc.genes$g2m.genes)
 }
 
+print(so)
 so = seuratSample(so,30)
+
+
+
 
 if(ref == "hg38"){
 so$HPCA_main <- runSingleRCell(so,celldex::HumanPrimaryCellAtlasData(),"label.main")

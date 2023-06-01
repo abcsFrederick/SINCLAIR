@@ -1,3 +1,8 @@
+
+
+
+
+
 convertHumanGeneList  <- function(gns){
   egs <- mapIds(org.Hs.eg.db, gns, "ENTREZID","SYMBOL")
   mapped <- select(Orthology.eg.db, egs, "Mus.musculus","Homo.sapiens")
@@ -34,6 +39,7 @@ ref = refFile
 s = SingleR(test = sce, ref = ref,labels = ref[[fineORmain]])
 return(s$pruned.labels)
 }
+
 
 doublets <-function(dfso){
           
@@ -85,3 +91,4 @@ singleRClusters = function(obj,refFile,fineORmain){
   obj$clustAnnot = clustAnnot
   return(obj$clustAnnot)
 }
+

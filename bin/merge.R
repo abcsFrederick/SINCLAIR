@@ -62,5 +62,10 @@ selectFeatures <- SelectIntegrationFeatures(object.list = reference.list, nfeatu
 combinedObj.integratedRNA = merge(reference.list[[1]],reference.list[2:length(reference.list)])
 VariableFeatures(combinedObj.integratedRNA) = selectFeatures
 
+
+
+combinedObj.integratedRNA$groups = groupFile$V2[match(combinedObj.integratedRNA$Sample,  paste0("S_",groupFile$V1),nomatch = F)]
+
+
 saveRDS(combinedObj.integratedRNA,outDirMerge)
 
