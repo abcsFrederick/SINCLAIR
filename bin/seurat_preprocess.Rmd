@@ -134,9 +134,9 @@ mt_out = outliers_mad(so_qc$percent.mt,threshold = 3)$UL_CI_MAD
 # perform QC depenedent on user choice
 if(qc_filtering == "manual") {
   so_qc_select =  subset(so_qc,
-  nCount_RNA_max > nCount_RNA < nCount_RNA_min & 
-  nFeature_RNA_max > nFeature_RNA < nFeature_RNA_min & 
-  percent_mt_max > percent.mt < percent_mt_min)
+  nCount_RNA_max >= nCount_RNA & nCount_RNA <= nCount_RNA_min & 
+  nFeature_RNA_max >= nFeature_RNA & nFeature_RNA <= nFeature_RNA_min & 
+  percent_mt_max >= percent.mt & percent.mt <= percent_mt_min)
 } else if (qc_filtering == "miqc") {
   so_qc_select = subset(so_qc, miQC.keep == "keep")
 } else if(qc_filtering == "mads") {
