@@ -1,23 +1,14 @@
 ##################################################################
 # Seurat Pre-processing
 ##################################################################
-SEURAT_CLUSTERING = function(so){
-  
-  so$Sample = tail(strsplit(h5,"/")[[1]],1)
-  
-  so <- RunPCA(object = so, 
-               features = VariableFeatures(object = so), 
-               do.print = TRUE, 
-               pcs.print = 1:5,
-               genes.print = 0,verbose=F,npcs = 30)
-  npcs = 30
-  so <- FindNeighbors(so,dims = 1:npcs)
-  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.1,algorithm = 3)
-  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.2,algorithm = 3)
-  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.5,algorithm = 3)
-  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.6,algorithm = 3)
-  so <- FindClusters(so,dims = 1:npcs, print.output = 0, resolution = 0.8,algorithm = 3)
-  so <- RunUMAP(so,dims = 1:npcs,n.components = 3L)
+SEURAT_CLUSTERING = function(so_in, ncps_in){
+  so <- RunPCA(object = so_in, 
+               features = VariableFeatures(object = so_in), 
+               verbose=F,
+               npcs = 50)
+  so <- FindNeighbors(so,dims = 1:ncps_in)
+  so <- FindClusters(so,dims = 1:ncps_in, print.output = 0, resolution = 0.8,algorithm = 3)
+  so <- RunUMAP(so,dims = 1:ncps_in,n.components = 3)
   return(so)
 }
 
@@ -28,9 +19,7 @@ CONVERT_TO_HUMAN_GENELIST  <- function(gns){
   return(as.character(unlist(mapped$MUS )))
 }
 
-MAIN_PROCESS_SO<-function(so_in, ref){
-  # so_in=so_filt
-  
+MAIN_PROCESS_SO<-function(so_in, ref, ncps_in){
   # assign genes depending on ref input
   if(ref=="hg38" || ref == "hg19"){
     print("--proccesing human data")
@@ -43,17 +32,17 @@ MAIN_PROCESS_SO<-function(so_in, ref){
   }
   
   # process
-  so_1 = SCTransform(so_in)
-  so_2 = NormalizeData(so_1,
+  so_1 = NormalizeData(so_in,
                        normalization.method = "LogNormalize", 
                        scale.factor = 10000,
                        assay = "RNA")
-  so_3 = ScaleData(so_2, assay = "RNA")
-  so_4 = CellCycleScoring(so_3,
+  so_2 = ScaleData(so_1, assay = "RNA")
+  so_3 = CellCycleScoring(so_2,
                           s.features = s.genes, 
                           g2m.features = g2m.genes, 
                           set.ident = TRUE)
-  so_out = SEURAT_CLUSTERING(so_4)
+  so_4 = SCTransform(so_3)
+  so_out = SEURAT_CLUSTERING(so_4,ncps_in)
   return(so_out)
 }
 
@@ -75,7 +64,7 @@ MAIN_LABEL_SO<-function(so_in, ref){
     so_in$BP_encode_main <-  RUN_SINGLEr(so_in,celldex::BlueprintEncodeData(),"label.main")
     so_in$BP_encode <-  RUN_SINGLEr(so_in,celldex::BlueprintEncodeData(),"label.fine")
     so_in$monaco_main <-  RUN_SINGLEr(so_in,celldex::MonacoImmuneData(),"label.main")
-    so_in$monaco <-     RUN_SINGLEr(so_in,celldex::MonacoImmuneData(),"label.fine")
+    so_in$monaco <- RUN_SINGLEr(so_in,celldex::MonacoImmuneData(),"label.fine")
     so_in$immu_cell_exp_main <-  RUN_SINGLEr(so_in,celldex::DatabaseImmuneCellExpressionData(),
                                             "label.main")
     so_in$immu_cell_exp <- RUN_SINGLEr(so_in,celldex::DatabaseImmuneCellExpressionData(),
@@ -94,34 +83,34 @@ MAIN_LABEL_SO<-function(so_in, ref){
 ##################################################################
 #
 ##################################################################
-PROCESS_DOUBLETS <-function(dfso){
-  dfso <- SCTransform(dfso)
-  dfso <- RunPCA(dfso, pc.genes = dfso@var.genes, pcs.print = 0,verbose = F,npcs =10)
-  npcs = 10
-  dfso <- RunUMAP(dfso, verbose=TRUE,dims = 1:npcs)
+PROCESS_DOUBLETS <-function(so_in, run_doublet_finder){
+  if (run_doublet_finder=="Y"){
+    sweep.res.list_kidney <- paramSweep_v3(so_in,PCs = 1:10, sct = T)
+    sweep.stats_kidney <- summarizeSweep(sweep.res.list_kidney, GT = FALSE)
+    bcmvn_kidney <- find.pK(sweep.stats_kidney)
+    
+    ## Homotypic Doublet Proportion Estimate 
+    homotypic.prop <- modelHomotypic(so_in$annot)
+    perc = 0.005 * (length(colnames(so_in))/1000)
+    nExp_poi <- round(perc*length(colnames(so_in)))#dfso@cell.names
+    nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
+    
+    ## Run DoubletFinder with varying classification stringencies 
+    dfso <- doubletFinder_v3(so_in, 
+                            pN = 0.25, pK = 0.09, 
+                            nExp = nExp_poi, 
+                            reuse.pANN = FALSE,PCs = 1:10,sct = T)
+    
+    pAAN=tail(names(dfso@meta.data),2)[1]
+    dfso <- doubletFinder_v3(dfso, 
+                            pN = 0.25, pK = 0.09, 
+                            nExp = nExp_poi.adj, 
+                            reuse.pANN = pAAN,PCs = 1:10,sct = T)
+    so_in$DF_hi.lo = dfso[[tail(names(dfso@meta.data),1)]]
+    so_in=subset(so_in,cells=names(so_in$DF_hi.lo)[so_in$DF_hi.lo =="Singlet"])
+  }
   
-  sweep.res.list_kidney <- paramSweep_v3(dfso,PCs = 1:10, sct = T)
-  sweep.stats_kidney <- summarizeSweep(sweep.res.list_kidney, GT = FALSE)
-  bcmvn_kidney <- find.pK(sweep.stats_kidney)
-  
-  ## Homotypic Doublet Proportion Estimate 
-  homotypic.prop <- modelHomotypic(dfso$annot)
-  perc = 0.005 * (length(colnames(dfso))/1000)
-  nExp_poi <- round(perc*length(colnames(dfso)))#dfso@cell.names
-  nExp_poi.adj <- round(nExp_poi*(1-homotypic.prop))
-  
-  ## Run DoubletFinder with varying classification stringencies 
-  dfso <- doubletFinder_v3(dfso, 
-                           pN = 0.25, pK = 0.09, 
-                           nExp = nExp_poi, 
-                           reuse.pANN = FALSE,PCs = 1:10,sct = T)
-  
-  pAAN=tail(names(dfso@meta.data),2)[1]
-  dfso <- doubletFinder_v3(dfso, 
-                           pN = 0.25, pK = 0.09, 
-                           nExp = nExp_poi.adj, 
-                           reuse.pANN = pAAN,PCs = 1:10,sct = T)
-  return(dfso)
+  return(so_in)
 }
 
 ##################################################################

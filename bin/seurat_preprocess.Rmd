@@ -9,6 +9,14 @@ params:
   species: "hg19"
   sampleid: "WB_Lysis_1"
   h5: "~/../../Volumes/data/scRNA_test/cellranger_counts/sample1/outs/filtered_feature_bc_matrix.h5"
+  qc_filtering: "manual"
+  nCount_RNA_max: 500000
+  nCount_RNA_min: 1000
+  nFeature_RNA_max: 5000
+  nFeature_RNA_min: 200
+  percent_mt_max: 10
+  percent_mt_min: 0
+  run_doublet_finder: "N"
   Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
   Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
   scRNA_functions: "scRNA_functions.R"
@@ -17,13 +25,25 @@ params:
 
 ```{r, prep_args, message=FALSE}
 # set up params
-testing = params$testing
-Rlib_dir=params$Rlib_dir
-Rpkg_config=params$Rpkg_config
-h5 = params$h5 
 species= params$species
 sampleid = params$sampleid
+h5 = params$h5
+
+qc_filtering = params$qc_filtering  # manual, miqc, mads
+nCount_RNA_max = params$nCount_RNA_max
+nCount_RNA_min = params$nCount_RNA_min
+nFeature_RNA_max = params$nFeature_RNA_max
+nFeature_RNA_min = params$nFeature_RNA_min
+percent_mt_max = params$percent_mt_max
+percent_mt_min = params$percent_mt_min
+run_doublet_finder = params$run_doublet_finder #Y, N
+
+Rlib_dir=params$Rlib_dir
+Rpkg_config=params$Rpkg_config
 scRNA_functions = params$scRNA_functions
+
+testing = params$testing
+ncps_val=30
 ```
 
 ```{r, handle_pkg, message=FALSE}
@@ -84,12 +104,17 @@ so$Sample = sampleid
 # determine percent mito
 ## http://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/miQC.html
 so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^[M,m]T-")
+so[["percent.RP"]] = PercentageFeatureSet(so, pattern = "^R[PL,pl]|R[PS,ps]")
 FeatureScatter(so, feature1 = "nFeature_RNA", feature2 = "percent.mt")
 ```
 
 ```{r, QC, message=FALSE}
+# subset
+so_filt = subset(so, subset = nFeature_RNA > 200)
+so_filt
+
 # run QC, subset for features meeting critera
-so_qc <- RunMiQC(so, 
+so_qc <- RunMiQC(so_filt, 
               percent.mt = "percent.mt",
               nFeature_RNA = "nFeature_RNA", 
               posterior.cutoff = 0.7,
@@ -98,27 +123,44 @@ print(so_qc)
 #PlotMiQC(so_qc, color.by = "miQC.probability") + 
   #ggplot2::scale_color_gradient(low = "grey", high = "purple")
 VlnPlot(so_qc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
-
-# subset
-so_filt = subset(so_qc, miQC.keep == "keep")
-so_filt
 ```
 
-```{r, processing, message=FALSE}
+```{r qc2, message=FALSE}
+# define feature info
+nCount_out = outliers_mad(so_qc$nCount_RNA,threshold = 3)$LL_CI_MAD#
+nFeature_out = outliers_mad(so_qc$nFeature_RNA,threshold = 3)$LL_CI_MAD
+mt_out = outliers_mad(so_qc$percent.mt,threshold = 3)$UL_CI_MAD
+
+# perform QC depenedent on user choice
+if(qc_filtering == "manual") {
+  so_qc_select =  subset(so_qc,
+  nCount_RNA_max > nCount_RNA < nCount_RNA_min & 
+  nFeature_RNA_max > nFeature_RNA < nFeature_RNA_min & 
+  percent_mt_max > percent.mt < percent_mt_min)
+} else if (qc_filtering == "miqc") {
+  so_qc_select = subset(so_qc, miQC.keep == "keep")
+} else if(qc_filtering == "mads") {
+  so_qc_select = subset(so_qc, 
+  subset = nFeature_RNA > nFeature_out & 
+  nCount_RNA > nFeature_out & 
+  percent.mt < mt_out)
+}
+
 # Process data
-so_processed = MAIN_PROCESS_SO(so_filt, species)
+so_processed = MAIN_PROCESS_SO(so_filt, species, ncps_val)
 
 # Label data
 so_labeled = MAIN_LABEL_SO(so_processed,species)
 
 # ID doublets
-dfso = PROCESS_DOUBLETS(so_labeled)
+so_doublet = PROCESS_DOUBLETS(so_labeled, run_doublet_finder)
+```
 
-#label and filter
-so_labeled$DF_hi.lo = dfso[[tail(names(dfso@meta.data),1)]]
-so_singlet=subset(so_labeled,cells=names(so_labeled$DF_hi.lo)[so_labeled$DF_hi.lo =="Singlet"])
+```{r, save, message=FALSE}
+# clean final object
+so_output = UpdateSeuratObject(so_doublet)
 
 #save file
 fpath=paste0(sampleid,"_seurat_preprocess.rds")
-saveRDS(so_singlet,fpath)
+saveRDS(so_output,fpath)
 ```
