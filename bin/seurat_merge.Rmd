@@ -7,25 +7,25 @@ editor_options:
   chunk_output_type: console
 params:
   species: "hg19"
-  rds: "/data/sevillas2/scRNA_test/seurat/sample2_seurat_object.rds, /data/sevillas2/scRNA_test/seurat/sample4_seurat_object.rds"
-  gid: "group1_group2"
+  rdsFiles: "~/../../Volumes/data/scRNA_test/seurat/preprocess/sample2_seurat_object.rds,~/../../Volumes/data/scRNA_test/seurat/preprocess/sample4_seurat_object.rds"
+  gid: "group1-group2"
   Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
   Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
   scRNA_functions: "scRNA_functions.R"
   testing: "Y"
 ---
 
-```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
+```{r, prep_args,  message=FALSE}
 # set up params
 species= params$species
-rds_files=strsplit(params$rds,",")[[1]]
-
+rds_files=strsplit(params$rdsFiles," ")[[1]]
 gid = params$gid
+
+scRNA_functions = params$scRNA_functions
 Rlib_dir=params$Rlib_dir
 Rpkg_config=params$Rpkg_config
 testing = params$testing
 ```
-
 
 ```{r, handle_pkg, message=FALSE}
 # set library dir, load this and remove any other dirs to avoid confusion
@@ -34,9 +34,6 @@ testing = params$testing
 print(paste0("Using the lib.loc location: ",Rlib_dir))
 assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
 .libPaths()
-
-# load shared objects
-#dyn.load('/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA/KernSmooth/libs/KernSmooth.so')
 
 # read in package info
 pkg_df=read.csv(Rpkg_config)
@@ -55,7 +52,7 @@ for (rowid in rownames(pkg_df)){
     print(paste0("Installing: ", pkg))
     if (source=="bc") BiocManager::install(pkg)
     if (source=="cr") install.packages(pkg,version=version,repos = "http://cran.us.r-project.org",
-                                       local = FALSE)
+                                        local = FALSE)
     if (source=="gh") remotes::install_github(gh_name,version=version,local = FALSE)
   }
 
@@ -68,16 +65,18 @@ source(scRNA_functions)
 
 # additional options
 tinytex::install_tinytex(force = TRUE)
-
-# set options
 options(future.globals.maxSize = 1e12)
 ```
 
-```{r, readfiles, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
+```{r, readfiles, message=FALSE}
+# print group info
+print(paste0("This merged object includes groups: ",gid))
+
 # read in individuals RDS files
 readObj = list()
 for (obj in rds_files) {
   sampleID=strsplit(basename(obj),"_seurat")[[1]][1]
+  print(sampleID)
   assign(paste0("S_",sampleID),readRDS(obj))
   readObj = append(readObj,paste0("S_",sampleID))  
 }
@@ -92,20 +91,21 @@ for (p in readObj){
  }
 ```
 
-```{r merge_objs, echo=FALSE, message=FALSE, include=FALSE, warning=FALSE}
-
-specieserence.list <- combinedObj.list[unlist(readObj)]
+```{r merge_objs, message=FALSE}
+# create ref list
+reference.list <- combinedObj.list[unlist(readObj)]
 
 # set features
-selectFeatures <- SelectIntegrationFeatures(object.list = specieserence.list, 
+selectFeatures <- SelectIntegrationFeatures(object.list = reference.list, 
                                             nfeatures = 3000)
 
 # merge the objects
-combinedObj.integratedRNA = merge(specieserence.list[[1]],specieserence.list[2:length(specieserence.list)])
+combinedObj.integratedRNA = merge(reference.list[[1]],reference.list[2:length(reference.list)])
 VariableFeatures(combinedObj.integratedRNA) = selectFeatures
 
 # save RDS files
-fpath=paste0(gid,"_seurat_object.rds")
+combinedObj.integratedRNA
+fpath=paste0(gid,"_seurat_merged.rds")
 saveRDS(combinedObj.integratedRNA,fpath)
 ```
 
