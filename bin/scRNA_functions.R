@@ -190,6 +190,7 @@ RUN_SINGLEr_AVERAGE = function(obj,refFile,fineORmain){
   names(clustAnnot) = gsub("SCT.","",names(clustAnnot))
   
   obj$clustAnnot = clustAnnot[match(obj$seurat_clusters,names(clustAnnot))]
+  
   return(obj$clustAnnot)
 }
 
@@ -201,51 +202,66 @@ FIND_CLUSTERS_BY_RES<-function(resolution,obj,algorithm_val){
   return(obj)
 }
 
-RUN_CORRECTION_HARMONY = function(obj,npcs,harm, resolution){
-  obj <- RunPCA(object = obj, npcs = npcs, verbose = FALSE)
+RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution){
+  # transform and runPCA
+  so_transform <- SCTransform(so_in)
+  so_pca <- RunPCA(so_transform)
   
-  if(harm=="Yes") {
-    obj <- FindNeighbors(obj,dims = 1:npcs,reduction = "harmony")
-  } else if(harm=="No") {
-    obj <- FindNeighbors(obj,dims = 1:npcs)
+  # integrate
+  so_integrate <- IntegrateLayers(object = so_pca, method = HarmonyIntegration, normalization.method = "SCT", verbose = F,new.reduction = "harmony")
+  so <- RunUMAP(so_integrate, reduction = "harmony", dims = 1:npcs)
+  so <- FindNeighbors(so, reduction = "harmony", dims = 1:npcs)
+
+  for (res in resolutions){
+    so <- FindClusters(so,dims = 1:npcs, resolution = res,algorithm = 3)
+  }
+
+  if(ref == "hg38" || ref == "hg19"){
+    so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.main")
+    so$clustAnnot_HPCA <-  RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.fine")
+    so$clustAnnot_BP_encode_main <-  RUN_SINGLEr_AVERAGE(so,celldex::BlueprintEncodeData(),"label.main")
+    so$clustAnnot_BP_encode <-  RUN_SINGLEr_AVERAGE(so,celldex::BlueprintEncodeData(),"label.fine")
+    so$clustAnnot_monaco_main <-  RUN_SINGLEr_AVERAGE(so,celldex::MonacoImmuneData(),"label.main")
+    so$clustAnnot_monaco <- RUN_SINGLEr_AVERAGE(so,celldex::MonacoImmuneData(),"label.fine")
+    so$clustAnnot_immu_cell_exp_main <-  RUN_SINGLEr_AVERAGE(so,celldex::DatabaseImmuneCellExpressionData(),"label.main")
+    so$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(so,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
   }
   
-  # for each input resolution, find clusters
-  FIND_CLUSTERS_BY_RES(obj,res,3)
-  colnames(obj@meta.data) = gsub("integrated_snn_res","SLM_int_snn_res",colnames(obj@meta.data))
-  colnames(obj@meta.data) = gsub("SCT_snn_res","SLM_SCT_snn_res",colnames(obj@meta.data))
-  
-  FIND_CLUSTERS_BY_RES(obj,res,4)
-  colnames(obj@meta.data) = gsub("integrated_snn_res","Leiden_int_snn_res",colnames(obj@meta.data))
-  colnames(obj@meta.data) = gsub("SCT_snn_res","Leiden_SCT_snn_res",colnames(obj@meta.data))
-  
-  if(harm=="Yes") {
-    obj <- RunUMAP(object = obj,dims = 1:npcs, n.components = 3,reduction = "harmony")
-  } else if(harm=="No") {
-    obj <- RunUMAP(object = obj, reduction = "pca",dims = 1:npcs,n.components = 3)
+  if(ref == "mm10"){
+    so$clustAnnot_immgen_main <-  RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.main")
+    so$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.fine")
+    so$clustAnnot_mouseRNAseq_main <-  RUN_SINGLEr_AVERAGE(so,celldex::MouseRNAseqData(),"label.main")
+    so$clustAnnot_mouseRNAseq <- RUN_SINGLEr_AVERAGE(so,celldex::MouseRNAseqData(),"label.fine")
   }
+
+  # obj <- RunPCA(object = obj, npcs = npcs, verbose = FALSE)
+  
+  # if(harm=="Yes") {
+  #   obj <- FindNeighbors(obj,dims = 1:npcs,reduction = "harmony")
+  # } else if(harm=="No") {
+  #   obj <- FindNeighbors(obj,dims = 1:npcs)
+  # }
+  
+  # # for each input resolution, find clusters
+  # FIND_CLUSTERS_BY_RES(obj,res,3)
+  # colnames(obj@meta.data) = gsub("integrated_snn_res","SLM_int_snn_res",colnames(obj@meta.data))
+  # colnames(obj@meta.data) = gsub("SCT_snn_res","SLM_SCT_snn_res",colnames(obj@meta.data))
+  
+  # FIND_CLUSTERS_BY_RES(obj,res,4)
+  # colnames(obj@meta.data) = gsub("integrated_snn_res","Leiden_int_snn_res",colnames(obj@meta.data))
+  # colnames(obj@meta.data) = gsub("SCT_snn_res","Leiden_SCT_snn_res",colnames(obj@meta.data))
+  
+  # if(harm=="Yes") {
+  #   obj <- RunUMAP(object = obj,dims = 1:npcs, n.components = 3,reduction = "harmony")
+  # } else if(harm=="No") {
+  #   obj <- RunUMAP(object = obj, reduction = "pca",dims = 1:npcs,n.components = 3)
+  # }
 
   # this is essentially the same labeling as was done in preprocessing, except now you're adding
   # "clustAnnot" in the front - is it ncessary? can we keep the obj$HPCA_main, or is the prefix needed
   # for all of these?
-  if(ref == "hg38" || ref == "hg19"){
-    obj$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(obj,celldex::HumanPrimaryCellAtlasData(),"label.main")
-    obj$clustAnnot_HPCA <-  RUN_SINGLEr_AVERAGE(obj,celldex::HumanPrimaryCellAtlasData(),"label.fine")
-    obj$clustAnnot_BP_encode_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::BlueprintEncodeData(),"label.main")
-    obj$clustAnnot_BP_encode <-  RUN_SINGLEr_AVERAGE(obj,celldex::BlueprintEncodeData(),"label.fine")
-    obj$clustAnnot_monaco_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::MonacoImmuneData(),"label.main")
-    obj$clustAnnot_monaco <- RUN_SINGLEr_AVERAGE(obj,celldex::MonacoImmuneData(),"label.fine")
-    obj$clustAnnot_immu_cell_exp_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::DatabaseImmuneCellExpressionData(),"label.main")
-    obj$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(obj,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
-  }
-  
-  if(ref == "mm10"){
-    obj$clustAnnot_immgen_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::ImmGenData(),"label.main")
-    obj$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(obj,celldex::ImmGenData(),"label.fine")
-    obj$clustAnnot_mouseRNAseq_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::MouseRNAseqData(),"label.main")
-    obj$clustAnnot_mouseRNAseq <- RUN_SINGLEr_AVERAGE(obj,celldex::MouseRNAseqData(),"label.fine")
-  }
-  return(obj)
+
+  return(so)
 }
 
 RUN_CORRECTION_RPCA = function(obj,npcs){

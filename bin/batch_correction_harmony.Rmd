@@ -6,12 +6,13 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 params:
-  ref: "hg19"
   gid: "group1_group2"
-  input_files: "~/../../Volumes/data-1/scRNA_test/seurat/group1_group2.rds"
+  mergedObj: "~/../../Volumes/data-1/scRNA_test/seurat/group1_group2.rds"
+  ref: "hg19"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
-  shared_source: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
-  pkg_info: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
+  Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
+  scRNA_functions: "scRNA_functions.R"
   testing: "Y"
 ---
 
@@ -21,42 +22,23 @@ ref= params$ref
 gid = params$gid
 mergedObj=params$mergedObj
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
-npcs = 50
+npcs = params$npcs
 
-shared_source=params$shared_source
-pkg_info=params$pkg_info
-testing = params$testing
-
+Rlib_dir=params$Rlib_dir
+Rpkg_config=params$Rpkg_config
+scRNA_functions = params$scRNA_functions
 ```
 
-```{r, handle_pkg, message=FALSE, include=FALSE}
-# library(htmltools,lib.loc=loc)
-# library(rlang,lib.loc=loc)
-# library(globals,lib.loc=loc)
-# library(stringr,lib.loc=loc)
-# library(harmony,lib.loc=loc)
-# library("SeuratWrappers",lib.loc=loc)
-# library(Seurat,lib.loc=loc)
-# library("SingleR",lib.loc=loc)
-# library(scRNAseq,lib.loc=loc)
-# library(SingleCellExperiment,lib.loc=loc)
-# library(dplyr)
-# library(Matrix) 
-# library(tools)
-
+```{r, handle_pkg, message=FALSE}
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
-if (testing=="Y"){
-  # saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
-  library_db_loc = paste0("~/../../Volumes/",shared_source)
-}else {
-  library_db_loc = paste0("/data/",shared_source)
-}
-assign(".lib.loc", library_db_loc, envir = environment(.libPaths))
+## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
+print(paste0("Using the lib.loc location: ",Rlib_dir))
+assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
 .libPaths()
 
 # read in package info
-pkg_df=read.csv(pkg_info)
+pkg_df=read.csv(Rpkg_config)
 pkg_df=subset(pkg_df,bch=="Y")
 pkg_df
 
@@ -66,63 +48,52 @@ for (rowid in rownames(pkg_df)){
   source=pkg_df[rowid,"source"]
   version=pkg_df[rowid,"version"]
   gh_name=pkg_df[rowid,"gh_name"]
-  print(pkg)
 
   need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
+  if (length(need_install)!=0){
+    print(paste0("Installing: ", pkg))
+    if (source=="bc") BiocManager::install(pkg)
+    if (source=="cr") install.packages(pkg,version=version,repos = "http://cran.us.r-project.org",
+                                       local = FALSE)
+    if (source=="gh") remotes::install_github(gh_name,version=version,local = FALSE)
+  }
 
-  if (source=="bc" & length(need_install)!=0) BiocManager::install(pkg,version=version)
-  if (source=="cr" & length(need_install)!=0) install.packages(pkg,version=version)
-  if (source=="gh" & length(need_install)!=0) remotes::install_github(gh_name,version=version)
-
+  print(paste0("Loading: ",pkg))
   invisible(lapply(pkg, library, character.only = TRUE))
 }
 
 # source functions
-source("scRNA_functions.R")
-options(future.globals.maxSize = 64000 * 1024^2)
+source(scRNA_functions)
+
+# additional options
+tinytex::install_tinytex(force = TRUE)
 ```
 
-```{r}
-# keep - this will be the input object
-combinedObj.integrated=mergedObj
+```{r, processing, message=FALSE}
+# read in merged object
+so = readRDS(mergedObj)
 
-# TBD - relabel samples with "__"?
-combinedObj.integratedRNA$Sample = stringr::str_split_fixed(combinedObj.integratedRNA$Sample,
-                                                            pattern = "__",n = Inf)[,1]
+# assign assay
+DefaultAssay(so) = "RNA"
+so[["RNA"]] <- as(so[["RNA"]], Class = "Assay5")
+so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 
-# keep - add groups label
-combinedObj.integratedRNA$groups = groupFile$V2[match(combinedObj.integratedRNA$Sample,
-                                                      paste0("S_",groupFile$V1),nomatch = F)]
+# integrate
+harmGroup <- RUN_CORRECTION_HARMONY(so,npcs,resolution)
 
-# keep - run pca
-combinedObj.integratedRNA <- RunPCA(object = combinedObj.integratedRNA, 
-                                    npcs = 50, 
-                                    verbose = FALSE)
-```
-
-```{r}
-# keep run harmony
-# renames function to distinguish between other scripts
-
-harmSample <- RunHarmony(combinedObj.integratedRNA, 
-                         group.by.vars = "Sample",
-                         assay.use = "SCT")
-harmGroup <- RunHarmony(combinedObj.integratedRNA, 
-                        group.by.vars = "groups",
-                        assay.use = "SCT")
-harmGroup = RUN_CORRECTION_HARMONY(harmGroup,50,"Yes", resolution)
-harmSample = RUN_CORRECTION_HARMONY(harmSample,50,"Yes", resolution)
+# harmGroup = RUN_CORRECTION_HARMONY(harmGroup,50,"Yes", resolution)
+# harmSample = RUN_CORRECTION_HARMONY(harmSample,50,"Yes", resolution)
 
 fpath=paste0(gid,"_batchcorrection_harmony_group.rds")
 saveRDS(harmGroup,fpath)
 
-fpath=paste0(gid,"_batchcorrection_harmony_sample.rds")
-saveRDS(harmSample,outDirSample)
+# fpath=paste0(gid,"_batchcorrection_harmony_sample.rds")
+# saveRDS(harmSample,outDirSample)
 
 # why are you running this on the obj instead of the harmony sample? does this need to be saved?
 # renames function to distinguish between other scripts
-combinedObj.integratedRNA = RUN_CORRECTION_HARMONY(combinedObj.integratedRNA,50,"No", resolution)
-fpath=paste0(gid,"_batchcorrection_harmony_merged.rds")
-saveRDS(combinedObj.integratedRNA,fpath)
+# combinedObj.integratedRNA = RUN_CORRECTION_HARMONY(combinedObj.integratedRNA,50,"No", resolution)
+# fpath=paste0(gid,"_batchcorrection_harmony_merged.rds")
+# saveRDS(combinedObj.integratedRNA,fpath)
 ```
 
