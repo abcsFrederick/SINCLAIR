@@ -70,10 +70,18 @@ workflow GEX_EXQC {
             ch_meta,
             CELLRANGER_COUNT.out.h5,
             params.species,
+            params.qc_filtering,
+            params.nCount_RNA_max,
+            params.nCount_RNA_min,
+            params.nFeature_RNA_max,
+            params.nFeature_RNA_min,
+            params.percent_mt_max,
+            params.percent_mt_min,
+            params.run_doublet_finder,
             params.Rlib_dir,
             params.Rpkg,
             params.seurat_preprocess,
-            params.scRNA_functions
+            params.scRNA_functions    
         )
 
         // creates metadata
@@ -101,9 +109,24 @@ workflow GEX_EXQC {
             params.species,
             params.Rlib_dir,
             params.Rpkg,
-            params.seurat_preprocess,
-            params.seurat_merge
+            params.seurat_merge,
+            params.scRNA_functions
         )
+
+        // // Run batch corrections
+        // BATCHC_HARMONY (
+        //     ch_groups,
+        //     params.species,
+        //     params.seurat_integration,
+        //     params.Rlib_dir,
+        //     params.Rpkg
+        // )
+
+// Rscript harmonyGroup.R merged.rds cca.rds mm10 50 0.2,0.4,0.6,1
+// Rscript harmonySample.R  merged.rds cca.rds mm10 50 0.2,0.4,0.6,1
+// Rscript rpca.R merged.rds cca.rds mm10 50 0.2,0.4,0.6,1
+// Rscript scvi.R merged.rds cca.rds mm10 50 0.2,0.4,0.6,1
+
 
         // Run batch corrections
         // BATCH_CORRECT_SEURAT (
@@ -123,14 +146,7 @@ workflow GEX_EXQC {
         //     params.Rpkg
         // )
 
-        // // Run batch corrections
-        // BATCHC_HARMONY (
-        //     ch_groups,
-        //     params.species,
-        //     params.seurat_integration,
-        //     params.Rlib_dir,
-        //     params.Rpkg
-        // )
+
     emit:
         samplesheet        = INPUT_CHECK_GEX.out.gex_samplesheet
 }
