@@ -106,14 +106,14 @@ workflow GEX_EXQC {
             .map { sample, key, rds_file -> tuple( key, rds_file ) }
             .groupTuple()
 
-        // SEURAT_MERGE (
-        //     ch_groups,
-        //     params.species,
-        //     params.Rlib_dir,
-        //     params.Rpkg,
-        //     params.script_merge,
-        //     params.script_functions
-        // )
+        SEURAT_MERGE (
+            ch_groups,
+            params.species,
+            params.Rlib_dir,
+            params.Rpkg,
+            params.script_merge,
+            params.script_functions
+        )
 
         // // Run batch corrections
         // BATCH_CORRECT_HARMONY (
