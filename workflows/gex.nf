@@ -30,8 +30,8 @@ include { CELLRANGER_COUNT                              } from '../modules/local
 include { SEURAT_PREPROCESS                             } from '../modules/local/seurat_preprocess.nf'
 include { SEURAT_MERGE                                  } from '../modules/local/seurat_merge.nf'
 // include { BATCH_CORRECT_SEURAT                          } from '../modules/local/batch_correction_seurat.nf'
-// include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
-// include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
+include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
+include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
 // include { BATCH_CORRECT_INTEGRATE                            } from '../modules/local/batch_correction_integration.nf'
 
 
@@ -115,29 +115,29 @@ workflow GEX_EXQC {
             params.script_functions
         )
 
-        // // Run batch corrections
-        // BATCH_CORRECT_HARMONY (
-        //     SEURAT_MERGE.out.rds,
-        //     params.species,
-        //     params.ncps,
-        //     params.resolution_list,
-        //     params.Rlib_dir,
-        //     params.Rpkg,
-        //     params.script_bc_harmony,
-        //     params.script_functions
-        // )
+        // Run batch corrections
+        BATCH_CORRECT_HARMONY (
+            SEURAT_MERGE.out.rds,
+            params.species,
+            params.ncps,
+            params.resolution_list,
+            params.Rlib_dir,
+            params.Rpkg,
+            params.script_bc_harmony,
+            params.script_functions
+        )
 
-        // // Run batch corrections
-        // BATCH_CORRECT_RPCA (
-        //     SEURAT_MERGE.out.rds,
-        //     params.species,
-        //     params.ncps,
-        //     params.resolution_list,
-        //     params.Rlib_dir,
-        //     params.Rpkg,
-        //     params.script_bc_rpca,
-        //     params.script_functions
-        // )
+        // Run batch corrections
+        BATCH_CORRECT_RPCA (
+            SEURAT_MERGE.out.rds,
+            params.species,
+            params.ncps,
+            params.resolution_list,
+            params.Rlib_dir,
+            params.Rpkg,
+            params.script_bc_rpca,
+            params.script_functions
+        )
 
         // // Run batch corrections
         // BATCH_CORRECT_INTEGRATE (

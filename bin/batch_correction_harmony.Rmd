@@ -8,8 +8,9 @@ editor_options:
 params:
   gid: "group1_group2"
   mergedObj: "~/../../Volumes/data-1/scRNA_test/seurat/group1_group2.rds"
-  ref: "hg19"
+  species: "hg19"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
+  npcs: "50"
   Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
   Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
   scRNA_functions: "scRNA_functions.R"
@@ -18,7 +19,7 @@ params:
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
 # set up params
-ref= params$ref
+species= params$species
 gid = params$gid
 mergedObj=params$mergedObj
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
@@ -79,7 +80,7 @@ so[["RNA"]] <- as(so[["RNA"]], Class = "Assay5")
 so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 
 # integrate
-harmGroup <- RUN_CORRECTION_HARMONY(so,npcs,resolution)
+harmGroup <- RUN_CORRECTION_HARMONY(so,npcs,species,resolution)
 
 # harmGroup = RUN_CORRECTION_HARMONY(harmGroup,50,"Yes", resolution)
 # harmSample = RUN_CORRECTION_HARMONY(harmSample,50,"Yes", resolution)

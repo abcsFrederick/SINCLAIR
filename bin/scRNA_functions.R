@@ -19,13 +19,13 @@ CONVERT_TO_HUMAN_GENELIST  <- function(gns){
   return(as.character(unlist(mapped$MUS )))
 }
 
-MAIN_PROCESS_SO<-function(so_in, ref, ncps_in){
-  # assign genes depending on ref input
-  if(ref=="hg38" || ref == "hg19"){
+MAIN_PROCESS_SO<-function(so_in, species, ncps_in){
+  # assign genes depending on species input
+  if(species=="hg38" || species == "hg19"){
     print("--proccesing human data")
     s.genes <- cc.genes$s.genes
     g2m.genes <- cc.genes$g2m.genes
-  } else if(ref=="mm10"){
+  } else if(species=="mm10"){
     print("--proccesing mouse data")
     s.genes <- CONVERT_TO_HUMAN_GENELIST(cc.genes$s.genes)
     g2m.genes <- CONVERT_TO_HUMAN_GENELIST(cc.genes$g2m.genes)
@@ -57,8 +57,8 @@ RUN_SINGLEr = function(obj,refFile,fineORmain){
   return(s$pruned.labels)
 }
 
-MAIN_LABEL_SO<-function(so_in, ref){
-  if(ref == "hg38" || ref == "hg19"){
+MAIN_LABEL_SO<-function(so_in, species){
+  if(species == "hg38" || species == "hg19"){
     so_in$HPCA_main <- RUN_SINGLEr(so_in,celldex::HumanPrimaryCellAtlasData(),"label.main")
     so_in$HPCA <-  RUN_SINGLEr(so_in,celldex::HumanPrimaryCellAtlasData(),"label.fine")
     so_in$BP_encode_main <-  RUN_SINGLEr(so_in,celldex::BlueprintEncodeData(),"label.main")
@@ -70,7 +70,7 @@ MAIN_LABEL_SO<-function(so_in, ref){
     so_in$immu_cell_exp <- RUN_SINGLEr(so_in,celldex::DatabaseImmuneCellExpressionData(),
                                       "label.fine")
     so_in$annot = so_in$HPCA_main
-  } else if(ref == "mm10"){
+  } else if(species == "mm10"){
     so_in$immgen_main <-  RUN_SINGLEr(so_in,celldex::ImmGenData(),"label.main")
     so_in$immgen <- RUN_SINGLEr(so_in,celldex::ImmGenData(),"label.fine")
     so_in$mouseRNAseq_main <-  RUN_SINGLEr(so_in,celldex::MouseRNAseqData(),"label.main")
@@ -131,7 +131,7 @@ RUN_SINGLEr_seurat = function(obj,refFile,fineORmain){
   return(obj$clustAnnot)
 }
 
-RUN_CORRECTION_SEURAT = function(obj,npcs,ref,resolution){
+RUN_CORRECTION_SEURAT = function(obj,npcs,species,resolution){
   # what is this catching? why another scale?
   if(ncol(obj@assays$integrated@scale.data)!=ncol(obj@assays$integrated@data)){
     obj = ScaleData(obj)
@@ -156,9 +156,9 @@ RUN_CORRECTION_SEURAT = function(obj,npcs,ref,resolution){
                  dims = 1:npcs,n.components = 3)
   
   # this is essentially the same labeling as was done in preprocessing, except now you're adding
-  # "clustAnnot" in the front - is it ncessary? can we keep the obj$HPCA_main, or is the prefix needed
+  # "clustAnnot" in the front - is it ncessary? can we keep the obj$HPCA_main, or is the pspeciesix needed
   # for all of these?
-  if(ref == "hg38" || ref == "hg19"){
+  if(species == "hg38" || species == "hg19"){
     obj$clustAnnot_HPCA_main <- RUN_CORRECTION_SEURAT(obj,celldex::HumanPrimaryCellAtlasData(),"label.main")
     obj$clustAnnot_HPCA <-  RUN_CORRECTION_SEURAT(obj,celldex::HumanPrimaryCellAtlasData(),"label.fine")
     obj$clustAnnot_BP_encode_main <-  RUN_CORRECTION_SEURAT(obj,celldex::BlueprintEncodeData(),"label.main")
@@ -167,7 +167,7 @@ RUN_CORRECTION_SEURAT = function(obj,npcs,ref,resolution){
     obj$clustAnnot_monaco <- RUN_CORRECTION_SEURAT(obj,celldex::MonacoImmuneData(),"label.fine")
     obj$clustAnnot_immu_cell_exp_main <-  RUN_CORRECTION_SEURAT(obj,celldex::DatabaseImmuneCellExpressionData(),"label.main")
     obj$clustAnnot_immu_cell_exp <- RUN_CORRECTION_SEURAT(obj,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
-  } else if(ref == "mm10"){
+  } else if(species == "mm10"){
     obj$clustAnnot_immgen_main <-  RUN_CORRECTION_SEURAT(obj,celldex::ImmGenData(),"label.main")
     obj$clustAnnot_immgen <- RUN_CORRECTION_SEURAT(obj,celldex::ImmGenData(),"label.fine")
     obj$clustAnnot_mouseRNAseq_main <-  RUN_CORRECTION_SEURAT(obj,celldex::MouseRNAseqData(),"label.main")
@@ -202,7 +202,7 @@ FIND_CLUSTERS_BY_RES<-function(resolution,obj,algorithm_val){
   return(obj)
 }
 
-RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution_list){
+RUN_CORRECTION_HARMONY = function(so_in,npcs,species,resolution_list){
   # transform and runPCA
   so_transform <- SCTransform(so_in)
   so_pca <- RunPCA(so_transform)
@@ -216,7 +216,7 @@ RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution_list){
     so <- FindClusters(so, dims = 1:npcs, resolution = res, algorithm = 3)
   }
 
-  if(ref == "hg38" || ref == "hg19"){
+  if(species == "hg38" || species == "hg19"){
     so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.main")
     so$clustAnnot_HPCA <-  RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.fine")
     so$clustAnnot_BP_encode_main <-  RUN_SINGLEr_AVERAGE(so,celldex::BlueprintEncodeData(),"label.main")
@@ -227,7 +227,7 @@ RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution_list){
     so$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(so,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
   }
   
-  if(ref == "mm10"){
+  if(species == "mm10"){
     so$clustAnnot_immgen_main <-  RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.main")
     so$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.fine")
     so$clustAnnot_mouseRNAseq_main <-  RUN_SINGLEr_AVERAGE(so,celldex::MouseRNAseqData(),"label.main")
@@ -264,7 +264,7 @@ RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution_list){
   return(so)
 }
 
-RUN_CORRECTION_RPCA = function(so_in,npcs,resolution_list){
+RUN_CORRECTION_RPCA = function(so_in,npcs,species,resolution_list){
    # transform and runPCA
   so_transform <- SCTransform(so_in)
   so_pca <- RunPCA(so_transform)
@@ -279,7 +279,7 @@ RUN_CORRECTION_RPCA = function(so_in,npcs,resolution_list){
   }
 
   # relabel
-  if(ref == "hg38" || ref == "hg19"){
+  if(species == "hg38" || species == "hg19"){
     so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.main")
     so$clustAnnot_HPCA <-  RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.fine")
     so$clustAnnot_BP_encode_main <-  RUN_SINGLEr_AVERAGE(so,celldex::BlueprintEncodeData(),"label.main")
@@ -288,7 +288,7 @@ RUN_CORRECTION_RPCA = function(so_in,npcs,resolution_list){
     so$clustAnnot_monaco <- RUN_SINGLEr_AVERAGE(so,celldex::MonacoImmuneData(),"label.fine")
     so$clustAnnot_immu_cell_exp_main <-  RUN_SINGLEr_AVERAGE(so,celldex::DatabaseImmuneCellExpressionData(),"label.main")
     so$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(so,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
-  } else if(ref == "mm10"){
+  } else if(species == "mm10"){
     so$clustAnnot_immgen_main <-  RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.main")
     so$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.fine")
     so$clustAnnot_mouseRNAseq_main <-  RUN_SINGLEr_AVERAGE(so,celldex::MouseRNAseqData(),"label.main")

@@ -6,7 +6,7 @@ output: html_document
 editor_options: 
   chunk_output_type: console
 params:
-  ref: "hg19"
+  species: "hg19"
   gid: "group1_group2"
   mergedObj: "~/../../Volumes/data-1/scRNA_test/seurat/group1_group2.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
@@ -19,7 +19,7 @@ params:
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
 # set up params
-ref= params$ref
+species= params$species
 gid = params$gid
 mergedObj=params$mergedObj
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
@@ -80,9 +80,8 @@ DefaultAssay(so) = "RNA"
 so[["RNA"]] <- as(so[["RNA"]], Class = "Assay5")
 so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 
-
 # integrate
-so_rpca <- RUN_CORRECTION_RPCA(so,npcs,resolution)
+so_rpca <- RUN_CORRECTION_RPCA(so,npcs,species,resolution)
 
 fpath=paste0(gid,"_batch_correction_rpca.rds")
 saveRDS(so_rpca,fpath)
