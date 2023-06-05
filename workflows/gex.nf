@@ -104,40 +104,50 @@ workflow GEX_EXQC {
             .map { sample, key, rds_file -> tuple( key, rds_file ) }
             .groupTuple()
 
-        SEURAT_MERGE (
-            ch_groups,
-            params.species,
-            params.Rlib_dir,
-            params.Rpkg,
-            params.script_merge,
-            params.script_functions
-        )
-
-        // Run batch corrections
-        BATCH_HARMONY_GROUP (
-            SEURAT_MERGE.out.rds,
-            params.species,
-            params.ncps,
-            params.resolution_list,
-            params.Rlib_dir,
-            params.Rpkg,
-            params.script_bc_harmony,
-            params.script_functions
-        )
-
-        // // Run batch corrections
-        // BATCHC_RPCA (
+        // SEURAT_MERGE (
         //     ch_groups,
         //     params.species,
-        //     params.seurat_integration,
         //     params.Rlib_dir,
-        //     params.Rpkg
+        //     params.Rpkg,
+        //     params.script_merge,
+        //     params.script_functions
         // )
 
+        // // Run batch corrections
+        // BATCH_CORRECT_HARMONY (
+        //     SEURAT_MERGE.out.rds,
+        //     params.species,
+        //     params.ncps,
+        //     params.resolution_list,
+        //     params.Rlib_dir,
+        //     params.Rpkg,
+        //     params.script_bc_harmony,
+        //     params.script_functions
+        // )
 
-// Rscript rpca.R merged.rds cca.rds mm10 50 0.2,0.4,0.6,1
-// Rscript scvi.R merged.rds cca.rds mm10 50 0.2,0.4,0.6,1
+        // // Run batch corrections
+        // BATCH_CORRECT_RPCA (
+        //     SEURAT_MERGE.out.rds,
+        //     params.species,
+        //     params.ncps,
+        //     params.resolution_list,
+        //     params.Rlib_dir,
+        //     params.Rpkg,
+        //     params.script_bc_rpca,
+        //     params.script_functions
+        // )
 
+        // // Placeholder
+        // PLACEHOLDER_SCVI (
+        //     SEURAT_MERGE.out.rds,
+        //     params.species,
+        //     params.ncps,
+        //     params.resolution_list,
+        //     params.Rlib_dir,
+        //     params.Rpkg,
+        //     params.script_scvi,
+        //     params.script_functions
+        // )
 
         // Run batch corrections
         // BATCH_CORRECT_SEURAT (
@@ -148,8 +158,6 @@ workflow GEX_EXQC {
         //     params.Rpkg
         // )
         
-       
-
 
     emit:
         samplesheet        = INPUT_CHECK_GEX.out.gex_samplesheet

@@ -202,18 +202,18 @@ FIND_CLUSTERS_BY_RES<-function(resolution,obj,algorithm_val){
   return(obj)
 }
 
-RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution){
+RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution_list){
   # transform and runPCA
   so_transform <- SCTransform(so_in)
   so_pca <- RunPCA(so_transform)
   
   # integrate
   so_integrate <- IntegrateLayers(object = so_pca, method = HarmonyIntegration, normalization.method = "SCT", verbose = F,new.reduction = "harmony")
-  so <- RunUMAP(so_integrate, reduction = "harmony", dims = 1:npcs)
-  so <- FindNeighbors(so, reduction = "harmony", dims = 1:npcs)
+  so <- RunUMAP(so_integrate, reduction = "RPCA", dims = 1:npcs)
+  so <- FindNeighbors(so, reduction = "RPCA", dims = 1:npcs)
 
-  for (res in resolutions){
-    so <- FindClusters(so,dims = 1:npcs, resolution = res,algorithm = 3)
+  for (res in resolution_list){
+    so <- FindClusters(so, dims = 1:npcs, resolution = res, algorithm = 3)
   }
 
   if(ref == "hg38" || ref == "hg19"){
@@ -264,35 +264,35 @@ RUN_CORRECTION_HARMONY = function(so_in,npcs,resolution){
   return(so)
 }
 
-RUN_CORRECTION_RPCA = function(obj,npcs){
-  obj <- RunPCA(object = obj, npcs = npcs, verbose = FALSE)
-  obj <- FindNeighbors(obj,dims = 1:npcs)
+RUN_CORRECTION_RPCA = function(so_in,npcs,resolution_list){
+   # transform and runPCA
+  so_transform <- SCTransform(so_in)
+  so_pca <- RunPCA(so_transform)
   
-  FIND_CLUSTERS_BY_RES(obj,res,3)
-  colnames(obj@meta.data) = gsub("integrated_snn_res","SLM_int_snn_res",colnames(obj@meta.data))
-  colnames(obj@meta.data) = gsub("SCT_snn_res","SLM_SCT_snn_res",colnames(obj@meta.data))
+  # integrate
+  so_integrate <- IntegrateLayers(object = so_pca, method = RPCAIntegration, normalization.method = "SCT", verbose = F,new.reduction = "RPCA")
+  so <- RunPCA(object = so_integrate, npcs = npcs, verbose = FALSE)
+  so <- FindNeighbors(so,dims = 1:npcs)
   
-  FIND_CLUSTERS_BY_RES(obj,res,4)
-  colnames(obj@meta.data) = gsub("integrated_snn_res","Leiden_int_snn_res",colnames(obj@meta.data))
-  colnames(obj@meta.data) = gsub("SCT_snn_res","Leiden_SCT_snn_res",colnames(obj@meta.data))
-  
-  obj <- RunUMAP(object = obj, reduction = "pca", 
-                 dims = 1:npcs,n.components = 3)
-
-  if(ref == "hg38" || ref == "hg19"){
-    obj$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(obj,celldex::HumanPrimaryCellAtlasData(),"label.main")
-    obj$clustAnnot_HPCA <-  RUN_SINGLEr_AVERAGE(obj,celldex::HumanPrimaryCellAtlasData(),"label.fine")
-    obj$clustAnnot_BP_encode_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::BlueprintEncodeData(),"label.main")
-    obj$clustAnnot_BP_encode <-  RUN_SINGLEr_AVERAGE(obj,celldex::BlueprintEncodeData(),"label.fine")
-    obj$clustAnnot_monaco_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::MonacoImmuneData(),"label.main")
-    obj$clustAnnot_monaco <- RUN_SINGLEr_AVERAGE(obj,celldex::MonacoImmuneData(),"label.fine")
-    obj$clustAnnot_immu_cell_exp_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::DatabaseImmuneCellExpressionData(),"label.main")
-    obj$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(obj,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
-  } else if(ref == "mm10"){
-    obj$clustAnnot_immgen_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::ImmGenData(),"label.main")
-    obj$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(obj,celldex::ImmGenData(),"label.fine")
-    obj$clustAnnot_mouseRNAseq_main <-  RUN_SINGLEr_AVERAGE(obj,celldex::MouseRNAseqData(),"label.main")
-    obj$clustAnnot_mouseRNAseq <- RUN_SINGLEr_AVERAGE(obj,celldex::MouseRNAseqData(),"label.fine")
+  for (res in resolution_list){
+    so <- FindClusters(so,dims = 1:npcs, resolution = res,algorithm = 3)
   }
-  return(obj)
+
+  # relabel
+  if(ref == "hg38" || ref == "hg19"){
+    so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.main")
+    so$clustAnnot_HPCA <-  RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.fine")
+    so$clustAnnot_BP_encode_main <-  RUN_SINGLEr_AVERAGE(so,celldex::BlueprintEncodeData(),"label.main")
+    so$clustAnnot_BP_encode <-  RUN_SINGLEr_AVERAGE(so,celldex::BlueprintEncodeData(),"label.fine")
+    so$clustAnnot_monaco_main <-  RUN_SINGLEr_AVERAGE(so,celldex::MonacoImmuneData(),"label.main")
+    so$clustAnnot_monaco <- RUN_SINGLEr_AVERAGE(so,celldex::MonacoImmuneData(),"label.fine")
+    so$clustAnnot_immu_cell_exp_main <-  RUN_SINGLEr_AVERAGE(so,celldex::DatabaseImmuneCellExpressionData(),"label.main")
+    so$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(so,celldex::DatabaseImmuneCellExpressionData(),"label.fine")
+  } else if(ref == "mm10"){
+    so$clustAnnot_immgen_main <-  RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.main")
+    so$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(so,celldex::ImmGenData(),"label.fine")
+    so$clustAnnot_mouseRNAseq_main <-  RUN_SINGLEr_AVERAGE(so,celldex::MouseRNAseqData(),"label.main")
+    so$clustAnnot_mouseRNAseq <- RUN_SINGLEr_AVERAGE(so,celldex::MouseRNAseqData(),"label.fine")
+  }
+  return(so)
 }

@@ -2,21 +2,38 @@ process BATCHC_RPCA {
     tag "${id}"
 
     input:
-    tuple val(id), val(inDir)
-    path(h5)
+    tuple val(gid), path(mergedObj)
     val(species)
-    path(Rlib_dir)
+    val(ncps)
+    val(resolution_list)
+    val(Rlib_dir)
+    path(Rpkg_config)
+    path(rmd)
+    path(scRNA_functions)
 
     output:
-    path '*.rds'                  , emit:rds
+    tuple val(id), path ("*.rds")                 , emit:rds
+    tuple val(id), path ("*.pdf")                 , emit:logs
     
     script:
     def args = task.ext.args ?: ''
     """
-    Rscript scRNA.R \
-        $species \
-        $id \
-        $h5 \
-        $Rlib_dir
+    Rscript -e 'rmarkdown::render("${rmd}",
+        params=list(gid="$gid",
+            mergedObj="$mergedObj",
+            species="$species",
+            ncps="$ncps",
+            resolution_list="$resolution_list",
+            Rlib_dir="$Rlib_dir",
+            Rpkg_config="$Rpkg_config",
+            scRNA_functions="$scRNA_functions",
+            testing="N"),
+        output_file = "${id}_batch_correction_rpca.pdf")'
+    """
+
+    stub:
+    """
+    touch ${id}_batch_correction_rpca.rds
+    touch ${id}_batch_correction_rpca.pdf
     """
 }
