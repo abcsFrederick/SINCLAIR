@@ -1,4 +1,4 @@
-process BATCH_HARMONY {
+process BATCH_CORRECT_HARMONY {
     tag "${gid}"
 
     input:

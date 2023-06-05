@@ -1,4 +1,4 @@
-process BATCHC_RPCA {
+process BATCH_CORRECT_RPCA {
     tag "${id}"
 
     input:

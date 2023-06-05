@@ -1,4 +1,4 @@
-process SEURAT_INTEGRATION {
+process BATCH_CORRECT_SEURAT {
     tag "${contrast_id}"
 
     input:

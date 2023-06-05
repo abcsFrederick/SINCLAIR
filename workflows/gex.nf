@@ -32,6 +32,8 @@ include { SEURAT_MERGE                                  } from '../modules/local
 // include { BATCH_CORRECT_SEURAT                          } from '../modules/local/batch_correction_seurat.nf'
 // include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
 // include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
+// include { BATCH_CORRECT_INTEGRATE                            } from '../modules/local/batch_correction_integration.nf'
+
 
 /*
 =======================================================================================================
@@ -127,6 +129,18 @@ workflow GEX_EXQC {
 
         // // Run batch corrections
         // BATCH_CORRECT_RPCA (
+        //     SEURAT_MERGE.out.rds,
+        //     params.species,
+        //     params.ncps,
+        //     params.resolution_list,
+        //     params.Rlib_dir,
+        //     params.Rpkg,
+        //     params.script_bc_rpca,
+        //     params.script_functions
+        // )
+
+        // // Run batch corrections
+        // BATCH_CORRECT_INTEGRATE (
         //     SEURAT_MERGE.out.rds,
         //     params.species,
         //     params.ncps,
