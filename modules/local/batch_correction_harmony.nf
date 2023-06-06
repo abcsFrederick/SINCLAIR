@@ -4,7 +4,7 @@ process BATCH_CORRECT_HARMONY {
     input:
     tuple val(gid), path(mergedObj)
     val(species)
-    val(ncps)
+    val(npcs)
     val(resolution_list)
     val(Rlib_dir)
     path(Rpkg_config)
@@ -22,7 +22,7 @@ process BATCH_CORRECT_HARMONY {
         params=list(gid="$gid",
             mergedObj="$mergedObj",
             species="$species",
-            ncps="$ncps",
+            npcs="$npcs",
             resolution_list="$resolution_list",
             Rlib_dir="$Rlib_dir",
             Rpkg_config="$Rpkg_config",
