@@ -1,4 +1,4 @@
-process BATCH_CORRECTION_CCA {
+process BATCH_CORRECT_CCA {
     tag "${id}"
 
     input:
