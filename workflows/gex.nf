@@ -29,12 +29,11 @@ include { SAMPLESHEET_CHECK                             } from '../modules/local
 include { CELLRANGER_COUNT                              } from '../modules/local/cellranger_count_gex.nf'
 include { SEURAT_PREPROCESS                             } from '../modules/local/seurat_preprocess.nf'
 include { SEURAT_MERGE                                  } from '../modules/local/seurat_merge.nf'
-// include { BATCH_CORRECT_SEURAT                          } from '../modules/local/batch_correction_seurat.nf'
 include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
 include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
-// include { BATCH_CORRECT_INTEGRATE                            } from '../modules/local/batch_correction_integration.nf'
-
-
+include { BATCH_CORRECT_CCA                             } from '../modules/local/batch_correction_cca.nf'
+// include { BATCH_CORRECT_INTEGRATION                     } from '../modules/local/batch_correction_integrate.nf'
+// include { PLACEHOLDER_SCVI                               } from '../modules/local/placeholder_scvi.nf'
 /*
 =======================================================================================================
 RUN MAIN WORKFLOW
@@ -119,7 +118,7 @@ workflow GEX_EXQC {
         BATCH_CORRECT_HARMONY (
             SEURAT_MERGE.out.rds,
             params.species,
-            params.ncps,
+            params.npcs,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -131,7 +130,7 @@ workflow GEX_EXQC {
         BATCH_CORRECT_RPCA (
             SEURAT_MERGE.out.rds,
             params.species,
-            params.ncps,
+            params.npcs,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -139,15 +138,29 @@ workflow GEX_EXQC {
             params.script_functions
         )
 
-        // // Run batch corrections
-        // BATCH_CORRECT_INTEGRATE (
-        //     SEURAT_MERGE.out.rds,
+        // Run batch corrections
+        BATCH_CORRECT_CCA (
+            SEURAT_MERGE.out.rds,
+            params.species,
+            params.npcs,
+            params.resolution_list,
+            params.Rlib_dir,
+            params.Rpkg,
+            params.script_bc_cca,
+            params.script_functions
+        )
+
+        // // Integrate batch corrections
+        // BATCH_CORRECT_INTEGRATION (
+        //     BATCH_CORRECT_HARMONY.out.rds,
+        //     BATCH_CORRECT_RPCA.out.rds,
+        //     BATCH_CORRECT_CCA.out.rds,
         //     params.species,
-        //     params.ncps,
+        //     params.npcs,
         //     params.resolution_list,
         //     params.Rlib_dir,
         //     params.Rpkg,
-        //     params.script_bc_rpca,
+        //     params.script_bc_integration,
         //     params.script_functions
         // )
 
@@ -155,23 +168,13 @@ workflow GEX_EXQC {
         // PLACEHOLDER_SCVI (
         //     SEURAT_MERGE.out.rds,
         //     params.species,
-        //     params.ncps,
+        //     params.npcs,
         //     params.resolution_list,
         //     params.Rlib_dir,
         //     params.Rpkg,
         //     params.script_scvi,
         //     params.script_functions
         // )
-
-        // Run batch corrections
-        // BATCH_CORRECT_SEURAT (
-        //     ch_groups,
-        //     params.species,
-        //     params.seurat_integration,
-        //     params.Rlib_dir,
-        //     params.Rpkg
-        // )
-        
 
     emit:
         samplesheet        = INPUT_CHECK_GEX.out.gex_samplesheet
