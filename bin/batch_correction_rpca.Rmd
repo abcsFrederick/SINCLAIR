@@ -8,12 +8,12 @@ editor_options:
 params:
   species: "hg19"
   gid: "group1_group2"
-  mergedObj: "~/../../Volumes/data-1/scRNA_test/seurat/group1_group2.rds"
+  mergedObj: "~/../../Volumes/data/scRNA_test/seurat/merge/group1-group2_seurat_merged.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
-  npcs: "50"
-  Rlib_dir: "CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
+  ncps: "50"
+  Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
   Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
-  scRNA_functions: ""
+  scRNA_functions: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/bin/scRNA_functions.R"
   testing: "Y"
 ---
 
@@ -23,7 +23,7 @@ species= params$species
 gid = params$gid
 mergedObj=params$mergedObj
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
-npcs = params$npcs
+ncps = params$ncps
 
 Rlib_dir=params$Rlib_dir
 Rpkg_config=params$Rpkg_config
@@ -40,7 +40,7 @@ assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
 
 # read in package info
 pkg_df=read.csv(Rpkg_config)
-pkg_df=subset(pkg_df,bch=="Y")
+pkg_df=subset(pkg_df,rpca=="Y")
 pkg_df
 
 # for each package check installation, if present then load library
@@ -71,7 +71,6 @@ tinytex::install_tinytex(force = TRUE)
 ```
 
 ```{r, processing, message=FALSE}
-
 # read in merged object
 so = readRDS(mergedObj)
 
@@ -81,8 +80,10 @@ so[["RNA"]] <- as(so[["RNA"]], Class = "Assay5")
 so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 
 # integrate
-so_rpca <- RUN_CORRECTION_RPCA(so,npcs,species,resolution)
+so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in=RPCAIntegration,new.reduction_in = "RPCA")
+```
 
-fpath=paste0(gid,"_batch_correction_rpca.rds")
-saveRDS(so_rpca,fpath)
+```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
+fpath=paste0(gid,"_batchcorrection_rpca.rds")
+saveRDS(so_corrected,fpath)
 ```

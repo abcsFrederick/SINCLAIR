@@ -150,10 +150,10 @@ if(qc_filtering == "manual") {
 so_processed = MAIN_PROCESS_SO(so_filt, species, ncps_val)
 
 # Label data
-so_labeled = MAIN_LABEL_SO(so_processed,species)
+so_labeled = MAIN_SINGLER(so_processed,species)
 
 # ID doublets
-so_doublet = PROCESS_DOUBLETS(so_labeled, run_doublet_finder)
+so_doublet = MAIN_DOUBLETS(so_labeled, run_doublet_finder)
 ```
 
 ```{r, save, message=FALSE}

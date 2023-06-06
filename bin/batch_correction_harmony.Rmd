@@ -40,7 +40,7 @@ assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
 
 # read in package info
 pkg_df=read.csv(Rpkg_config)
-pkg_df=subset(pkg_df,bch=="Y")
+pkg_df=subset(pkg_df,harmony=="Y")
 pkg_df
 
 # for each package check installation, if present then load library
@@ -80,21 +80,10 @@ so[["RNA"]] <- as(so[["RNA"]], Class = "Assay5")
 so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 
 # integrate
-harmGroup <- RUN_CORRECTION_HARMONY(so,npcs,species,resolution)
-
-# harmGroup = RUN_CORRECTION_HARMONY(harmGroup,50,"Yes", resolution)
-# harmSample = RUN_CORRECTION_HARMONY(harmSample,50,"Yes", resolution)
-
-fpath=paste0(gid,"_batchcorrection_harmony_group.rds")
-saveRDS(harmGroup,fpath)
-
-# fpath=paste0(gid,"_batchcorrection_harmony_sample.rds")
-# saveRDS(harmSample,outDirSample)
-
-# why are you running this on the obj instead of the harmony sample? does this need to be saved?
-# renames function to distinguish between other scripts
-# combinedObj.integratedRNA = RUN_CORRECTION_HARMONY(combinedObj.integratedRNA,50,"No", resolution)
-# fpath=paste0(gid,"_batchcorrection_harmony_merged.rds")
-# saveRDS(combinedObj.integratedRNA,fpath)
+so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in=HarmonyIntegration,new.reduction_in = "harmony")
 ```
 
+```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
+fpath=paste0(gid,"_batchcorrection_harmony.rds")
+saveRDS(so_corrected,fpath)
+```

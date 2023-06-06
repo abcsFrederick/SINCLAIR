@@ -11,7 +11,7 @@ params:
   gid: "group1-group2"
   Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
   Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
-  scRNA_functions: "scRNA_functions.R"
+  scRNA_functions: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/bin/scRNA_functions.R"
   testing: "Y"
 ---
 
