@@ -14,11 +14,13 @@ workflow INPUT_CHECK_GEX {
     take:
         samplesheet
         contrast_samplesheet
+        run_cellranger
 
     main:
         SAMPLESHEET_CHECK (
             samplesheet,
-            contrast_samplesheet
+            contrast_samplesheet,
+            run_cellranger
         )
 
     emit:

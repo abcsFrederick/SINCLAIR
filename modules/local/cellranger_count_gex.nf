@@ -4,6 +4,7 @@ process CELLRANGER_COUNT {
     input:
     tuple val(id), val(inDir)
     val(genome_dir)
+    val(run_cellranger)
 
     output:
     path '*/outs/filtered_feature_bc_matrix.h5'                  , emit:h5
@@ -12,12 +13,17 @@ process CELLRANGER_COUNT {
     def args = task.ext.args ?: ''
     def localmem = task.memory.toGiga()
     """
-    cellranger count \
+    if [[ "$run_cellranger" == "N" ]]; then
+        mkdir -p $id/outs/
+        cp $inDir/filtered_feature_bc_matrix.h5 $id/outs/filtered_feature_bc_matrix.h5
+    else
+        cellranger count \
         --id $id \
         --fastqs $inDir \
         --transcriptome=${genome_dir} \
         --localcores=$task.cpus \
-        --localmem=$localmem \
+        --localmem=$localmem
+    fi
     """
 
     stub:
