@@ -22,6 +22,7 @@ The following explains each of the command options:
 - contrast: contrast_manifest.csv location
 - outdir: complete path to the output dir
 - species: species to be used
+- run_cellranger: whether or not to run cellranger on dataset; IE Y, N
 - args: any additional arguments; IE --stub-run
 
 ## 3.3 Typical Workflow
@@ -36,7 +37,7 @@ nextflow run main.nf \
     --species hg19
 ```
 
-A typical command workflow, running the pipeline for a repeated time locally, is as follows:
+A typical command workflow, running the pipeline for a repeated time locally, running cellranger, is as follows:
 ```
 nextflow run main.nf -resume \
     -entry gex \
@@ -45,10 +46,11 @@ nextflow run main.nf -resume \
     --input assets/input_manifest.csv \
     --contrast assets/contrast_manifest.csv \
     --outdir /path/to/scRNA_test \
+    --run_cellranger Y \
     --species hg19
 ```
 
-A typical command workflow, running the pipeline in a `dryrun mode`, is as follows:
+A typical command workflow, running the pipeline in a `dryrun mode`, without running cellranger, is as follows:
 ```
 nextflow run main.nf \
     -entry gex \
@@ -58,24 +60,32 @@ nextflow run main.nf \
     --contrast assets/contrast_manifest.csv \
     --outdir /path/to/scRNA_test \
     --species hg19 \
+    --run_cellranger N \
     --stub-run
 ```
 
 Alternatively a script was created to run the pipeline, which takes the following flags:
 - species: hg19
 - datatype: GEX
-- resume: Y or N
 - outDir: /path/to/output/dir
-- args: --stub-run, --cellranger Y
+- resume: Y or N
+- run_cellranger: Y or N
+- stubrun: Y or N
 
 Examples:
 ```
 # run GEX on test data, for the first time
 sh run_scRNA.sh hg19 GEX N /path/to/output/dir
 
-# run GEX on test data, as a re-run
-sh run_scRNA.sh hg19 GEX Y /path/to/output/dir
+# first pass, with and without cellranger
+sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y N
+sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y N
 
-# run GEX on test data, as a dry-run
-sh run_scRNA.sh hg19 GEX N /path/to/output/dir -stub-run 
+# resume, with and without cellranger
+sh run_scRNA.sh hg19 GEX /path/to/output/dir Y Y N
+sh run_scRNA.sh hg19 GEX /path/to/output/dir Y N N
+
+# first pass, with cellranger, with and without a dryrun
+sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y Y
+sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y N
 ```
