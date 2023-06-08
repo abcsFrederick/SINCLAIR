@@ -18,15 +18,12 @@ if (params.contrast) { ch_contrast = file(params.contrast) } else { exit 1, 'Con
 Assign local subworkflows
 =======================================================================================================
 */
-include { INPUT_CHECK_GEX                               } from '../subworkflows/input_check'
 
 /*
 =======================================================================================================
 Assign Local Modules
 =======================================================================================================
 */
-include { SAMPLESHEET_CHECK                             } from '../modules/local/samplesheet_check.nf'
-include { CELLRANGER_COUNT                              } from '../modules/local/cellranger_count_gex.nf'
 include { SEURAT_PREPROCESS                             } from '../modules/local/seurat_preprocess.nf'
 include { SEURAT_MERGE                                  } from '../modules/local/seurat_merge.nf'
 include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
@@ -40,36 +37,18 @@ RUN MAIN WORKFLOW
 =======================================================================================================
 */
 workflow GEX_EXQC {
+    take:
+        ch_meta
+        group_samplesheet
+        h5
     main:
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
-        
-        // Read in samplesheet, contrast manifest
-        INPUT_CHECK_GEX (
-            ch_input,
-            ch_contrast
-        )
-        
-        // create metadata
-        // creates GEX mapped input of sample:gex_input_dir
-        ch_meta = INPUT_CHECK_GEX.out.gex_samplesheet
-            .splitCsv( header:true, sep:',', strip:true )
-            .map { row ->
-                    def id = row["sample"]
-                    def inDir = row["gex_input_dir"]
-                    return [ id, inDir ]
-                }
-
-        // Run cellranger count
-        CELLRANGER_COUNT (
-            ch_meta,
-            params.genome_dir
-        )
 
         // Run Seurat for individual samples
         SEURAT_PREPROCESS (
             ch_meta,
-            CELLRANGER_COUNT.out.h5,
+            h5,
             params.species,
             params.qc_filtering,
             params.nCount_RNA_max,
@@ -94,7 +73,7 @@ workflow GEX_EXQC {
         //     example: sample2:group1_group2; sample2:sample2.rds
         // output: group1_group2: [sample1.rds,sample2.rds]
         // output: group1_group2_group3: [sample1.rds]
-        ch_groups = INPUT_CHECK_GEX.out.group_samplesheet
+        ch_groups = group_samplesheet
             .splitCsv( header:true, sep:',', strip:true )
             .map { row ->
                     def key = row["keyid"]
