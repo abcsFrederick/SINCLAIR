@@ -19,6 +19,7 @@ log.info """\
          start time   : $workflow.start
          launchDir    : $workflow.launchDir
          workdDir     : $workflow.workDir
+         outDir       : $params.outdir
          """
          .stripIndent()
 
@@ -29,8 +30,9 @@ log.info """\
     Identify workflows
 ===================================================================
 */
-include { GEX_EXQC                               } from './workflows/gex'
-include { ATAC_EXQC                              } from './workflows/atac'
+include { PREPROCESS_EXQC                           } from './workflows/pre_process' 
+include { GEX_EXQC                                  } from './workflows/gex'
+include { ATAC_EXQC                                 } from './workflows/atac'
 // include { VDJ_EXQC                            } from '.workflows/sCRNA_vdj'
 // include { CITE_EXQC                           } from '.workflows/sCRNA_cite'
 
@@ -39,16 +41,21 @@ include { ATAC_EXQC                              } from './workflows/atac'
 //
 workflow GEX {
     main:
-        GEX_EXQC ()
-    emit:
-        samplesheet         = GEX_EXQC.out.samplesheet
+        PREPROCESS_EXQC ()
+        GEX_EXQC (
+            ch_meta,
+            group_samplesheet,
+            h5
+            )
+
 }
 
 workflow ATAC {
     main:
+        PREPROCESS_EXQC ()
         ATAC_EXQC ()
     emit:
-        samplesheet         = ATAC_EXQC.out.samplesheet
+        samplesheet         = PREPROCESS_EXQC.out.samplesheet
 }
 
 // //
