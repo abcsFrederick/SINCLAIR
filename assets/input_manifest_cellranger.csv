@@ -1,0 +1,6 @@
+masterID,uniqueID,groupID,dataType,input_dir
+WB_Lysis_1,sample1,group1,gex,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/cellranger_counts/sample1/outs
+WB_Lysis_1,sample2,group1,gex,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/cellranger_counts/sample2/outs
+WB_Lysis_2,sample3,group2,gex,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/cellranger_counts/sample3/outs
+WB_Lysis_2,sample4,group2,gex,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/cellranger_counts/sample4/outs
+WB_Lysis_3,sample5,group3,gex,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/cellranger_counts/sample5/outs
