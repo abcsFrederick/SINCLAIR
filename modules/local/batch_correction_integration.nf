@@ -1,29 +1,43 @@
 process BATCH_CORRECT_INTEGRATION {
-    tag "${contrast_id}"
+    tag "${gid}"
 
     input:
-    tuple val(contrast_id), val(rds)
-    val(int_params)
+    tuple val(gid), val(rds_h)
+    tuple val(gid), val(rds_r)
+    tuple val(gid), val(rds_c)
     val(species)
+    val(npcs)
+    val(resolution_list)
     path(Rlib_dir)
     path(Rpkg)
+    path(rmd)
+    path(scRNA_functions)
 
     output:
-    path '*.rds'                  , emit:rds
-    
+    tuple val(gid), path ("*.rds")                 , emit:rds
+    tuple val(gid), path ("*.pdf")                 , emit:logs
+        
     script:
     def args = task.ext.args ?: ''
     """
-    Rscript integrateBatches.R \
-        $species \
-        $rds \
-        $int_params\
-        $Rlib_dir \
-        $Rpkg
+    Rscript -e 'rmarkdown::render("${rmd}",
+        params=list(gid="$gid",
+            rds_harmony="$rds_h",
+            rds_cca="$rds_c",
+            rds_rpca="$rds_r",
+            species="$species",
+            npcs="$npcs",
+            resolution_list="$resolution_list",
+            Rlib_dir="$Rlib_dir",
+            Rpkg_config="$Rpkg_config",
+            scRNA_functions="$scRNA_functions",
+            testing="N"),
+        output_file = "${gid}_batch_correction_integration.pdf")'
     """
 
     stub:
     """
-    touch ${contrast_id}_seurat_object.rds
+    touch ${gid}_batch_correction_integration.rds
+    touch ${gid}_batch_correction_integration.pdf
     """
 }
