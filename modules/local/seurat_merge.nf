@@ -29,7 +29,7 @@ process SEURAT_MERGE {
 
     stub:
     """
-    echo $rdsFiles > ${gid}_merged.rds
-    touch ${gid}.pdf
+    echo $rdsFiles > ${gid}_seurat_merged.rds
+    touch ${gid}_seurat_merged.pdf
     """
 }
