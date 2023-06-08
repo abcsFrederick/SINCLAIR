@@ -19,7 +19,7 @@ fi
 
 if [[ $stubrun == "Y" ]]; then
     input="assets/input_manifest.csv"
-    args="$args -stubrun"
+    args="$args -stub-run"
 fi
 
 if [[ $resume == "Y" ]]; then
@@ -49,3 +49,6 @@ fi
 
 # with and without resume
 # rm -r /data/sevillas2/scRNA_test/*; sh run_scRNA.sh hg19 GEX /data/sevillas2/scRNA_test Y N N; rm -r /data/sevillas2/scRNA_test/*; sh run_scRNA.sh hg19 GEX /data/sevillas2/scRNA_test Y N N
+
+# with resume, with cellranger
+#  sh run_scRNA.sh hg19 GEX /data/sevillas2/scRNA_test Y Y N
