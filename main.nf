@@ -43,10 +43,10 @@ workflow GEX {
     main:
         PREPROCESS_EXQC ()
         GEX_EXQC (
-            ch_meta,
-            group_samplesheet,
-            h5
-            )
+            PREPROCESS_EXQC.out.ch_meta,
+            PREPROCESS_EXQC.out.group_samplesheet,
+            PREPROCESS_EXQC.out.h5
+        )
 
 }
 

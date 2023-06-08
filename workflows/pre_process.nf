@@ -62,7 +62,7 @@ workflow PREPROCESS_EXQC {
         )
 
     emit:
-        ch_meta             = ch_meta
         group_samplesheet   = INPUT_CHECK_GEX.out.group_samplesheet
         h5                  = CELLRANGER_COUNT.out.h5
+        ch_meta             = ch_meta
 }

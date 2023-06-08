@@ -29,7 +29,7 @@ include { SEURAT_MERGE                                  } from '../modules/local
 include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
 include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
 include { BATCH_CORRECT_CCA                             } from '../modules/local/batch_correction_cca.nf'
-// include { BATCH_CORRECT_INTEGRATION                     } from '../modules/local/batch_correction_integrate.nf'
+include { BATCH_CORRECT_INTEGRATION                     } from '../modules/local/batch_correction_integration.nf'
 // include { PLACEHOLDER_SCVI                               } from '../modules/local/placeholder_scvi.nf'
 /*
 =======================================================================================================
@@ -129,19 +129,19 @@ workflow GEX_EXQC {
             params.script_functions
         )
 
-        // // Integrate batch corrections
-        // BATCH_CORRECT_INTEGRATION (
-        //     BATCH_CORRECT_HARMONY.out.rds,
-        //     BATCH_CORRECT_RPCA.out.rds,
-        //     BATCH_CORRECT_CCA.out.rds,
-        //     params.species,
-        //     params.npcs,
-        //     params.resolution_list,
-        //     params.Rlib_dir,
-        //     params.Rpkg,
-        //     params.script_bc_integration,
-        //     params.script_functions
-        // )
+        // Integrate batch corrections
+        BATCH_CORRECT_INTEGRATION (
+            BATCH_CORRECT_HARMONY.out.rds,
+            BATCH_CORRECT_RPCA.out.rds,
+            BATCH_CORRECT_CCA.out.rds,
+            params.species,
+            params.npcs,
+            params.resolution_list,
+            params.Rlib_dir,
+            params.Rpkg,
+            params.script_bc_integration,
+            params.script_functions
+        )
 
         // // Placeholder
         // PLACEHOLDER_SCVI (
@@ -156,5 +156,7 @@ workflow GEX_EXQC {
         // )
 
     emit:
-        samplesheet        = INPUT_CHECK_GEX.out.gex_samplesheet
+        harmony_rds         = BATCH_CORRECT_HARMONY.out.rds
+        rpca_rds            = BATCH_CORRECT_RPCA.out.rds
+        cca_rds             = BATCH_CORRECT_CCA.out.rds
 }
