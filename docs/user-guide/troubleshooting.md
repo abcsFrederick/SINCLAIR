@@ -13,11 +13,14 @@ Review the logs in two ways:
 ## 1.3 Restart the run
 After addressing the issue, unlock the output directory, perform another dry-run and check the status of the pipeline, then resubmit to the cluster.
 ```
-#perform dry-run
-bash .run_scRNA.sh --runmode=dryrun --workdir=/path/to/output/dir
-
-#perform re-run
-bash .run_scRNA.sh --runmode=rerun --workdir=/path/to/output/dir
+nextflow run main.nf \
+    -entry $datatype \
+    -profile biowulf \
+    --input assets/input_manifest.csv \
+    --contrast assets/contrast_manifest.csv \
+    --outdir /data/sevillas2/scRNA_test \
+    --species $species \
+    $args
 ```
 
 ## 1.4 Contact information
