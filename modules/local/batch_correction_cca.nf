@@ -1,5 +1,5 @@
 process BATCH_CORRECT_CCA {
-    tag "${id}"
+    tag "${gid}"
 
     input:
     tuple val(gid), path(mergedObj)
