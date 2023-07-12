@@ -2,6 +2,7 @@
 # Seurat Pre-processing
 ##################################################################
 SEURAT_CLUSTERING = function(so_in, ncps_in){
+# Runs Principal Component Analysis, FindNeighbors, clustering with the Smart Local Moving algorithm, and UMAP dimensionality reduction
   so <- RunPCA(object = so_in, 
                features = VariableFeatures(object = so_in), 
                verbose=F,
