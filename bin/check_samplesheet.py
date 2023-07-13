@@ -42,16 +42,17 @@ def print_error(error, context="Line", context_str=""):
 
 def check_files(fileid):
     # ensure that the file follows the structure
-    ## [Sample Name]_S1_L00[Lane Number]_[Read Type]_001.fastq.gz
+    ## [Sample Name]_S[Sample Number]_L00[Lane Number]_[Read Type]_001.fastq.gz
     # create sample list - will check all samples are the same name
     sample_list=list()
-    sampleID=fileid.split("_S1")[0]
+    sampleID=re.split("_S.",fileid)[0]
     sample_list.append(sampleID)
 
+
     # check S1_L00 is within file
-    sID="S1_L00" in fileid
-    if sID == False:
-        print_error("Input file must include S1_L00 in name:", fileid)
+    sID= re.search("S._L00", fileid)
+    if sID == None:
+        print_error("Input file must include S[sampleNumber]_L00 in name:", fileid)
 
     # spit after S1_L00
     postID=fileid.split("_L00")[1]
