@@ -1,5 +1,6 @@
 process SEURAT_PREPROCESS {
     tag "${id}"
+    label 'process_medium'
 
     input:
     tuple val(id), val(inDir)

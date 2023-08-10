@@ -1,5 +1,6 @@
 process BATCH_CORRECT_HARMONY {
     tag "${gid}"
+    label 'process_high'
 
     input:
     tuple val(gid), path(mergedObj)

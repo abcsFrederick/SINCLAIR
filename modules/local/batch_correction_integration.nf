@@ -1,5 +1,6 @@
 process BATCH_CORRECT_INTEGRATION {
     tag "${gid}"
+    label 'process_high'
 
     input:
     tuple val(gid), val(rds_h)
