@@ -1,3 +1,6 @@
+# vim temp files
+**/.*.swp
+
 # Compiled class file
 *.class
 
@@ -49,3 +52,5 @@ test.sh
 
 **/.koparde*
 test_dir/**
+
+**/.koparde*
