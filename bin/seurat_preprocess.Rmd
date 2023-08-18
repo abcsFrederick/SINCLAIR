@@ -83,7 +83,7 @@ for (rowid in rownames(pkg_df)){
 source(scRNA_functions)
 
 # additional options
-tinytex::install_tinytex(force = TRUE)
+#tinytex::install_tinytex(force = TRUE)
 ```
 
 ```{r, pre-processing, message=FALSE}

@@ -10,7 +10,7 @@ params:
   gid: "group1_group2"
   mergedObj: "~/../../Volumes/data/scRNA_test/seurat/merge/group1-group2_seurat_merged.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
-  ncps: "50"
+  npcs: "50"
   Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
   Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
   scRNA_functions: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/bin/scRNA_functions.R"
@@ -67,7 +67,7 @@ for (rowid in rownames(pkg_df)){
 source(scRNA_functions)
 
 # additional options
-tinytex::install_tinytex(force = TRUE)
+#tinytex::install_tinytex(force = TRUE)
 ```
 
 ```{r, processing, message=FALSE}

@@ -69,7 +69,7 @@ for (rowid in rownames(pkg_df)){
 source(scRNA_functions)
 
 # additional options
-tinytex::install_tinytex(force = TRUE)
+#tinytex::install_tinytex(force = TRUE)
 options(future.globals.maxSize = 96000 * 1024^2)
 ```
 

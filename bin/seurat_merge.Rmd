@@ -27,13 +27,13 @@ Rpkg_config=params$Rpkg_config
 testing = params$testing
 ```
 
-```{r, handle_pkg, message=FALSE}
+```{r, handle_pkg, message=TRUE}
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
 ## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
 print(paste0("Using the lib.loc location: ",Rlib_dir))
 assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
-.libPaths()
+message(.libPaths())
 
 # read in package info
 pkg_df=read.csv(Rpkg_config)
@@ -64,7 +64,7 @@ for (rowid in rownames(pkg_df)){
 source(scRNA_functions)
 
 # additional options
-tinytex::install_tinytex(force = TRUE)
+#tinytex::install_tinytex(force = TRUE)
 options(future.globals.maxSize = 1e12)
 ```
 
