@@ -83,7 +83,7 @@ so[["RNA"]] <- as(so[["RNA"]], Class = "Assay5")
 so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 
 # integrate
-so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in=CCAIntegration,new.reduction_in = "CCA")
+so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in=CCAIntegration,reduction_in = "CCA")
 ```
 
 ```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
