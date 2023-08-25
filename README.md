@@ -18,6 +18,11 @@ For detailed documentation on running the pipeline view the [documentation](http
   - [2. Overview](#2-overview)
   - [GitHub Structure](#github-structure)
 
+### 1. Introduction
+
+### 2. Overview
+
+![Single cell RNA-Seq GEX pipeline](./resources/scRNA_GEX.svg) <sup>**Overview of Single Cell RNASeq Gene Expression Pipeline**</sup>
 
 ### GitHub Structure
 
