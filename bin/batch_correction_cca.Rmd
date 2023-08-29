@@ -2,7 +2,9 @@
 title: "Batch Correction: CCA"
 author: "Samantha Sevilla"
 date: "`r Sys.Date()`"
-output: html_document
+output: 
+  pdf_document: 
+    toc: yes
 editor_options: 
   chunk_output_type: console
 params:
@@ -24,7 +26,7 @@ species= params$species
 gid = params$gid
 mergedObj=params$mergedObj
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
-npcs=params$npcs
+npcs=as.numeric(params$npcs)
 
 Rlib_dir=params$Rlib_dir
 Rpkg_config=params$Rpkg_config
@@ -83,7 +85,7 @@ so[["RNA"]] <- as(so[["RNA"]], Class = "Assay5")
 so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 
 # integrate
-so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in=CCAIntegration,reduction_in = "CCA")
+so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in="CCAIntegration",reduction_in = "CCA")
 ```
 
 ```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}

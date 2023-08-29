@@ -127,9 +127,9 @@ RUN_SINGLEr_AVERAGE = function(obj,refFile,fineORmain){
   names(clustAnnot) = colnames(avg)
   names(clustAnnot) = gsub("SCT.","",names(clustAnnot))
   
-  obj$clustAnnot = clustAnnot[match(obj$seurat_clusters,names(clustAnnot))]
-  
-  return(obj$clustAnnot)
+  annotVect = clustAnnot[match(obj$seurat_clusters,names(clustAnnot))]
+  names(annotVect) = colnames(obj)
+  return(annotVect)
 }
 
 MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,reduction_in){
