@@ -8,7 +8,7 @@ SEURAT_CLUSTERING = function(so_in, ncps_in){
                verbose=F,
                npcs = 50)
   so <- FindNeighbors(so,dims = 1:ncps_in)
-  so <- FindClusters(so,dims = 1:ncps_in, print.output = 0, resolution = 0.8,algorithm = 3)
+  so <- FindClusters(so, print.output = 0, resolution = 0.8,algorithm = 3)
   so <- RunUMAP(so,dims = 1:ncps_in,n.components = 3)
   return(so)
 }
