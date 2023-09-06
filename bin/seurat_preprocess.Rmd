@@ -142,12 +142,12 @@ if(qc_filtering == "manual") {
 } else if(qc_filtering == "mads") {
   so_qc_select = subset(so_qc, 
   subset = nFeature_RNA > nFeature_out & 
-  nCount_RNA > nFeature_out & 
+  nCount_RNA > nCount_out & 
   percent.mt < mt_out)
 }
 
 # Process data
-so_processed = MAIN_PROCESS_SO(so_filt, species, ncps_val)
+so_processed = MAIN_PROCESS_SO(so_qc, species, ncps_val)
 
 # Label data
 so_labeled = MAIN_SINGLER(so_processed,species)
