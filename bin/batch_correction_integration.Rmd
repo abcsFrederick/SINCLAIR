@@ -1,23 +1,48 @@
 ---
 title: "Sample Integration Report"
-author: "CCBR Pipeliner"
+author: "CCBR"
 date: '`r format(Sys.time(), "%a %b %d %Y - %X")`'
 output:
   html_document: default
 params:
   gid: "text"
-  mergedObj: "mergedObject.rds"
-  integratedObj: "integratedObject.rds"
-  rpcaObj: "rpcaObject.rds"
-  harmonyGroupObj: "harmonyGroupObject.rds"
-  harmonySampleObj: "harmonySampleObject.rds"
-  resolution: "csvListResolutionString"
+  mergedObj: "/data/sevillas2/scRNA_test/seurat/merge/group1-group2_seurat_merged.rds"
+  CCAintegratedObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batchcorrection_cca.rds"
+  rpcaObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batchcorrection_rpca.rds"
+  harmonyGroupObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batchcorrection_harmony.rds"
+  resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   citeseq: "text"
   annot: "text"
   imageDir: "path/to/images"
+  Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8"
+  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/TechDev_scRNASeq_Dev2023_SC/conf/Rpack.config"
+  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/TechDev_scRNASeq_Dev2023_SC/bin/scRNA_functions.R"
+  testing: "Y"
 geometry:
   margins:0.25in
+editor_options: 
+  chunk_output_type: console
 ---
+
+```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
+# set up params
+#species= params$species
+gid = params$gid
+mergedObj=params$mergedObj
+CCAintegratedObj=params$CCAintegratedObj
+rpcaObj=params$rpcaObj
+harmonyGroupObj=params$harmonyGroupObj
+
+resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
+citeseq=params$citeseq
+annot=params$annot
+
+imageDir=params$imageDir
+
+Rlib_dir=params$Rlib_dir
+Rpkg_config=params$Rpkg_config
+scRNA_functions = params$scRNA_functions
+```
 
 ```{r, handle_pkg, message=FALSE}
 # set library dir, load this and remove any other dirs to avoid confusion
@@ -59,69 +84,77 @@ source(scRNA_functions)
 #tinytex::install_tinytex(force = TRUE)
 ```
 
-```{r libraryImport, message=FALSE, warning=FALSE}
-path = dirname(params$imageDir)
-require("knitr")
-knitr::opts_chunk$set(
-	echo = FALSE,
-	message = FALSE,
-	warning = FALSE
-)
-knitr::opts_knit$set(
-  root.dir=path
-)
-
-.libPaths("/data/CCBR_Pipeliner/db/PipeDB/")
-.libPaths("/data/CCBR_Pipeliner/db/PipeDB/scrna4.2Rlibs")
-
-#Visualization libraries
-library(magick)
-library(ggplot2)
-library(cowplot)
-library(scales)
-library(RColorBrewer)
-library(ggpubr)
-
-#Bioconductor dependencies
-library(BiocGenerics)
-library(Biobase)
-library(farver)
-library(S4Vectors)
-library(AnnotationDbi)
-# library(modes)
-library(dplyr)
-library(Matrix)
-library(reshape2)
-library(tools)
-library(stringr)
-
-#statistics libraries
-# library(Routliers)
-library(VennDiagram)
-library(cluster)
-library(DT)
-
-#scRNASeq libraries
-library(Seurat)
-library(scRNAseq)
-library(SingleCellExperiment)
-library(SingleR)
-library(scater)
-library(DoubletFinder)
-# library(URD)
-library(celldex)
+```{r removelibraryImport, message=FALSE, warning=FALSE}
+# path = dirname(params$imageDir)
+# require("knitr")
+# knitr::opts_chunk$set(
+# 	echo = FALSE,
+# 	message = FALSE,
+# 	warning = FALSE
+# )
+# knitr::opts_knit$set(
+#   root.dir=path
+# )
+# 
+# .libPaths("/data/CCBR_Pipeliner/db/PipeDB/")
+# .libPaths("/data/CCBR_Pipeliner/db/PipeDB/scrna4.2Rlibs")
+# 
+# #Visualization libraries
+# library(magick)
+# library(ggplot2)
+# library(cowplot)
+# library(scales)
+# library(RColorBrewer)
+# library(ggpubr)
+# 
+# #Bioconductor dependencies
+# library(BiocGenerics)
+# library(Biobase)
+# library(farver)
+# library(S4Vectors)
+# library(AnnotationDbi)
+# library(dplyr)
+# library(Matrix)
+# library(reshape2)
+# library(tools)
+# library(stringr)
+# 
+# #statistics libraries
+# library(VennDiagram)
+# library(cluster)
+# library(DT)
+# 
+# #scRNASeq libraries
+# library(Seurat)
+# library(scRNAseq)
+# library(SingleCellExperiment)
+# library(SingleR)
+# library(scater)
+# library(DoubletFinder)
+# library(celldex)
 ```
 
-```{r dataLoad, message=FALSE, warning=FALSE}
-# set up params
-gid = params$gid
-mergedObj=params$mergedObj
-integratedObj=params$integratedObj
-rpcaObj=params$rpcaObj
-harmonyGroup=params$harmonyGroupObj
-harmonySample=params$harmonySampleObj
+```{r, processing, message=FALSE}
+# read in merged objects
+so_merged = readRDS(mergedObj)
+so_rpca = readRDS(rpcaObj)
+so_harmony = readRDS(harmonyObj)
+so_integrated = readRDS(CCAintegratedObj)
 
-resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
+# identify object list
+objList = c("merged","CCAintegrated","harmony","rpca")
+```
+
+```{r removedataLoad, message=FALSE, warning=FALSE}
+# set up params
+# gid = params$gid
+# mergedObj=params$mergedObj
+# integratedObj=params$integratedObj
+# rpcaObj=params$rpcaObj
+# harmonyGroup=params$harmonyGroupObj
+# harmonySample=params$harmonySampleObj
+# 
+# resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
 # Rlib_dir=params$Rlib_dir
 # Rpkg_config=params$Rpkg_config
 # scRNA_functions = params$scRNA_functions
@@ -129,17 +162,17 @@ resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
 
 #"contrasts" may be the same as "group"
 #citeseq: "text"
-  annot: "text"
+  # annot: "text"
 
 # read in SO
-so_merged = readRDS(mergedObj)
-so_rpca = readRDS(rpcaObj)
-so_harmonyGroup = readRDS(harmonyGroup)
-so_harmonySample = readRDS(harmonySample)
-so_integrated = readRDS(integratedObj)
-
-# identify object list
-objList = c("merged","integrated","harmonyGroup","harmonySample","rpca")
+# so_merged = readRDS(mergedObj)
+# so_rpca = readRDS(rpcaObj)
+# so_harmonyGroup = readRDS(harmonyGroup)
+# so_harmonySample = readRDS(harmonySample)
+# so_integrated = readRDS(ccaintegratedObj)
+# 
+# # identify object list
+# objList = c("merged","CCAintegrated","harmonyGroup","harmonySample","rpca")
 ```
 
 ### Batch correction selection
@@ -156,7 +189,9 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("s",i),value=sampleImage)
 }
-ggarrange(s1,s2,s3,s4,s5,ncol=2,nrow=3,common.legend=T,legend="bottom")
+ggarrange(s1,s2,s3,s4,
+          ncol=2,nrow=3,
+          common.legend=T,legend="bottom")
 ```
 
 ```{r groupBatchCorrection, fig.width=15, fig.height=15}
@@ -169,7 +204,9 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(override.aes = list(size=3)))
   assign(x=paste0("g",i),value=sampleImage)
 }
-ggarrange(g1,g2,g3,g4,g5,ncol=2,nrow=3,common.legend=T,legend="bottom")
+ggarrange(g1,g2,g3,g4,
+          ncol=2,nrow=3,
+          common.legend=T,legend="bottom")
 ```
 
 #### Cell type annotations before and after batch corrrection
@@ -183,7 +220,9 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("ct",i),value=sampleImage)
 }
-ggarrange(ct1,ct2,ct3,ct4,ct5,ncol=2,nrow=3,common.legend=T,legend="bottom")
+ggarrange(ct1,ct2,ct3,ct4,
+          ncol=2,nrow=3,
+          common.legend=T,legend="bottom")
 
 datatable(as.data.frame.matrix(cbind(table(merged$annot,
                                            merged$Sample),table(merged$annot))),
@@ -194,7 +233,7 @@ datatable(as.data.frame.matrix(cbind(table(merged$annot,
 
 ```{r silhouetteImages,  echo=FALSE, include=FALSE}
 # create matrix
-resSil_merged =matrix(ncol=2,nrow=length(resString))
+resSil_merged=matrix(ncol=2,nrow=length(resString))
 resSil_merged[]<-0
 resSil_integrated=resSil_merged
 resSil_rpca=resSil_merged
