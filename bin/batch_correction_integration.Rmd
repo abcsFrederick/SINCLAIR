@@ -9,7 +9,7 @@ params:
   mergedObj: "/data/sevillas2/scRNA_test/seurat/merge/group1-group2_seurat_merged.rds"
   CCAintegratedObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batchcorrection_cca.rds"
   rpcaObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batchcorrection_rpca.rds"
-  harmonyGroupObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batchcorrection_harmony.rds"
+  harmonyObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batchcorrection_harmony.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   citeseq: "text"
   annot: "text"
@@ -31,7 +31,7 @@ gid = params$gid
 mergedObj=params$mergedObj
 CCAintegratedObj=params$CCAintegratedObj
 rpcaObj=params$rpcaObj
-harmonyGroupObj=params$harmonyGroupObj
+harmonyObj=params$harmonyObj
 
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
 citeseq=params$citeseq
@@ -142,7 +142,7 @@ so_harmony = readRDS(harmonyObj)
 so_integrated = readRDS(CCAintegratedObj)
 
 # identify object list
-objList = c("merged","CCAintegrated","harmony","rpca")
+objList = c("rpca","merged","CCAintegrated","harmony")
 ```
 
 ```{r removedataLoad, message=FALSE, warning=FALSE}
@@ -179,6 +179,10 @@ objList = c("merged","CCAintegrated","harmony","rpca")
 
 #### Samples before and after batch correction:
 ```{r sampleBatchCorrection, fig.width=15, fig.height=15}
+# identify object list
+objList = c("rpca","integrated","harmony")
+
+# plot 
 for(i in 1:length(objList)){
   obj = OBJECT_SELECT(objList[i])
   title = NAME_SELECT(objList[i])
@@ -189,8 +193,8 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("s",i),value=sampleImage)
 }
-ggarrange(s1,s2,s3,s4,
-          ncol=2,nrow=3,
+ggarrange(s1,s2,s3,
+          ncol=2,nrow=2,
           common.legend=T,legend="bottom")
 ```
 
