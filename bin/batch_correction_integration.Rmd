@@ -144,37 +144,6 @@ so_integrated = readRDS(CCAintegratedObj)
 # identify object list
 objList = c("rpca","merged","CCAintegrated","harmony")
 ```
-
-```{r removedataLoad, message=FALSE, warning=FALSE}
-# set up params
-# gid = params$gid
-# mergedObj=params$mergedObj
-# integratedObj=params$integratedObj
-# rpcaObj=params$rpcaObj
-# harmonyGroup=params$harmonyGroupObj
-# harmonySample=params$harmonySampleObj
-# 
-# resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
-# Rlib_dir=params$Rlib_dir
-# Rpkg_config=params$Rpkg_config
-# scRNA_functions = params$scRNA_functions
-# 
-
-#"contrasts" may be the same as "group"
-#citeseq: "text"
-  # annot: "text"
-
-# read in SO
-# so_merged = readRDS(mergedObj)
-# so_rpca = readRDS(rpcaObj)
-# so_harmonyGroup = readRDS(harmonyGroup)
-# so_harmonySample = readRDS(harmonySample)
-# so_integrated = readRDS(ccaintegratedObj)
-# 
-# # identify object list
-# objList = c("merged","CCAintegrated","harmonyGroup","harmonySample","rpca")
-```
-
 ### Batch correction selection
 
 #### Samples before and after batch correction:
