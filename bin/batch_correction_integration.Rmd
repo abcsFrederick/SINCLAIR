@@ -208,8 +208,8 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(override.aes = list(size=3)))
   assign(x=paste0("g",i),value=sampleImage)
 }
-ggarrange(g1,g2,g3,g4,
-          ncol=2,nrow=3,
+ggarrange(g1,g2,g3,
+          ncol=2,nrow=2,
           common.legend=T,legend="bottom")
 ```
 
@@ -224,8 +224,8 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("ct",i),value=sampleImage)
 }
-ggarrange(ct1,ct2,ct3,ct4,
-          ncol=2,nrow=3,
+ggarrange(ct1,ct2,ct3,
+          ncol=2,nrow=2,
           common.legend=T,legend="bottom")
 
 datatable(as.data.frame.matrix(cbind(table(merged$annot,
