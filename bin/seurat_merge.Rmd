@@ -7,7 +7,7 @@ editor_options:
   chunk_output_type: console
 params:
   species: "hg19"
-  rdsFiles: "/data/sevillas2/scRNA_test/seurat/preprocess/sample2_seurat_object.rds,/data/sevillas2/scRNA_test/seurat/preprocess/sample4_seurat_object.rds"
+  rdsFiles: "/data/sevillas2/scRNA_test/seurat/preprocess/sample2_seurat_preprocess.rds /data/sevillas2/scRNA_test/seurat/preprocess/sample4_seurat_preprocess.rds"
   gid: "group1-group2"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
@@ -87,6 +87,7 @@ i=1
 for (p in readObj){
   combinedObj.list[[p]] <- eval(parse(text = readObj[[i]])) 
   combinedObj.list[[p]]$Sample = names(combinedObj.list)[i]
+  combinedObj.list[[p]]$Group = gid
   i <- i + 1
  }
 ```
