@@ -7,11 +7,11 @@ editor_options:
   chunk_output_type: console
 params:
   species: "hg19"
-  rdsFiles: "~/../../Volumes/data/scRNA_test/seurat/preprocess/sample2_seurat_object.rds,~/../../Volumes/data/scRNA_test/seurat/preprocess/sample4_seurat_object.rds"
+  rdsFiles: "/data/sevillas2/scRNA_test/seurat/preprocess/sample2_seurat_object.rds,/data/sevillas2/scRNA_test/seurat/preprocess/sample4_seurat_object.rds"
   gid: "group1-group2"
-  Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
-  Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
-  scRNA_functions: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/bin/scRNA_functions.R"
+  Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
+  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
+  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/bin/scRNA_functions.R"
   testing: "Y"
 ---
 
