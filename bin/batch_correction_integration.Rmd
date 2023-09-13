@@ -247,7 +247,7 @@ resSil_harmonySample=resSil_merged
 for(i in 1:length(objList)){
   obj = OBJECT_SELECT(objList[i])
 
-  #Initialize silhouette scores matrix
+  # Initialize silhouette scores matrix
   resSil_mat = matrix(ncol=2,nrow=length(resolution))
   resSil_mat[,1]<- as.numeric(resolution)
   resSil_mat[,2]<-0
@@ -255,123 +255,33 @@ for(i in 1:length(objList)){
   # TBD
   k=1
 
-  #Skip all calculations for objects greater than 90k cells
-  if(ncol(obj)>90000){
-    for (res in resolution){
-      fileName = paste0("silhouetteResolution_",res,"_",objList[i],".pdf")
-      pdf(fileName)
-      plot.new()
-      text(0.5,0.5,"No silhouette available for datasets with more than 90,000 cells")
-      dev.off()
-    }
-  } else{
-    print("WILLDO")
-  }
-  #   if(length(grep("^harmony",objList[k]))){
-  #     dist = dist(Embeddings(obj,reduction='harmony')[,1:30])
-  #   } else{
-  #     dist = dist(Embeddings(obj,reduction='pca')[,1:30])
-  #   }
-  # 
-  #   for (res in resolution){
-  #     #convert resolution to numeric value
-  #     resMod=as.numeric(res)
-  #     #SLM name ident determination, based on integration method
-  #     slm_name = grep("^SLM",colnames(obj@meta.data),value=T)
-  #     if (objList[k] %in% c("integrated","rpca")){
-  #       slm_name=gsub("\\..*","",grep("int",slm_name,value=T)[1])
-  #     }else{
-  #       slm_name=gsub("\\..*","",grep("SCT",slm_name,value=T)[1])
-  #     }
-  #     #create file for resolution and integration method
-  #     fileName = paste0(params$imageDir,"/silhouetteResolution_",res,"_",objList[k],".pdf")
-  #     pdf(fileName)
-  # 
-  #     slm_name = paste0(slm_name,".",resMod)
-  # 
-  #     if ((slm_name %in% colnames(obj@meta.data))==FALSE){
-  #       obj = FindClusters(obj, algorithm =3, resolution = resMod)
-  #       obj[[slm_name]] = Idents(obj)
-  #       rdsFile = params[[grep(objList[k],names(params),value=T)]]
-  #       saveRDS(obj,file=rdsFile)
-  #       message(paste(objList[k],
-  #                     "object has been overwritten to include clustering at resolution",
-  #                     res))
-  #     }
-  # 
-  #     #Calculate silhouette scores for resolutions with more than one cluster
-  #     Idents(obj)=slm_name
-  #     clusters=Idents(obj)
-  # 
-  #     if(length(unique(clusters))==1){ #edge case of failed sample, only one cluster
-  #       plot.new()
-  #       text(0.5,0.5,"No silhouette available for single cluster samples")
-  #       dev.off()
-  #     } else{
-  #       sil=silhouette(as.numeric(as.character(clusters)),dist=dist)
-  #       palette=alpha(colour=hue_pal()(length(unique(Idents(obj)))),alpha=0.7)
-  # 
-  #       #Export silhouette plot to file
-  #       print(plot(sil, col=palette[as.factor(clusters[order(as.numeric(as.character(clusters)),
-  #                                                            decreasing=F)])],
-  #       main=paste0("Silhouette plot of clustering resolution ", res), lty=2,
-  #       sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4))))
-  #       abline(v=mean(sil[,3]), col="red4", lty=2)
-  #       dev.off()
-  # 
-  #       #Store resolution vs average silhouette score
-  #       resSil_mat[k,2] = format(round(mean(sil[,3]), 4), nsmall = 4)
-  #     }
-  #     k=k+1
-  #   }
-  # }
-  # #Convert character matrix to numeric matrix and assign to appropriate variable
-  # resSil_mat = matrix(as.numeric(resSil_mat),ncol=ncol(resSil_mat))
-  # assign(x=paste0("resSil_",objList[k]),value=resSil_mat)
-}
-
-
-# Initial loop through integration methods
-for(k in 1:length(objList)){
-  obj = OBJECT_SELECT(objList[k])
-
-  i=1
-  #Initialize silhouette  scores matrix
-  resSil_mat = matrix(ncol=2,nrow=length(resolution))
-  resSil_mat[,1]<- as.numeric(resolution)
-  resSil_mat[,2]<-0
-
-  #Skip all calculations for objects greater than 90k cells
-  if(ncol(obj)>90000){
-    for (res in resolution){
-      fileName = paste0(params$imageDir,"/silhouetteResolution_",res,"_",objList[k],".pdf")
-      pdf(fileName)
-      plot.new()
-      text(0.5,0.5,"No silhouette available for datasets with more than 90,000 cells")
-      dev.off()
-    }
-  } else{
-    if(length(grep("^harmony",objList[k]))){
+  # Skip all calculations for objects greater than 90k cells
+  if(ncol(obj)<90000){
+    
+    # if batch correction is harmony, use harmony reduction
+    # otherwise use PCA
+    if(length(grep("^harmony",objList[i]))){
       dist = dist(Embeddings(obj,reduction='harmony')[,1:30])
     } else{
       dist = dist(Embeddings(obj,reduction='pca')[,1:30])
     }
-
+    
+    # iterate each resolution value
     for (res in resolution){
       #convert resolution to numeric value
       resMod=as.numeric(res)
-      #SLM name ident determination, based on integration method
+      
+      #SLM name identity determination, based on integration method
       slm_name = grep("^SLM",colnames(obj@meta.data),value=T)
-      if (objList[k] %in% c("integrated","rpca")){
+      if (objList[i] %in% c("integrated","rpca")){
         slm_name=gsub("\\..*","",grep("int",slm_name,value=T)[1])
-      }else{
+      } else{
         slm_name=gsub("\\..*","",grep("SCT",slm_name,value=T)[1])
       }
-      #create file for resolution and integration method
-      fileName = paste0(params$imageDir,"/silhouetteResolution_",res,"_",objList[k],".pdf")
+      
+      # create file for resolution and integration method
+      fileName = paste0("silhouetteResolution_",res,"_",objList[[i]],".pdf")
       pdf(fileName)
-
-      slm_name = paste0(slm_name,".",resMod)
 
       if ((slm_name %in% colnames(obj@meta.data))==FALSE){
         obj = FindClusters(obj, algorithm =3, resolution = resMod)
@@ -407,6 +317,14 @@ for(k in 1:length(objList)){
         resSil_mat[i,2] = format(round(mean(sil[,3]), 4), nsmall = 4)
       }
       i=i+1
+    }
+  } else{
+    for (res in resolution){
+      fileName = paste0("silhouetteResolution_",res,"_",objList[i],".pdf")
+      pdf(fileName)
+      plot.new()
+      text(0.5,0.5,"No silhouette available for datasets with more than 90,000 cells")
+      dev.off()
     }
   }
   #Convert character matrix to numeric matrix and assign to appropriate variable
