@@ -4,6 +4,7 @@ process SEURAT_MERGE {
 
     input:
     tuple val(gid), path(rdsFiles)
+    path(samplesheet)
     val(species)
     val(Rlib_dir)
     path(Rpkg_config)
@@ -21,6 +22,7 @@ process SEURAT_MERGE {
         params=list(species="$species",
             rdsFiles="$rdsFiles",
             gid="$gid",
+            samplesheet="$samplesheet",
             Rlib_dir="$Rlib_dir",
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",

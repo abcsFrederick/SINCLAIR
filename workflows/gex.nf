@@ -86,6 +86,7 @@ workflow GEX_EXQC {
 
         SEURAT_MERGE (
             ch_groups,
+            ch_input,
             params.species,
             params.Rlib_dir,
             params.Rpkg,

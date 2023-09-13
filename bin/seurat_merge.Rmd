@@ -7,6 +7,7 @@ editor_options:
   chunk_output_type: console
 params:
   species: "hg19"
+  samplesheet: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/assets/input_manifest_cellranger.csv"
   rdsFiles: "/data/sevillas2/scRNA_test/seurat/preprocess/sample2_seurat_preprocess.rds /data/sevillas2/scRNA_test/seurat/preprocess/sample4_seurat_preprocess.rds"
   gid: "group1-group2"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
@@ -20,6 +21,7 @@ params:
 species= params$species
 rds_files=strsplit(params$rdsFiles," ")[[1]]
 gid = params$gid
+samplesheet = params$samplesheet
 
 scRNA_functions = params$scRNA_functions
 Rlib_dir=params$Rlib_dir
@@ -68,9 +70,13 @@ source(scRNA_functions)
 options(future.globals.maxSize = 1e12)
 ```
 
-```{r, readfiles, message=FALSE}
+```{r, processing, message=FALSE}
 # print group info
 print(paste0("This merged object includes groups: ",gid))
+
+# read in samplesheet
+## needed to assign correct groupID
+samplesheet_df=read.csv(samplesheet)
 
 # read in individuals RDS files
 readObj = list()
@@ -81,13 +87,13 @@ for (obj in rds_files) {
   readObj = append(readObj,paste0("S_",sampleID))  
 }
 
-# compine te list
+# combine list
 combinedObj.list=list()
 i=1
 for (p in readObj){
   combinedObj.list[[p]] <- eval(parse(text = readObj[[i]])) 
   combinedObj.list[[p]]$Sample = names(combinedObj.list)[i]
-  combinedObj.list[[p]]$Group = gid
+  combinedObj.list[[p]]$Group = subset(samplesheet_df,uniqueID==strsplit(names(combinedObj.list)[1],"_")[[1]][2])$groupID
   i <- i + 1
  }
 ```
