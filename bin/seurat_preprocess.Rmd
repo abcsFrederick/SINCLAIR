@@ -8,7 +8,7 @@ editor_options:
 params:
   species: "hg19"
   sampleid: "WB_Lysis_1"
-  h5: "~/../../Volumes/data/scRNA_test/cellranger_counts/sample1/outs/filtered_feature_bc_matrix.h5"
+  h5: "/data/sevillas2/scRNA_test/cellranger_counts/sample1/outs/filtered_feature_bc_matrix.h5"
   qc_filtering: "manual"
   nCount_RNA_max: 500000
   nCount_RNA_min: 1000
@@ -17,9 +17,9 @@ params:
   percent_mt_max: 10
   percent_mt_min: 0
   run_doublet_finder: "N"
-  Rlib_dir: "~/../../Volumes/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA"
-  Rpkg_config: "~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/conf/Rpack.config"
-  scRNA_functions: "scRNA_functions.R"
+  Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
+  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
+  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/bin/scRNA_functions.R"
   testing: "Y"
 ---
 
