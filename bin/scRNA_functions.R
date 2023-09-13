@@ -175,8 +175,7 @@ OBJECT_SELECT = function(id){
     "merged"=so_merged,
     "integrated"=so_integrated,
     "rpca"=so_rpca,
-    "harmonyGroup"=so_harmonyGroup,
-    "harmonySample"=so_harmonySample
+    "harmony"=so_harmony
   )
   return (obj)
 }
@@ -186,8 +185,7 @@ NAME_SELECT = function(id){
     "merged"="Merged",
     "integrated"="Integrated CCA",
     "rpca"="RPCA",
-    "harmonyGroup"="Harmony (Group)",
-    "harmonySample"="Harmony (Sample)"
+    "harmony"="Harmony (Sample)"
   )
   return (obj)
 }
