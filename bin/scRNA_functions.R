@@ -182,7 +182,7 @@ OBJECT_SELECT = function(id){
 NAME_SELECT = function(id){
   obj = switch(
     id,
-    "merged"="Merged",
+    "merged"="Before Batch Correction",
     "integrated"="Integrated CCA",
     "rpca"="RPCA",
     "harmony"="Harmony (Sample)"
