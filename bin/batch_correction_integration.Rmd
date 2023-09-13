@@ -144,9 +144,12 @@ so_integrated = readRDS(CCAintegratedObj)
 # identify object list
 objList = c("rpca","merged","CCAintegrated","harmony")
 ```
-### Batch correction selection
 
-#### Samples before and after batch correction:
+## **Batch correction selection**
+
+### DimPlots
+
+#### Samples {.tabset}
 ```{r sampleBatchCorrection, fig.width=15, fig.height=15}
 # identify object list
 objList = c("rpca","integrated","harmony")
@@ -167,6 +170,7 @@ ggarrange(s1,s2,s3,
           common.legend=T,legend="bottom")
 ```
 
+#### Groups {.tabset}
 ```{r groupBatchCorrection, fig.width=15, fig.height=15}
 for(i in 1:length(objList)){
   obj = OBJECT_SELECT(objList[i])
@@ -182,7 +186,7 @@ ggarrange(g1,g2,g3,
           common.legend=T,legend="bottom")
 ```
 
-#### Cell type annotations before and after batch corrrection
+#### Cell type annotations {.tabset}
 ```{r annotationBatchCorrection, fig.width=15, fig.height=15}
 for(i in 1:length(objList)){
   obj = OBJECT_SELECT(objList[i])
@@ -202,7 +206,7 @@ datatable(as.data.frame.matrix(cbind(table(merged$annot,
           colnames=c(unique(merged$Sample),"Total"))
 ```
 
-### Clustering and silhouette scores before and after batch correction {.tabset}
+### Silhouette scores
 
 ```{r silhouetteImages,  echo=FALSE, include=FALSE}
 # create matrix
@@ -299,7 +303,10 @@ for(k in 1:length(objList)){
 
 ```
 
-#### Clustering without batch correction
+### Clustering
+
+#### Merged {.tabset}
+
 ```{r clusterResultsMerged,fig.width=15, fig.height=9, echo=FALSE, results="asis"}
 for (res in resolution){
   resMod = as.numeric(res)
@@ -327,7 +334,7 @@ plot(resSil_merged,lty=3,pch=1,type="b",
 cat("  \n")
 ```
 
-#### Clustering after batch correction with CCA Integration
+#### CCA Integration {.tabset}
 ```{r clusterIntegrated, fig.width=15, fig.height=9, echo=FALSE, results="asis"}
 for (res in resolution){
   resMod = as.numeric(res)
@@ -354,38 +361,7 @@ plot(resSil_integrated,lty=3,pch=1,type="b",lwd=2,cex=3,
 cat("  \n")
 ```
 
-
-#### Clustering after batch correction with Harmony (by group ID)
-```{r clusterHarmonyGroup, fig.width=15, fig.height=9, echo=FALSE, results="asis"}
-for (res in resolution){
-  resMod = as.numeric(res)
-  fileName = paste0(params$imageDir,"/silhouetteResolution_",res,"_harmonyGroup.pdf")
-  cat("  \n##### Clustering at Resolution ", res," \n")
-  clusterPlot = DimPlot(harmonyGroup, group.by=paste0("SLM_SCT_snn_res.",resMod),
-                        label=T,repel=T,
-    order=sort(as.numeric(as.character(unique(harmonyGroup[[paste0("SLM_SCT_snn_res.",resMod)]][,1]))),
-               decreasing=T))+
-    ggtitle(paste("Harmony (group) clusters at resolution",res))
-  p1 = ggdraw(clusterPlot)
-  p2 = ggdraw()+draw_image(fileName)
-  print(plot_grid(p1,p2))
-  cat("  \n")
-}
-
-cat("  \n##### Average silhouette scores vs clustering resolution \n")
-plot(resSil_harmonyGroup,lty=3,pch=1,type="b",lwd=2,cex=3,
-  main="Average silhouette score vs clustering resolution",
-  xlab = "Resolution", ylab="Average Silhouette Score",
-  xlim=c(min(resSil_harmonyGroup[,1])-0.1,max(resSil_harmonyGroup[,1])+0.1),
-  ylim=c(round(min(resSil_harmonyGroup[,2])-0.005,digits=3),
-         round(max(resSil_harmonyGroup[,2])+0.005,
-               digits=3)))
-
-cat("  \n")
-```
-
-
-#### Clustering after batch correction with Harmony (by sample ID)
+#### Harmony (by sample ID) {.tabset}
 ```{r clusterHarmonySample, fig.width=15, fig.height=9, echo=FALSE, results="asis"}
 for (res in resolution){
   resMod = as.numeric(res)
@@ -416,7 +392,7 @@ plot(resSil_harmonySample,lty=3,pch=1,type="b",
 cat("  \n")
 ```
 
-#### Clustering after batch correction with Reciprocal PCA
+#### rPCA {.tabset}
 ```{r clusterRPCA, fig.width=15, fig.height=9, echo=FALSE, results="asis"}
 for (res in resolution){
   resMod = as.numeric(res)
