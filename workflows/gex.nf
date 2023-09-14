@@ -130,6 +130,18 @@ workflow GEX_EXQC {
             params.script_functions
         )
 
+        // Run batch corrections
+        // BATCH_CORRECT_CCA (
+        //     SEURAT_MERGE.out.rds,
+        //     params.species,
+        //     params.npcs,
+        //     params.resolution_list,
+        //     params.Rlib_dir,
+        //     params.Rpkg,
+        //     params.script_scvi,
+        //     params.script_functions
+        // )
+
         // Integrate batch corrections
         BATCH_CORRECT_INTEGRATION (
             BATCH_CORRECT_HARMONY.out.rds,
@@ -144,17 +156,6 @@ workflow GEX_EXQC {
             params.script_functions
         )
 
-        // // Placeholder
-        // PLACEHOLDER_SCVI (
-        //     SEURAT_MERGE.out.rds,
-        //     params.species,
-        //     params.npcs,
-        //     params.resolution_list,
-        //     params.Rlib_dir,
-        //     params.Rpkg,
-        //     params.script_scvi,
-        //     params.script_functions
-        // )
 
     emit:
         harmony_rds         = BATCH_CORRECT_HARMONY.out.rds
