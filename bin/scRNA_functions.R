@@ -132,13 +132,22 @@ RUN_SINGLEr_AVERAGE = function(obj,refFile,fineORmain){
   return(annotVect)
 }
 
-MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,reduction_in){
+MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,reduction_in,conda_path=""){
    # transform and runPCA
   so_transform <- SCTransform(so_in)
   so_pca <- RunPCA(so_transform)
   
-  # integrate
-  so_integrate <- IntegrateLayers(object = so_pca, method = get(method_in), normalization.method = "SCT", verbose = F,new.reduction = reduction_in)
+  # integration method for SCVI vs integration for
+  # harmony,rpca,cca
+  if(get(method_in)=="scvi"){
+    so_integrate <- IntegrateLayers(object = so_pca, method = scVIIntegration,
+                                    new.reduction = "integrated.scvi",
+                                    conda_env = conda_path, verbose = FALSE)
+  } else{
+    so_integrate <- IntegrateLayers(object = so_pca, method = get(method_in), 
+                                    normalization.method = "SCT", 
+                                    verbose = F,new.reduction = reduction_in)
+  }
   so <- RunPCA(object = so_integrate, npcs = npcs, verbose = FALSE)
   so <- RunUMAP(so, reduction = reduction_in, dims = 1:npcs)
   so <- FindNeighbors(so, reduction = reduction_in, dims = 1:npcs)
@@ -167,7 +176,7 @@ MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,re
 }
 
 ##################################################################
-#
+# Integration Report Functions
 ##################################################################
 OBJECT_SELECT = function(id){
   obj = switch(
