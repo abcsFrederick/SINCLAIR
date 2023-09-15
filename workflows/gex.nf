@@ -131,22 +131,25 @@ workflow GEX_EXQC {
         )
 
         // Run batch corrections
-        // BATCH_CORRECT_CCA (
-        //     SEURAT_MERGE.out.rds,
-        //     params.species,
-        //     params.npcs,
-        //     params.resolution_list,
-        //     params.Rlib_dir,
-        //     params.Rpkg,
-        //     params.script_scvi,
-        //     params.script_functions
-        // )
+        BATCH_CORRECT_SCVI (
+            SEURAT_MERGE.out.rds,
+            params.species,
+            params.npcs,
+            params.resolution_list,
+            params.conda_path,
+            params.python_path,
+            params.Rlib_dir,
+            params.Rpkg,
+            params.script_scvi,
+            params.script_functions
+        )
 
         // Integrate batch corrections
         BATCH_CORRECT_INTEGRATION (
             BATCH_CORRECT_HARMONY.out.rds,
             BATCH_CORRECT_RPCA.out.rds,
             BATCH_CORRECT_CCA.out.rds,
+            BATCH_CORRECT_SCVI.out.rds,
             params.species,
             params.npcs,
             params.resolution_list,

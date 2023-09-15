@@ -1,4 +1,29 @@
 ##################################################################
+# Handle packages
+##################################################################
+scRNA_handle_packages<-function(pkg_df){
+  for (rowid in rownames(pkg_df)){
+    pkg=pkg_df[rowid,"package"]
+    source=pkg_df[rowid,"source"]
+    version=pkg_df[rowid,"version"]
+    gh_name=pkg_df[rowid,"gh_name"]
+    
+    need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
+    if (length(need_install)!=0){
+      print(paste0("Installing: ", pkg))
+      if (source=="bc") BiocManager::install(pkg)
+      if (source=="cr") install.packages(pkg,version=version,repos = "http://cran.us.r-project.org",
+                                         local = FALSE)
+      if (source=="gh") remotes::install_github(gh_name,version=version,local = FALSE)
+    }
+    
+    print(paste0("Loading: ",pkg))
+    invisible(lapply(pkg, library, character.only = TRUE))
+  }
+  
+}
+
+##################################################################
 # Seurat Pre-processing
 ##################################################################
 SEURAT_CLUSTERING = function(so_in, ncps_in){
@@ -132,30 +157,39 @@ RUN_SINGLEr_AVERAGE = function(obj,refFile,fineORmain){
   return(annotVect)
 }
 
-MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,reduction_in,conda_path=""){
-   # transform and runPCA
-  so_transform <- SCTransform(so_in)
-  so_pca <- RunPCA(so_transform)
-  
+MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,reduction_in,conda_env=""){
+
   # integration method for SCVI vs integration for
   # harmony,rpca,cca
-  if(get(method_in)=="scvi"){
+  if(method_in=="scVIIntegration"){
+    print("--running SVII integration")
+    
+    so_transform <- NormalizeData(so_in)
+    so_variable <- FindVariableFeatures(so_transform)
+    so_scaled <- ScaleData(so_variable)
+    so_pca <- RunPCA(so_scaled)
+    
     so_integrate <- IntegrateLayers(object = so_pca, method = scVIIntegration,
                                     new.reduction = "integrated.scvi",
-                                    conda_env = conda_path, verbose = FALSE)
+                                    conda_env = conda_path, dims = 1:npcs)
   } else{
+    print("--running SCT")
+
+    # transform and runPCA
+    so_transform <- SCTransform(so_in)
+    so_pca <- RunPCA(so_transform)
+    
     so_integrate <- IntegrateLayers(object = so_pca, method = get(method_in), 
                                     normalization.method = "SCT", 
                                     verbose = F,new.reduction = reduction_in)
   }
-  so <- RunPCA(object = so_integrate, npcs = npcs, verbose = FALSE)
-  so <- RunUMAP(so, reduction = reduction_in, dims = 1:npcs)
-  so <- FindNeighbors(so, reduction = reduction_in, dims = 1:npcs)
-  
+  # run neighbors, clusters, umap
+  so <- FindNeighbors(so_integrate, reduction = reduction_in, dims = 1:npcs)
   for (res in resolution_list){
     so <- FindClusters(so,dims = 1:npcs, resolution = res, algorithm = 3)
   }
-
+  so <- RunUMAP(so, reduction = reduction_in, dims = 1:npcs)
+  
   # relabel
   if(species == "hg38" || species == "hg19"){
     so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so,celldex::HumanPrimaryCellAtlasData(),"label.main")
