@@ -33,6 +33,9 @@ scRNA_functions = params$scRNA_functions
 ```
 
 ```{r, handle_pkg, message=FALSE}
+# source functions
+source(scRNA_functions)
+
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
 ## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
@@ -46,27 +49,7 @@ pkg_df=subset(pkg_df,rpca=="Y")
 pkg_df
 
 # for each package check installation, if present then load library
-for (rowid in rownames(pkg_df)){
-  pkg=pkg_df[rowid,"package"]
-  source=pkg_df[rowid,"source"]
-  version=pkg_df[rowid,"version"]
-  gh_name=pkg_df[rowid,"gh_name"]
-
-  need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
-  if (length(need_install)!=0){
-    print(paste0("Installing: ", pkg))
-    if (source=="bc") BiocManager::install(pkg)
-    if (source=="cr") install.packages(pkg,version=version,repos = "http://cran.us.r-project.org",
-                                       local = FALSE)
-    if (source=="gh") remotes::install_github(gh_name,version=version,local = FALSE)
-  }
-
-  print(paste0("Loading: ",pkg))
-  invisible(lapply(pkg, library, character.only = TRUE))
-}
-
-# source functions
-source(scRNA_functions)
+scRNA_handle_packages(pkg_df)
 
 # additional options
 #tinytex::install_tinytex(force = TRUE)
