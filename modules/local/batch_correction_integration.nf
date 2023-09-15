@@ -11,7 +11,7 @@ process BATCH_CORRECT_INTEGRATION {
     val(npcs)
     val(resolution_list)
     path(Rlib_dir)
-    path(Rpkg)
+    path(Rpkg_config)
     path(rmd)
     path(scRNA_functions)
 
