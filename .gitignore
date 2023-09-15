@@ -46,6 +46,7 @@ test.sh
 # R files
 */.Rhistory
 .Rproj.user
+.Rhistory
 
 **/.koparde*
 test_dir/**
