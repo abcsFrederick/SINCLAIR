@@ -89,6 +89,6 @@ so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in="CCAI
 ```
 
 ```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
-fpath=paste0(gid,"_batchcorrection_cca.rds")
+fpath=paste0(gid,"_batch_correction_cca.rds")
 saveRDS(so_corrected,fpath)
 ```

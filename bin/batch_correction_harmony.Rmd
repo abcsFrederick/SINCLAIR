@@ -87,6 +87,6 @@ so_corrected <- MAIN_BATCH_CORRECTION(so,npcs,species,resolution,method_in="Harm
 ```
 
 ```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
-fpath=paste0(gid,"_batchcorrection_harmony.rds")
+fpath=paste0(gid,"_batch_correction_harmony.rds")
 saveRDS(so_corrected,fpath)
 ```
