@@ -3,6 +3,7 @@ process BATCH_CORRECT_INTEGRATION {
     label 'process_high'
 
     input:
+    tuple val(gid), path(mergedObj)
     tuple val(gid), val(rds_h)
     tuple val(gid), val(rds_r)
     tuple val(gid), val(rds_c)
@@ -24,13 +25,15 @@ process BATCH_CORRECT_INTEGRATION {
     """
     Rscript -e 'rmarkdown::render("${rmd}",
         params=list(gid="$gid",
-            rds_harmony="$rds_h",
-            rds_cca="$rds_c",
-            rds_rpca="$rds_r",
-            rds_scvi="$rds_s",
-            species="$species",
+            mergedObj="$rds_m",
+            harmonyObj="$rds_h",
+            ccaObj="$rds_c",
+            rpcaObj="$rds_r",
+            scviObj="$rds_s",
             npcs="$npcs",
             resolution_list="$resolution_list",
+            citseq="",
+            annot="",
             Rlib_dir="$Rlib_dir",
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",

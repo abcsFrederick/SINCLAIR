@@ -7,14 +7,13 @@ output:
 params:
   gid: "text"
   mergedObj: "/data/sevillas2/scRNA_test/seurat/merge/group1-group2_seurat_merged.rds"
-  CCAintegratedObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_cca.rds"
+  ccaObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_cca.rds"
   rpcaObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_rpca.rds"
   harmonyObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_harmony.rds"
   scviObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_scvi.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   citeseq: "text"
   annot: "text"
-  imageDir: "path/to/images"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
   scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/bin/scRNA_functions.R"
@@ -30,7 +29,7 @@ editor_options:
 #species= params$species
 gid = params$gid
 mergedObj=params$mergedObj
-CCAintegratedObj=params$CCAintegratedObj
+CCAintegratedObj=params$ccaObj
 rpcaObj=params$rpcaObj
 harmonyObj=params$harmonyObj
 scviObj=params$scviObj
@@ -39,7 +38,6 @@ resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
 citeseq=params$citeseq
 annot=params$annot
 
-imageDir=params$imageDir
 
 Rlib_dir=params$Rlib_dir
 Rpkg_config=params$Rpkg_config

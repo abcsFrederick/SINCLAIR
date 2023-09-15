@@ -146,6 +146,7 @@ workflow GEX_EXQC {
 
         // Integrate batch corrections
         BATCH_CORRECT_INTEGRATION (
+            SEURAT_MERGE.out.rds,
             BATCH_CORRECT_HARMONY.out.rds,
             BATCH_CORRECT_RPCA.out.rds,
             BATCH_CORRECT_CCA.out.rds,
