@@ -36,7 +36,7 @@ Rpkg_config=params$Rpkg_config
 scRNA_functions = params$scRNA_functions
 ```
 
-```{r, handle_pkg, message=FALSE}
+```{r, handle_pkg, message=FALSE, echo=FALSE, include=FALSE}
 # source functions
 source(scRNA_functions)
 
@@ -62,7 +62,7 @@ reticulate::use_python(python_path)
 options(future.globals.maxSize = 96000 * 1024^2)
 ```
 
-```{r, processing, message=FALSE}
+```{r, processing,  message=FALSE, echo=FALSE, include=FALSE}
 # read in merged object
 so = readRDS(mergedObj)
 
