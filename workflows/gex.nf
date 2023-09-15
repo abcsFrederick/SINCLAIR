@@ -29,8 +29,8 @@ include { SEURAT_MERGE                                  } from '../modules/local
 include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
 include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
 include { BATCH_CORRECT_CCA                             } from '../modules/local/batch_correction_cca.nf'
+include { BATCH_CORRECT_SCVI                            } from '../modules/local/batch_correction_scvi.nf'
 include { BATCH_CORRECT_INTEGRATION                     } from '../modules/local/batch_correction_integration.nf'
-// include { PLACEHOLDER_SCVI                               } from '../modules/local/placeholder_scvi.nf'
 /*
 =======================================================================================================
 RUN MAIN WORKFLOW

@@ -3,7 +3,7 @@ process BATCH_CORRECT_SCVI {
     label 'process_high'
 
     input:
-    tuple val(gid), path(rdsFiles)
+    tuple val(gid), path(mergedObj)
     val(species)
     val(npcs)
     val(resolution_list)
