@@ -6,6 +6,7 @@ process BATCH_CORRECT_INTEGRATION {
     tuple val(gid), val(rds_h)
     tuple val(gid), val(rds_r)
     tuple val(gid), val(rds_c)
+    tuple val(gid), val(rds_s)
     val(species)
     val(npcs)
     val(resolution_list)
@@ -26,6 +27,7 @@ process BATCH_CORRECT_INTEGRATION {
             rds_harmony="$rds_h",
             rds_cca="$rds_c",
             rds_rpca="$rds_r",
+            rds_scvi="$rds_s",
             species="$species",
             npcs="$npcs",
             resolution_list="$resolution_list",
