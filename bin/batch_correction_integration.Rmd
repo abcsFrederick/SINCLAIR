@@ -2,8 +2,13 @@
 title: "Sample Integration Report"
 author: "CCBR"
 date: '`r format(Sys.time(), "%a %b %d %Y - %X")`'
-output:
-  html_document: default
+output: 
+  pdf_document: 
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+always_allow_html: true
+
 params:
   gid: "text"
   mergedObj: "/data/sevillas2/scRNA_test/seurat/merge/group1-group2_seurat_merged.rds"
@@ -14,14 +19,11 @@ params:
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   citeseq: "text"
   annot: "text"
+  npcs: "30"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
   scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/bin/scRNA_functions.R"
   testing: "Y"
-geometry:
-  margins:0.25in
-editor_options: 
-  chunk_output_type: console
 ---
 
 ```{r, prep_args,  message=FALSE, echo=FALSE, include=FALSE}
@@ -37,7 +39,10 @@ scviObj=params$scviObj
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
 citeseq=params$citeseq
 annot=params$annot
+npcs=params$npcs
 
+citeseq=params$citeseq
+annot=params$annot
 
 Rlib_dir=params$Rlib_dir
 Rpkg_config=params$Rpkg_config
@@ -234,108 +239,108 @@ DT::datatable(as.data.frame.matrix(cbind(table(so_merged$annot,
 
 ### Silhouette scores  {.tabset}
 
-```{r silhouetteImages,  echo=FALSE, include=FALSE}
-# create matrix
-resSil_merged=matrix(ncol=2,nrow=length(resolution))
-resSil_merged[]<-0
-resSil_integrated=resSil_merged
-resSil_rpca=resSil_merged
-resSil_harmonyGroup=resSil_merged
-resSil_harmonySample=resSil_merged
+<!-- ```{r silhouetteImages,  echo=FALSE, include=FALSE} -->
+<!-- # create matrix -->
+<!-- resSil_merged=matrix(ncol=2,nrow=length(resolution)) -->
+<!-- resSil_merged[]<-0 -->
+<!-- resSil_integrated=resSil_merged -->
+<!-- resSil_rpca=resSil_merged -->
+<!-- resSil_harmonyGroup=resSil_merged -->
+<!-- resSil_harmonySample=resSil_merged -->
 
-# Initial loop through integration methods
-for(i in 1:length(objList)){
-  obj = OBJECT_SELECT(objList[i])
+<!-- # Initial loop through integration methods -->
+<!-- for(i in 1:length(objList)){ -->
+<!--   obj = OBJECT_SELECT(objList[i]) -->
 
-  # Initialize silhouette scores matrix
-  resSil_mat = matrix(ncol=2,nrow=length(resolution))
-  resSil_mat[,1]<- as.numeric(resolution)
-  resSil_mat[,2]<-0
-  
-  # TBD
-  k=1
+<!--   # Initialize silhouette scores matrix -->
+<!--   resSil_mat = matrix(ncol=2,nrow=length(resolution)) -->
+<!--   resSil_mat[,1]<- as.numeric(resolution) -->
+<!--   resSil_mat[,2]<-0 -->
 
-  # Skip all calculations for objects greater than 90k cells
-  if(ncol(obj)<90000){
-    
-    # if batch correction is harmony, use harmony reduction
-    # otherwise use PCA
-    if(length(grep("^harmony",objList[i]))){
-      print("--Running harmony")
-      dist = dist(Embeddings(obj,reduction='harmony')[,1:30])
-    } else{
-      print("--Running PCA")
-      dist = dist(Embeddings(obj,reduction='pca')[,1:30])
-    }
-    
-    # iterate each resolution value
-    for (res in resolution){
-      #convert resolution to numeric value
-      resMod=as.numeric(res)
-      
-      #SLM name identity determination, based on integration method
-      slm_name = grep("^SLM",colnames(obj@meta.data),value=T)
-      if (objList[i] %in% c("integrated","rpca")){
-        slm_name=gsub("\\..*","",grep("int",slm_name,value=T)[1])
-      } else{
-        slm_name=gsub("\\..*","",grep("SCT",slm_name,value=T)[1])
-      }
-      
-      # create file for resolution and integration method
-      fileName = paste0("silhouetteResolution_",res,"_",objList[[i]],".pdf")
-      pdf(fileName)
+<!--   # TBD -->
+<!--   k=1 -->
 
-      if ((slm_name %in% colnames(obj@meta.data))==FALSE){
-        obj = FindClusters(obj, algorithm =3, resolution = resMod)
-        obj[[slm_name]] = Idents(obj)
-        rdsFile = params[[grep(objList[k],names(params),value=T)]]
-        saveRDS(obj,file=rdsFile)
-        message(paste(objList[k],
-                      "object has been overwritten to include clustering at resolution",
-                      res))
-      }
+<!--   # Skip all calculations for objects greater than 90k cells -->
+<!--   if(ncol(obj)<90000){ -->
 
-      #Calculate silhouette scores for resolutions with more than one cluster
-      Idents(obj)=slm_name
-      clusters=Idents(obj)
+<!--     # if batch correction is harmony, use harmony reduction -->
+<!--     # otherwise use PCA -->
+<!--     if(length(grep("^harmony",objList[i]))){ -->
+<!--       print("--Running harmony") -->
+<!--       dist = dist(Embeddings(obj,reduction='harmony')[,1:30]) -->
+<!--     } else{ -->
+<!--       print("--Running PCA") -->
+<!--       dist = dist(Embeddings(obj,reduction='pca')[,1:30]) -->
+<!--     } -->
 
-      if(length(unique(clusters))==1){ #edge case of failed sample, only one cluster
-        plot.new()
-        text(0.5,0.5,"No silhouette available for single cluster samples")
-        dev.off()
-      } else{
-        sil=silhouette(as.numeric(as.character(clusters)),dist=dist)
-        palette=alpha(colour=hue_pal()(length(unique(Idents(obj)))),alpha=0.7)
+<!--     # iterate each resolution value -->
+<!--     for (res in resolution){ -->
+<!--       #convert resolution to numeric value -->
+<!--       resMod=as.numeric(res) -->
 
-        #Export silhouette plot to file
-        print(plot(sil, col=palette[as.factor(clusters[order(as.numeric(as.character(clusters)),
-                                                             decreasing=F)])],
-        main=paste0("Silhouette plot of clustering resolution ", res), lty=2,
-        sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4))))
-        abline(v=mean(sil[,3]), col="red4", lty=2)
-        dev.off()
+<!--       #SLM name identity determination, based on integration method -->
+<!--       slm_name = grep("^SLM",colnames(obj@meta.data),value=T) -->
+<!--       if (objList[i] %in% c("integrated","rpca")){ -->
+<!--         slm_name=gsub("\\..*","",grep("int",slm_name,value=T)[1]) -->
+<!--       } else{ -->
+<!--         slm_name=gsub("\\..*","",grep("SCT",slm_name,value=T)[1]) -->
+<!--       } -->
 
-        #Store resolution vs average silhouette score
-        resSil_mat[i,2] = format(round(mean(sil[,3]), 4), nsmall = 4)
-      }
-      i=i+1
-    }
-  } else{
-    for (res in resolution){
-      fileName = paste0("silhouetteResolution_",res,"_",objList[i],".pdf")
-      pdf(fileName)
-      plot.new()
-      text(0.5,0.5,"No silhouette available for datasets with more than 90,000 cells")
-      dev.off()
-    }
-  }
-  #Convert character matrix to numeric matrix and assign to appropriate variable
-  resSil_mat = matrix(as.numeric(resSil_mat),ncol=ncol(resSil_mat))
-  assign(x=paste0("resSil_",objList[k]),value=resSil_mat)
-}
+<!--       # create file for resolution and integration method -->
+<!--       fileName = paste0("silhouetteResolution_",res,"_",objList[[i]],".pdf") -->
+<!--       pdf(fileName) -->
+
+<!--       if ((slm_name %in% colnames(obj@meta.data))==FALSE){ -->
+<!--         obj = FindClusters(obj, algorithm =3, resolution = resMod) -->
+<!--         obj[[slm_name]] = Idents(obj) -->
+<!--         rdsFile = params[[grep(objList[k],names(params),value=T)]] -->
+<!--         saveRDS(obj,file=rdsFile) -->
+<!--         message(paste(objList[k], -->
+<!--                       "object has been overwritten to include clustering at resolution", -->
+<!--                       res)) -->
+<!--       } -->
+
+<!--       #Calculate silhouette scores for resolutions with more than one cluster -->
+<!--       Idents(obj)=slm_name -->
+<!--       clusters=Idents(obj) -->
+
+<!--       if(length(unique(clusters))==1){ #edge case of failed sample, only one cluster -->
+<!--         plot.new() -->
+<!--         text(0.5,0.5,"No silhouette available for single cluster samples") -->
+<!--         dev.off() -->
+<!--       } else{ -->
+<!--         sil=silhouette(as.numeric(as.character(clusters)),dist=dist) -->
+<!--         palette=alpha(colour=hue_pal()(length(unique(Idents(obj)))),alpha=0.7) -->
+
+<!--         #Export silhouette plot to file -->
+<!--         print(plot(sil, col=palette[as.factor(clusters[order(as.numeric(as.character(clusters)), -->
+<!--                                                              decreasing=F)])], -->
+<!--         main=paste0("Silhouette plot of clustering resolution ", res), lty=2, -->
+<!--         sub=paste("Average silhouette width:",format(round(mean(sil[,3]), 4), nsmall = 4)))) -->
+<!--         abline(v=mean(sil[,3]), col="red4", lty=2) -->
+<!--         dev.off() -->
+
+<!--         #Store resolution vs average silhouette score -->
+<!--         resSil_mat[i,2] = format(round(mean(sil[,3]), 4), nsmall = 4) -->
+<!--       } -->
+<!--       i=i+1 -->
+<!--     } -->
+<!--   } else{ -->
+<!--     for (res in resolution){ -->
+<!--       fileName = paste0("silhouetteResolution_",res,"_",objList[i],".pdf") -->
+<!--       pdf(fileName) -->
+<!--       plot.new() -->
+<!--       text(0.5,0.5,"No silhouette available for datasets with more than 90,000 cells") -->
+<!--       dev.off() -->
+<!--     } -->
+<!--   } -->
+<!--   #Convert character matrix to numeric matrix and assign to appropriate variable -->
+<!--   resSil_mat = matrix(as.numeric(resSil_mat),ncol=ncol(resSil_mat)) -->
+<!--   assign(x=paste0("resSil_",objList[k]),value=resSil_mat) -->
+<!-- } -->
 
 
-```
+<!-- ``` -->
 
 <!-- ### Clustering -->
 

@@ -3,11 +3,11 @@ process BATCH_CORRECT_INTEGRATION {
     label 'process_high'
 
     input:
-    tuple val(gid), path(mergedObj)
-    tuple val(gid), val(rds_h)
-    tuple val(gid), val(rds_r)
-    tuple val(gid), val(rds_c)
-    tuple val(gid), val(rds_s)
+    tuple val(gid), path(rds_m)
+    tuple val(gid), path(rds_h)
+    tuple val(gid), path(rds_r)
+    tuple val(gid), path(rds_c)
+    tuple val(gid), path(rds_s)
     val(species)
     val(npcs)
     val(resolution_list)
@@ -17,7 +17,6 @@ process BATCH_CORRECT_INTEGRATION {
     path(scRNA_functions)
 
     output:
-    tuple val(gid), path ("*.rds")                 , emit:rds
     tuple val(gid), path ("*.pdf")                 , emit:logs
         
     script:
@@ -32,7 +31,7 @@ process BATCH_CORRECT_INTEGRATION {
             scviObj="$rds_s",
             npcs="$npcs",
             resolution_list="$resolution_list",
-            citseq="",
+            citeseq="",
             annot="",
             Rlib_dir="$Rlib_dir",
             Rpkg_config="$Rpkg_config",
@@ -43,7 +42,6 @@ process BATCH_CORRECT_INTEGRATION {
 
     stub:
     """
-    touch ${gid}_batch_correction_integration.rds
     touch ${gid}_batch_correction_integration.pdf
     """
 }
