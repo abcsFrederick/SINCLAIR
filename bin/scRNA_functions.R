@@ -218,7 +218,8 @@ OBJECT_SELECT = function(id){
     "merged"=so_merged,
     "integrated"=so_integrated,
     "rpca"=so_rpca,
-    "harmony"=so_harmony
+    "harmony"=so_harmony,
+    "scvi"=so_scvi
   )
   return (obj)
 }
@@ -228,7 +229,8 @@ NAME_SELECT = function(id){
     "merged"="Before Batch Correction",
     "integrated"="Integrated CCA",
     "rpca"="RPCA",
-    "harmony"="Harmony (Sample)"
+    "harmony"="Harmony (Sample)",
+    "scvi"="single-cell Variational Inference"
   )
   return (obj)
 }

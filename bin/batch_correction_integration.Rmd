@@ -139,10 +139,11 @@ source(scRNA_functions)
 so_merged_raw = readRDS(mergedObj)
 so_rpca = readRDS(rpcaObj)
 so_harmony = readRDS(harmonyObj)
+so_scvi = readRDS(scviObj)
 so_integrated = readRDS(CCAintegratedObj)
 
 # identify object list
-objList = c("rpca","merged","CCAintegrated","harmony")
+objList = c("merged","rpca","integrated","harmony","scvi")
 ```
 
 ```{r mergedObjDims,message=FALSE, echo=FALSE, include=FALSE}
@@ -164,8 +165,6 @@ so_merged <- RunUMAP(so_merged, reduction = "pca", dims = 1:30, n.components = 2
 
 ```{r sampleBatchCorrection, echo=FALSE, fig.width=15, fig.height=15}
 # identify object list
-objList = c("merged","rpca","integrated","harmony")
-
 # plot 
 for(i in 1:length(objList)){
   obj = OBJECT_SELECT(objList[i])
@@ -177,8 +176,8 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("s",i),value=sampleImage)
 }
-p = ggarrange(s1,s2,s3,s4,
-          ncol=2,nrow=2,
+p = ggarrange(s1,s2,s3,s4,s5,
+          ncol=3,nrow=2,
           common.legend=T,
           legend="bottom")
 
@@ -199,8 +198,8 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(override.aes = list(size=3)))
   assign(x=paste0("g",i),value=sampleImage)
 }
-p = ggarrange(g1,g2,g3,g4,
-          ncol=2,nrow=2,
+p = ggarrange(g1,g2,g3,g4,g5,
+          ncol=3,nrow=2,
           common.legend=T,
           legend="bottom")
 
@@ -221,8 +220,8 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("c",i),value=sampleImage)
 }
-p = ggarrange(c1,c2,c3,c4,
-          ncol=2,nrow=2,
+p = ggarrange(c1,c2,c3,c4,c5,
+          ncol=3,nrow=2,
           common.legend=T,legend="bottom")
 
 annotate_figure(p,
