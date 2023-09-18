@@ -77,6 +77,6 @@ so_corrected
 ```
 
 ```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
-fpath=paste0(gid,"_batchcorrection_scvi.rds")
+fpath=paste0(gid,"_batch_correction_scvi.rds")
 saveRDS(so_corrected,fpath)
 ```
