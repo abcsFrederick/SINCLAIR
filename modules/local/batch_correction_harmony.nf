@@ -14,7 +14,7 @@ process BATCH_CORRECT_HARMONY {
 
     output:
     tuple val(gid), path ("*.rds")                 , emit:rds
-    tuple val(gid), path ("*.pdf")                 , emit:logs
+    tuple val(gid), path ("*.html")                 , emit:logs
 
     script:
     def args = task.ext.args ?: ''
@@ -29,12 +29,12 @@ process BATCH_CORRECT_HARMONY {
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",
             testing="N"),
-        output_file = "${gid}_batch_correction_harmony.pdf")'
+        output_file = "${gid}_batch_correction_harmony.html")'
     """
 
     stub:
     """
     touch ${gid}_batch_correction_harmony.rds
-    touch ${gid}_batch_correction_harmony.pdf
+    touch ${gid}_batch_correction_harmony.html
     """
 }

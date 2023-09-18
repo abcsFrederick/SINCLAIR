@@ -17,7 +17,7 @@ process BATCH_CORRECT_INTEGRATION {
     path(scRNA_functions)
 
     output:
-    tuple val(gid), path ("*.pdf")                 , emit:logs
+    tuple val(gid), path ("*.html")                 , emit:logs
         
     script:
     def args = task.ext.args ?: ''
@@ -37,11 +37,11 @@ process BATCH_CORRECT_INTEGRATION {
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",
             testing="N"),
-        output_file = "${gid}_batch_correction_integration.pdf")'
+        output_file = "${gid}_batch_correction_integration.html")'
     """
 
     stub:
     """
-    touch ${gid}_batch_correction_integration.pdf
+    touch ${gid}_batch_correction_integration.html
     """
 }
