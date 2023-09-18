@@ -2,13 +2,10 @@
 title: "Sample Integration Report"
 author: "CCBR"
 date: '`r format(Sys.time(), "%a %b %d %Y - %X")`'
-output: 
-  pdf_document: 
-    toc: yes
+output: html_document
 editor_options: 
   chunk_output_type: console
 always_allow_html: true
-
 params:
   gid: "text"
   mergedObj: "/data/sevillas2/scRNA_test/seurat/merge/group1-group2_seurat_merged.rds"

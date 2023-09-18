@@ -2,9 +2,7 @@
 title: "Batch Correction: rpca"
 author: "Samantha Sevilla"
 date: "`r Sys.Date()`"
-output: 
-  pdf_document: 
-    toc: yes
+output: html_document
 editor_options: 
   chunk_output_type: console
 params:
