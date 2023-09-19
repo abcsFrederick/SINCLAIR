@@ -42,6 +42,7 @@ test.sh
 *Delete*
 *DS_*
 *._*
+tmp_images
 
 # R files
 */.Rhistory
