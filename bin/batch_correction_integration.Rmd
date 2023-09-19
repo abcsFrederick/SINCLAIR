@@ -13,10 +13,11 @@ params:
   rpcaObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_rpca.rds"
   harmonyObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_harmony.rds"
   scviObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_scvi.rds"
+  ligerObj: "/data/sevillas2/scRNA_test/batch_correct/group1-group2_batch_correction_liger.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   citeseq: "text"
   annot: "text"
-  npcs: "30"
+  npcs: "20"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
   scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/bin/scRNA_functions.R"
@@ -32,6 +33,7 @@ CCAintegratedObj=params$ccaObj
 rpcaObj=params$rpcaObj
 harmonyObj=params$harmonyObj
 scviObj=params$scviObj
+ligerObj=params$ligerObj
 
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
 citeseq=params$citeseq
@@ -52,6 +54,9 @@ dir.create(file.path("tmp_images"), showWarnings = FALSE)
 ```
 
 ```{r, handle_pkg, message=FALSE, echo=FALSE, include=FALSE}
+# source functions
+source(scRNA_functions)
+
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
 ## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
@@ -65,30 +70,7 @@ pkg_df=subset(pkg_df,int=="Y")
 pkg_df
 
 # for each package check installation, if present then load library
-for (rowid in rownames(pkg_df)){
-  pkg=pkg_df[rowid,"package"]
-  source=pkg_df[rowid,"source"]
-  version=pkg_df[rowid,"version"]
-  gh_name=pkg_df[rowid,"gh_name"]
-
-  need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
-  if (length(need_install)!=0){
-    print(paste0("Installing: ", pkg))
-    if (source=="bc") BiocManager::install(pkg)
-    if (source=="cr") install.packages(pkg,version=version,repos = "http://cran.us.r-project.org",
-                                       local = FALSE)
-    if (source=="gh") remotes::install_github(gh_name,version=version,local = FALSE)
-  }
-
-  print(paste0("Loading: ",pkg))
-  invisible(lapply(pkg, library, character.only = TRUE))
-}
-
-# source functions
-source(scRNA_functions)
-
-# additional options
-#tinytex::install_tinytex(force = TRUE)
+scRNA_handle_packages(pkg_df)
 ```
 
 ```{r, processing, message=FALSE, echo=FALSE, include=FALSE}
@@ -97,10 +79,11 @@ so_merged_raw = readRDS(mergedObj)
 so_rpca = readRDS(rpcaObj)
 so_harmony = readRDS(harmonyObj)
 so_scvi = readRDS(scviObj)
+so_liger=readRDS(ligerObj)
 so_integrated = readRDS(CCAintegratedObj)
 
 # identify object list
-objList = c("merged","rpca","integrated","harmony","scvi")
+objList = c("merged","rpca","integrated","harmony","scvi","liger")
 ```
 
 ```{r mergedObjDims, message=FALSE, echo=FALSE, include=FALSE}
@@ -194,7 +177,7 @@ resSil_merged=matrix(ncol=2,nrow=length(resolution))
 resSil_merged[]<-0
 
 # Initial loop through batch correction methods
-objList = c("rpca","integrated","harmony","scvi")
+objList = c("rpca","integrated","harmony","scvi","liger")
 for(i in 1:length(objList)){
   # set object
   obj = OBJECT_SELECT(objList[i])
@@ -371,6 +354,21 @@ if(length(files)>0){
 }
 ```
 
+### liger
+
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.show='hold',fig.align='center'}
+method="liger"
+files <- list.files(path = tmp_images, 
+                    pattern = paste0("silhouette_",method,"*.*[.]png"),
+                    full.names = TRUE)
+if(length(files)>0){
+  knitr::include_graphics(files)
+} else{
+  print(paste0("Batch correction method was not included:",method))
+}
+```
+
+
 ## Clustering {.tabset}
 
 ### RPCA
@@ -419,6 +417,20 @@ if(length(files)>0){
 
 ```{r, echo=FALSE,out.width="49%", out.height="20%",fig.show='hold',fig.align='center'}
 method="scvi"
+files <- list.files(path = tmp_images, 
+                    pattern = paste0("clusters_.*",method,"*.*[.]png"),
+                    full.names = TRUE)
+if(length(files)>0){
+  knitr::include_graphics(files)
+} else{
+  print(paste0("Batch correction method was not included:",method))
+}
+```
+
+### liger
+
+```{r, echo=FALSE,out.width="49%", out.height="20%",fig.show='hold',fig.align='center'}
+method="liger"
 files <- list.files(path = tmp_images, 
                     pattern = paste0("clusters_.*",method,"*.*[.]png"),
                     full.names = TRUE)

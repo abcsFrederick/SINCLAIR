@@ -30,6 +30,7 @@ include { BATCH_CORRECT_HARMONY                         } from '../modules/local
 include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
 include { BATCH_CORRECT_CCA                             } from '../modules/local/batch_correction_cca.nf'
 include { BATCH_CORRECT_SCVI                            } from '../modules/local/batch_correction_scvi.nf'
+include { BATCH_CORRECT_LIGER                           } from '../modules/local/batch_correction_liger.nf'
 include { BATCH_CORRECT_INTEGRATION                     } from '../modules/local/batch_correction_integration.nf'
 /*
 =======================================================================================================
@@ -141,6 +142,18 @@ workflow GEX_EXQC {
             params.Rlib_dir,
             params.Rpkg,
             params.script_scvi,
+            params.script_functions
+        )
+
+        // Run batch corrections
+        BATCH_CORRECT_LIGER (
+            SEURAT_MERGE.out.rds,
+            params.species,
+            params.npcs,
+            params.resolution_list,
+            params.Rlib_dir,
+            params.Rpkg,
+            params.script_liger,
             params.script_functions
         )
 

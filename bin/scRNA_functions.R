@@ -159,8 +159,10 @@ RUN_SINGLEr_AVERAGE = function(obj,refFile,fineORmain){
 
 MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,reduction_in,conda_env=""){
 
-  # integration method for SCVI vs integration for
-  # harmony,rpca,cca
+  # integration method for 
+  ### SCVI 
+  ### LIGER
+  ### harmony,rpca,cca
   if(method_in=="scVIIntegration"){
     print("--running SVII integration")
     
@@ -172,6 +174,16 @@ MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,re
     so_integrate <- IntegrateLayers(object = so_pca, method = scVIIntegration,
                                     new.reduction = "integrated.scvi",
                                     conda_env = conda_path, dims = 1:npcs)
+  } else if (method_in=="LIGER"){
+    print("--running LIGER")
+    
+    # preprocess
+    so_norm <- NormalizeData(so_in)
+    so_norm <- FindVariableFeatures(so_norm)
+    so_norm <- ScaleData(so_norm, do.center = FALSE)
+    so_norm <- RunOptimizeALS(so_norm, k = 20, lambda = 5)
+    so_integrate <- RunQuantileNorm(so_norm)
+    
   } else{
     print("--running SCT")
 
@@ -183,11 +195,14 @@ MAIN_BATCH_CORRECTION = function(so_in,npcs,species,resolution_list,method_in,re
                                     normalization.method = "SCT", 
                                     verbose = F,new.reduction = reduction_in)
   }
-  # run neighbors, clusters, umap
+  
+  # run neighbors, clusters
   so <- FindNeighbors(so_integrate, reduction = reduction_in, dims = 1:npcs)
   for (res in resolution_list){
     so <- FindClusters(so,dims = 1:npcs, resolution = res, algorithm = 3)
   }
+  
+  # reduction
   so <- RunUMAP(so, reduction = reduction_in, dims = 1:npcs)
   
   # relabel
@@ -219,7 +234,8 @@ OBJECT_SELECT = function(id){
     "integrated"=so_integrated,
     "rpca"=so_rpca,
     "harmony"=so_harmony,
-    "scvi"=so_scvi
+    "scvi"=so_scvi,
+    "liger"=so_liger
   )
   return (obj)
 }
@@ -230,7 +246,8 @@ NAME_SELECT = function(id){
     "integrated"="Integrated CCA",
     "rpca"="RPCA",
     "harmony"="Harmony (Sample)",
-    "scvi"="single-cell Variational Inference"
+    "scvi"="single-cell Variational Inference",
+    "liger"="Linked Inference of Genomic Experimental Relationships"
   )
   return (obj)
 }
