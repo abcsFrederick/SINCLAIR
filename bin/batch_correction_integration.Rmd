@@ -198,10 +198,12 @@ for(i in 1:length(objList)){
     # otherwise use PCA
     if(length(grep("^harmony",objList[i]))){
       print("----Running harmony")
-      dist = dist(Embeddings(obj,reduction='harmony')[,1:30])
-    } else{
+      dist = dist(Embeddings(obj,reduction='harmony')[,1:npcs])
+    } else if (objList[[i]] == "liger"){
+      dist = dist(Embeddings(obj,reduction='iNMF')[,1:npcs])
+    } else {
       print("----Running PCA")
-      dist = dist(Embeddings(obj,reduction='pca')[,1:30])
+      dist = dist(Embeddings(obj,reduction='pca')[,1:npcs])
     }
 
     # iterate each resolution value

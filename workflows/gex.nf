@@ -164,6 +164,7 @@ workflow GEX_EXQC {
             BATCH_CORRECT_RPCA.out.rds,
             BATCH_CORRECT_CCA.out.rds,
             BATCH_CORRECT_SCVI.out.rds,
+            BATCH_CORRECT_LIGER.out.rds,
             params.species,
             params.npcs,
             params.resolution_list,
