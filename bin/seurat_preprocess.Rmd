@@ -95,7 +95,11 @@ if (testing=="T"){
   pbmc.data=Read10X(data.dir="~/../../Volumes/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/data_storage/10xFQ/filtered_gene_bc_matrices/hg19/")
   so = CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 } else {
-  so <- CreateSeuratObject(counts=rnaCounts)
+  if (length(rnaCounts) > 1){
+    so=CreateSeuratObject(counts=rnaCounts[["Gene Expression"]])
+  } else {
+    so <- CreateSeuratObject(counts=rnaCounts)
+  }
 }
 
 # add metadata
@@ -103,7 +107,7 @@ so$Sample = sampleid
 
 # determine percent mito
 ## http://htmlpreview.github.io/?https://github.com/satijalab/seurat-wrappers/blob/master/docs/miQC.html
-so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^[M,m]T-")
+so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^mt-|^MT-")
 so[["percent.RP"]] = PercentageFeatureSet(so, pattern = "^R[PL,pl]|R[PS,ps]")
 FeatureScatter(so, feature1 = "nFeature_RNA", feature2 = "percent.mt")
 ```
