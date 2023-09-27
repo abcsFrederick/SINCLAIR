@@ -59,6 +59,7 @@ workflow GEX_EXQC {
             params.percent_mt_max,
             params.percent_mt_min,
             params.run_doublet_finder,
+            params.npcs,
             params.Rlib_dir,
             params.Rpkg,
             params.script_preprocess,
