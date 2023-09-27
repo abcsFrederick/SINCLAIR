@@ -3,8 +3,8 @@ name: docker
 on:
   push:
     branches:
-        - main
-        - feature/gex_only
+     - main
+     - feature/gex_only
   pull_request:
     branches:
       - main
