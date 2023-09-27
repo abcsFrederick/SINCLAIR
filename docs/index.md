@@ -1,1 +1,1 @@
-This TechDev project was developed to [provide summary of the scope, key objectives].
+SINCLAIR is an open-source, reproducible solution for multiple single cell next-generation modalities

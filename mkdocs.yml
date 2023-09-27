@@ -1,15 +1,15 @@
 # Project Information
-site_name: TechDev Project
-site_author: Samantha Sevilla, Ph.D.
+site_name: SINCLAIR
+site_author: CCR Collaborative Bioinformatics Resource
 site_description: >-
-  TechDev project
+  SINCLAIR is an open-source, reproducible solution for multiple single cell next-generation modalities
 # Repository
-repo_name: CCBR/CCBRTechDevCookieCutter
-repo_url: https://github.com/CCBR/CCBRTechDevCookieCutter
-edit_uri: https://github.com/CCBR/CCBRTechDevCookieCutter/edit/main/docs/
+repo_name: CCBR/SINCLAIR
+repo_url: https://github.com/CCBR/SINCLAIR
+edit_uri: https://github.com/CCBR/SINCLAIR/edit/feature/gex_only/docs/
 
 # Copyright
-copyright: Copyright &copy; 2023 CCBR
+copyright: Copyright &copy; 2023 CCR Collaborative Bioinformatics Resource
 
 # Configuration
 theme:
@@ -18,7 +18,7 @@ theme:
     - navigation.tabs
     - navigation.top
     - navigation.indexes
-    - toc.integrate 
+    - toc.integrate
   palette:
     - scheme: default
       primary: indigo
@@ -93,11 +93,13 @@ markdown_extensions:
 
 # Page Tree
 nav:
-  - Overview : index.md
-  - Analysis: 
-    - 1. Background : analysis/background.md
-    - 2. Relevant Resources: analysis/resources.md
-    - 3. Analysis Plan: analysis/plan.md
-    - 4. Analysis Results: analysis/results.md
-    - 5. Conclusions: analysis/conclusions.md
-  - Contributions: contributions.md
+  - Background : index.md
+  - Usage: 
+    - 1. Getting Started : user-guide/getting-started.md
+    - 2. Preparing Files: user-guide/preparing-files.md
+    - 3. Running the Pipeline: user-guide/run.md
+    - 4. Expected Output: user-guide/output.md
+    - 5. Running Test Data: user-guide/test-info.md
+  - FAQ:
+    - Troubleshooting: user-guide/troubleshooting.md
+    - Contributions: user-guide/contributions.md
