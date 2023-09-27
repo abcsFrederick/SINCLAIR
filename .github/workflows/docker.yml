@@ -2,8 +2,9 @@ name: docker
 
 on:
   push:
-    paths:
-      - "docker/**"
+    branches:
+        - main
+        - feature/gex_only
   pull_request:
     branches:
       - main
