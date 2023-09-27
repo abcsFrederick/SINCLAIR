@@ -26,15 +26,15 @@ scRNA_handle_packages<-function(pkg_df){
 ##################################################################
 # Seurat Pre-processing
 ##################################################################
-SEURAT_CLUSTERING = function(so_in, ncps_in){
+SEURAT_CLUSTERING = function(so_in, npcs_in){
 # Runs Principal Component Analysis, FindNeighbors, clustering with the Smart Local Moving algorithm, and UMAP dimensionality reduction
   so <- RunPCA(object = so_in, 
                features = VariableFeatures(object = so_in), 
                verbose=F,
                npcs = 50)
-  so <- FindNeighbors(so,dims = 1:ncps_in)
+  so <- FindNeighbors(so,dims = 1:npcs_in)
   so <- FindClusters(so, print.output = 0, resolution = 0.8,algorithm = 3)
-  so <- RunUMAP(so,dims = 1:ncps_in,n.components = 3)
+  so <- RunUMAP(so,dims = 1:npcs_in,n.components = 3)
   return(so)
 }
 
@@ -45,7 +45,7 @@ CONVERT_TO_HUMAN_GENELIST  <- function(gns){
   return(as.character(unlist(mapped$MUS )))
 }
 
-MAIN_PROCESS_SO<-function(so_in, species, ncps_in){
+MAIN_PROCESS_SO<-function(so_in, species, npcs_in){
   # assign genes depending on species input
   if(species=="hg38" || species == "hg19"){
     print("--proccesing human data")
@@ -68,7 +68,7 @@ MAIN_PROCESS_SO<-function(so_in, species, ncps_in){
                           g2m.features = g2m.genes, 
                           set.ident = TRUE)
   so_4 = SCTransform(so_3)
-  so_out = SEURAT_CLUSTERING(so_4,ncps_in)
+  so_out = SEURAT_CLUSTERING(so_4,npcs_in)
   return(so_out)
 }
 
