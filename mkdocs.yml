@@ -1,15 +1,15 @@
 # Project Information
-site_name: TechDev Project
-site_author: Samantha Sevilla, Ph.D.
+site_name: SINCLAIR
+site_author: CCR Collaborative Bioinformatics Resource
 site_description: >-
-  TechDev project
+  SINCLAIR is an open-source, reproducible solution for multiple single cell next-generation modalities
 # Repository
-repo_name: CCBR/TechDev_scRNASeq_Dev2023
-repo_url: https://github.com/CCBR/TechDev_scRNASeq_Dev2023
-edit_uri: https://github.com/CCBR/TechDev_scRNASeq_Dev2023/edit/feature/gex_only/docs/
+repo_name: CCBR/SINCLAIR
+repo_url: https://github.com/CCBR/SINCLAIR
+edit_uri: https://github.com/CCBR/SINCLAIR/edit/feature/gex_only/docs/
 
 # Copyright
-copyright: Copyright &copy; 2023 CCBR
+copyright: Copyright &copy; 2023 CCR Collaborative Bioinformatics Resource
 
 # Configuration
 theme:
@@ -18,7 +18,7 @@ theme:
     - navigation.tabs
     - navigation.top
     - navigation.indexes
-    - toc.integrate 
+    - toc.integrate
   palette:
     - scheme: default
       primary: indigo
