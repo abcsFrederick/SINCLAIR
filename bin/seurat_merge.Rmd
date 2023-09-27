@@ -1,0 +1,119 @@
+---
+title: "merge Notebook"
+output: 
+  pdf_document: 
+    toc: yes
+editor_options: 
+  chunk_output_type: console
+params:
+  species: "hg19"
+  samplesheet: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/assets/input_manifest_cellranger.csv"
+  rdsFiles: "/data/sevillas2/scRNA_test/seurat/preprocess/sample2_seurat_preprocess.rds /data/sevillas2/scRNA_test/seurat/preprocess/sample4_seurat_preprocess.rds"
+  gid: "group1-group2"
+  Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
+  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
+  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/bin/scRNA_functions.R"
+  testing: "Y"
+---
+
+```{r, prep_args,  message=FALSE}
+# set up params
+species= params$species
+rds_files=strsplit(params$rdsFiles," ")[[1]]
+gid = params$gid
+samplesheet = params$samplesheet
+
+scRNA_functions = params$scRNA_functions
+Rlib_dir=params$Rlib_dir
+Rpkg_config=params$Rpkg_config
+testing = params$testing
+```
+
+```{r, handle_pkg, message=TRUE}
+# set library dir, load this and remove any other dirs to avoid confusion
+# between personally created pkgs and the pipeline package
+## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
+print(paste0("Using the lib.loc location: ",Rlib_dir))
+assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
+message(.libPaths())
+
+# read in package info
+pkg_df=read.csv(Rpkg_config)
+pkg_df=subset(pkg_df,merge=="Y")
+pkg_df
+
+# for each package check installation, if present then load library
+for (rowid in rownames(pkg_df)){
+  pkg=pkg_df[rowid,"package"]
+  source=pkg_df[rowid,"source"]
+  version=pkg_df[rowid,"version"]
+  gh_name=pkg_df[rowid,"gh_name"]
+
+  need_install <- pkg[!(pkg %in% installed.packages()[,"Package"])]
+  if (length(need_install)!=0){
+    print(paste0("Installing: ", pkg))
+    if (source=="bc") BiocManager::install(pkg)
+    if (source=="cr") install.packages(pkg,version=version,repos = "http://cran.us.r-project.org",
+                                        local = FALSE)
+    if (source=="gh") remotes::install_github(gh_name,version=version,local = FALSE)
+  }
+
+  print(paste0("Loading: ",pkg))
+  invisible(lapply(pkg, library, character.only = TRUE))
+}
+
+# source functions
+source(scRNA_functions)
+
+# additional options
+#tinytex::install_tinytex(force = TRUE)
+options(future.globals.maxSize = 1e12)
+```
+
+```{r, processing, message=FALSE}
+# print group info
+print(paste0("This merged object includes groups: ",gid))
+
+# read in samplesheet
+## needed to assign correct groupID
+samplesheet_df=read.csv(samplesheet)
+
+# read in individuals RDS files
+readObj = list()
+for (obj in rds_files) {
+  sampleID=strsplit(basename(obj),"_seurat")[[1]][1]
+  print(sampleID)
+  assign(paste0("S_",sampleID),readRDS(obj))
+  readObj = append(readObj,paste0("S_",sampleID))  
+}
+
+# combine list
+combinedObj.list=list()
+i=1
+for (p in readObj){
+  combinedObj.list[[p]] <- eval(parse(text = readObj[[i]])) 
+  combinedObj.list[[p]]$Sample = names(combinedObj.list)[i]
+  combinedObj.list[[p]]$Group = subset(samplesheet_df,uniqueID==strsplit(names(combinedObj.list)[i],"_")[[1]][2])$groupID
+  i <- i + 1
+ }
+```
+
+```{r merge_objs, message=FALSE}
+# create ref list
+reference.list <- combinedObj.list[unlist(readObj)]
+
+# set features
+selectFeatures <- SelectIntegrationFeatures(object.list = reference.list, 
+                                            nfeatures = 3000)
+
+# merge the objects
+combinedObj.integratedRNA = merge(reference.list[[1]],reference.list[2:length(reference.list)])
+VariableFeatures(combinedObj.integratedRNA) = selectFeatures
+
+# save RDS files
+combinedObj.integratedRNA
+fpath=paste0(gid,"_seurat_merged.rds")
+saveRDS(combinedObj.integratedRNA,fpath)
+```
+
+

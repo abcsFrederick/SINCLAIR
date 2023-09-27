@@ -36,3 +36,18 @@ work/
 
 # tmp ignore testing fastqs
 test_dir/*/*/*.gz
+test.sh
+
+# tmp files
+*Delete*
+*DS_*
+*._*
+tmp_images
+
+# R files
+*/.Rhistory
+.Rproj.user
+.Rhistory
+
+**/.koparde*
+test_dir/**

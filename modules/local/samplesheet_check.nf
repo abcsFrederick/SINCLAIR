@@ -4,14 +4,35 @@ process SAMPLESHEET_CHECK {
 
     input:
     path (samplesheet)
+    path (contrast_samplesheet)
+    val (run_cellranger)
 
     output:
-    path '*_samplesheet.csv', emit:csv
+    path '*gex_samplesheet.csv'                      , optional:true, emit:gex_samplesheet
+    path '*atac_samplesheet.csv'                     , optional:true, emit:atac_samplesheet
+    path '*contrast_samplesheet.csv'                 , emit:contrast_samplesheet
+    path '*groups_samplesheet.csv'                   , emit:group_samplesheet
     
     script:
     """
+    if [[ $run_cellranger == N ]]; then
+        check_samplesheet_input_cellranger.py \\
+        $samplesheet \\
+        $contrast_samplesheet \\
+        project
+    else
+        check_samplesheet.py \\
+        $samplesheet \\
+        $contrast_samplesheet \\
+        project
+    fi
+    """
+
+    stub:
+    """
     check_samplesheet.py \\
     $samplesheet \\
+    $contrast_samplesheet \\
     project
     """
 }
