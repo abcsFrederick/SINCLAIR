@@ -1,6 +1,9 @@
 # 2. Preparing Files
 The pipeline is controlled through editing configuration and manifest files. Defaults are found in the /PIPELINEDIR/conf and /PIPELINEDIR/ directories
 
+![SINCLAIR Process Overview](https://github.com/CCBR/SINCLAIR/blob/dev/resources/scRNA_process.svg?raw=true) <sup>**Overview of Single Cell RNASeq Gene Expression Process**</sup>
+
+
 ## 2.1 Configs
 The configuration files control parameters and software of the pipeline. These files are listed below:
 

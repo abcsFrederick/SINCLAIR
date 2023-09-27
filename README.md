@@ -1,8 +1,6 @@
 # SINCLAIR - **SIN**gle **C**el**L** **A**nalys**I**s **R**esource
 
 ## Table of contents
-- [SINCLAIR - **SIN**gle **C**el**L** **A**nalys**I**s **R**esource](#sinclair---single-cell-analysis-resource)
-  - [Table of Contents](#table-of-contents)
   - [1. Introduction](#1-Introduction)
   - [2. Overview](#2-Overview)
   - [3. Documentation](#3-Documentation)
