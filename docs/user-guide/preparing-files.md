@@ -8,6 +8,7 @@ The configuration files control parameters and software of the pipeline. These f
 - conf/base.config
 - conf/modules.config
 - conf/process_params.config
+- conf/Rpack.config
 
 ### 2.1.1 NextFlow Config
 The configuration file dictates the global information to be used during the pipeline. 
@@ -21,6 +22,9 @@ The configuration file dictates process-specific processing parameters, includin
 - the version of each software or program that is being used in the pipeline
 - output location and file names
 - additional arguments to be passed to the process
+
+### 2.1.4 R Package Config
+The configuration file dictates which R libraries, and which versions, are loaded into the accompanying R script
 
 ### 2.1.3 Process Parameters
 The configuration file dictates process-specific user parameters, which varies for each process. Users can choose varied resolution values or QC methods, for example.
