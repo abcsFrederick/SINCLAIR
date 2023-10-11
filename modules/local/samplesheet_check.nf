@@ -30,9 +30,16 @@ process SAMPLESHEET_CHECK {
 
     stub:
     """
-    check_samplesheet.py \\
-    $samplesheet \\
-    $contrast_samplesheet \\
-    project
+    if [[ $run_cellranger == N ]]; then
+        check_samplesheet_input_cellranger.py \\
+        $samplesheet \\
+        $contrast_samplesheet \\
+        project
+    else
+        check_samplesheet.py \\
+        $samplesheet \\
+        $contrast_samplesheet \\
+        project
+    fi
     """
 }
