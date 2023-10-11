@@ -159,7 +159,11 @@ function runslurm() {
 function runstubrun() {
 # Submit the execution of the pipeline to the biowulf job scheduler (slurm)
   runcheck
-  args="-stub-run --run_cellranger Y"
+  args="-stub-run"
+
+  # use base_stubrun config
+  sed -i "s/base.config/base_stub.config/g" ${WORKDIR}/nextflow.config
+
   echo "----Stubrun"
   run "local"
 }
@@ -205,14 +209,14 @@ function run() {
         nextflow run ${PIPELINE_HOME}/main.nf -resume \
         -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
-        -profile biowulf \
+        $PROFILE \
         $args
     elif [[ $RESUME == "N" ]]; then
         echo "----Starting pipeline"
         nextflow run ${PIPELINE_HOME}/main.nf \
         -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
-        -profile biowulf \
+        $PROFILE \
         $args
     else
         err "The RESUME flag must be Y or N, not $RESUME"
@@ -240,13 +244,13 @@ function run() {
         nextflow run ${PIPELINE_HOME}/main.nf -resume \
         -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
-        -profile biowulf \
+        $PROFILE \
         $args
     elif [[ $RESUME == "N" ]]; then
         nextflow run ${PIPELINE_HOME}/main.nf \
         -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
-        -profile biowulf \
+        $PROFILE \
         $args
     fi
 EOF
@@ -292,6 +296,7 @@ function main(){
   WORKDIR=$(readlink -m "$WORKDIR")
   echo "Working Dir: $WORKDIR"
 
+  if [[ $RUNMODE == "stubrun" ]]; then PROFILE="-profile local_biowulf"; else PROFILE="-profile biowulf"; fi
   if [ -z ${ENTRY} ]; then err "Need entry point"; fi
   if [ -z ${RESUME} ]; then RESUME="N"; fi
 
