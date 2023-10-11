@@ -99,6 +99,11 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
         for line in fin.readlines():
             lspl = [x.strip().strip('"') for x in line.strip().split(",")]
 
+            # If it's a blank line, next
+            if len(line.strip()) == 0:
+                print("Skipping blank line")
+                continue
+
             # Check valid number of columns per row
             if len(lspl) < len(HEADER):
                 print_error(
