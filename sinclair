@@ -1,0 +1,304 @@
+#!/usr/bin/env bash
+# CCBR, NCI
+# (c) 2023
+#
+
+################################################
+# NEXTFLOW SETUP
+################################################
+# set modules
+PYTHON_VERSION="python/3.9"
+NEXTFLOW_VERSION="nextflow/23.04.1"
+SINGULARITY_VERSION="singularity/3.10.5"
+
+set -eo pipefail
+module purge
+
+# pull script path
+SCRIPTNAME="$0"
+SCRIPTBASENAME=$(readlink -f $(basename $0))
+
+#define cluster, partitions dependent on host
+hostID=`echo $HOSTNAME`
+PARTITIONS="norm,ccr"
+
+# essential files
+# these are relative to the workflows' base folder
+# these are copied into the WORKDIR
+ESSENTIAL_FILES="nextflow.config"
+ESSENTIAL_FOLDERS="assets conf"
+
+################################################
+# PIPELINE SETUP
+################################################
+function get_git_commitid_tag() {
+  # This function gets the latest git commit id and tag
+  # Input is PIPELINE_HOME folder which is a git folder
+    cd $1
+    gid=$(git rev-parse HEAD)
+    tag=$(git describe --tags $gid 2>/dev/null)
+    echo -ne "$gid\t$tag"
+}
+
+# ## setting PIPELINE_HOME
+PIPELINE_HOME=$(readlink -f $(dirname "$0"))
+echo "Pipeline Dir: $PIPELINE_HOME"
+
+
+# get github commit tag
+GIT_COMMIT_TAG=$(get_git_commitid_tag $PIPELINE_HOME)
+echo "Git Commit/Tag: $GIT_COMMIT_TAG"
+
+################################################
+## FUNCTIONS
+################################################
+
+function usage() { 
+# This function prints generic usage of the wrapper script.
+  echo "${SCRIPTBASENAME}
+  --> run SINCLAIR
+  SINgle CelL AnalysIs Resource
+
+  USAGE:
+    bash ${SCRIPTNAME} -m/--runmode=<RUNMODE> -w/--workdir=<WORKDIR>
+  Required Arguments:
+  1.  RUNMODE: [Type: String] Valid options:
+      *) init : initialize workdir
+      *) run : run with slurm
+      *) resume : continue pipeline
+      *) stubrun : nextflow stubrun
+      *) runlocal : run without submitting to sbatch
+      *) testrun: run on cluster with test dataset
+  2.  WORKDIR: [Type: String]: Absolute or relative path to the output folder with write permissions.
+  3.  ENTRY: [Type: String] Valid options:
+      *) GEX
+  Optional Arguments:
+  1.  RESUME: [Type: String:] Valid options:
+      *) Y
+      *) N
+  "
+}
+
+function err() { 
+# This function print a error message (argument 1), the usage and then exits with non-zero status
+  cat <<< "
+  #
+  #
+  #
+    $@
+  #
+  #
+  #
+  " && usage && exit 1 1>&2; 
+}
+
+function init() {
+# This function initializes the workdir by:
+# 1. creating the working dir
+# 2. copying essential files like config.yaml and samples.tsv into the workdir
+# 3. setting up logs and stats folders
+  # create output folder
+  if [ -d $WORKDIR ];then err "Folder $WORKDIR already exists!"; fi
+  mkdir -p $WORKDIR
+
+  # copy essential files
+  for f in $ESSENTIAL_FILES; do
+    echo "Copying essential file: $f"
+    fbn=$(basename $f)
+    sed -e "s/PIPELINE_HOME/${PIPELINE_HOME//\//\\/}/g" -e "s/WORKDIR/${WORKDIR//\//\\/}/g" ${PIPELINE_HOME}/$f > $WORKDIR/$fbn
+  done
+
+  # copy essential folders
+  for f in $ESSENTIAL_FOLDERS;do
+    rsync -avz --no-perms --no-owner --no-group --progress $PIPELINE_HOME/$f $WORKDIR/
+  done
+
+  #create log and stats folders
+  if [ ! -d $WORKDIR/logs ]; then mkdir -p $WORKDIR/logs;echo "Logs Dir: $WORKDIR/logs";fi
+  if [ ! -d $WORKDIR/stats ];then mkdir -p $WORKDIR/stats;echo "Stats Dir: $WORKDIR/stats";fi
+
+  echo
+  echo "Done Initializing $WORKDIR."
+  echo "You can now edit $WORKDIR/assets/contrast_manifest.csv and $WORKDIR/assets/input_manifest.csv"
+}
+
+function check_essential_files() {
+# Checks if files essential to start running the pipeline exist in the workdir
+  if [ ! -d $WORKDIR ];then err "Folder $WORKDIR does not exist!"; fi
+  for f in $ESSENTIAL_FILES; do
+    fbn=$(basename $f)
+    if [ ! -f $WORKDIR/$fbn ]; then err "Error: '${fbn}' file not found in $WORKDIR ... initialize first!";fi
+  done
+  for f in $ESSENTIAL_FOLDERS;do
+    fbn=$(basename $f)
+    if [ ! -d $WORKDIR/$fbn ]; then err "Error: '${fbn}' folder not found in $WORKDIR ... initialize first!";fi
+  done
+}
+
+function runcheck(){
+# Check "job-essential" files and load required modules
+  check_essential_files
+  module load $PYTHON_VERSION
+  module load $NEXTFLOW_VERSION
+}
+
+function runlocal() {
+# If the pipeline is fired up on an interactive node (with sinteractive), this function runs the pipeline
+  runcheck
+  if [ "$SLURM_JOB_ID" == "" ];then err "runlocal can only be done on an interactive node"; fi
+  run "local"
+}
+
+function runslurm() {
+# Submit the execution of the pipeline to the biowulf job scheduler (slurm)
+  runcheck
+  run "slurm"
+}
+
+function runstubrun() {
+# Submit the execution of the pipeline to the biowulf job scheduler (slurm)
+  runcheck
+  args="-stub-run --run_cellranger Y"
+  echo "----Stubrun"
+  run "local"
+}
+
+function runtest() {
+# Submit the execution of the pipeline to the biowulf job scheduler (slurm)
+  runcheck
+  args="--input ${PIPELINE_HOME}/assets/input_manifest.csv"
+  echo "----Testrun"
+  run "local"
+}
+
+function preruncleanup() {
+# Cleanup function to rename/move files related to older runs to prevent overwriting them.
+  # check initialization
+  check_essential_files 
+
+  cd $WORKDIR
+  ## Archive previous run files
+  if [ -f ${WORKDIR}/logs/.nextflow.log ];then 
+    modtime=$(stat ${WORKDIR}/.nextflow.log |grep Modify|awk '{print $2,$3}'|awk -F"." '{print $1}'|sed "s/ //g"|sed "s/-//g"|sed "s/://g")
+    mv ${WORKDIR}/logs/.nextflow.log ${WORKDIR}/stats/nextflow.${modtime}.log
+  fi
+
+  nslurmouts=$(find ${WORKDIR} -maxdepth 1 -name "slurm-*.out" |wc -l)
+  if [ "$nslurmouts" != "0" ];then
+    for f in $(ls ${WORKDIR}/slurm-*.out);do mv ${f} ${WORKDIR}/logs/;done
+  fi
+
+}
+
+function run() {
+    # RUN function
+    # argument1 can be:
+    # 1. local
+    # 2. slurm
+
+  if [ "$1" == "local" ]; then
+    preruncleanup
+
+    if [[ $RESUME == "Y" ]]; then
+        echo "----Resuming pipeline"
+        nextflow run ${PIPELINE_HOME}/main.nf -resume \
+        -entry $ENTRY \
+        -profile biowulf \
+        $args
+    elif [[ $RESUME == "N" ]]; then
+        echo "----Starting pipeline"
+        nextflow run ${PIPELINE_HOME}/main.nf \
+        -entry $ENTRY \
+        -profile biowulf \
+        $args
+    else
+        err "The RESUME flag must be Y or N, not $RESUME"
+    fi
+
+  elif [ "$1" == "slurm" ];then
+  
+    preruncleanup
+
+    cat > ${WORKDIR}/submit_script.sbatch << EOF
+#!/bin/bash
+#SBATCH --job-name="SINCLAIR"
+#SBATCH --mem=40g
+#SBATCH --partition="$PARTITIONS"
+#SBATCH --time=96:00:00
+#SBATCH --cpus-per-task=2
+
+    module load $PYTHON_VERSION
+    module load $NEXTFLOW_VERSION
+
+    cd \$SLURM_SUBMIT_DIR
+
+    if [[ $RESUME == "Y" ]]; then
+        echo "----Resuming pipeline"
+        nextflow run ${PIPELINE_HOME}/main.nf -resume \
+        -entry $ENTRY \
+        -profile biowulf \
+        $args
+    elif [[ $RESUME == "N" ]]; then
+        nextflow run ${PIPELINE_HOME}/main.nf \
+        -entry $ENTRY \
+        -profile biowulf \
+        $args
+    fi
+EOF
+
+  # submit to sbatch
+  sbatch ${WORKDIR}/submit_script.sbatch
+  fi
+  
+}
+
+################################################
+# MAIN
+################################################
+function main(){
+# Main function which parses all arguments
+
+  if [ $# -eq 0 ]; then usage; exit 1; fi
+
+  for i in "$@"; do
+    case $i in
+        -m=*|--runmode=*)
+          RUNMODE="${i#*=}"
+        ;;
+        -w=*|--workdir=*)
+          WORKDIR="${i#*=}"
+        ;;
+        -e=*|--entry=*)
+          ENTRY="${i#*=}"
+        ;;
+        -r=*|--resume=*)
+          RESUME="${i#*=}"
+        ;;
+        -h|--help)
+          usage && exit 0;;
+        *)
+          err "Unknown argument!"    # unknown option
+        ;;
+    esac
+  done
+
+  if [ -z ${WORKDIR} ]; then err "Need WORKDIR"; fi
+
+  WORKDIR=$(readlink -m "$WORKDIR")
+  echo "Working Dir: $WORKDIR"
+
+  if [ -z ${ENTRY} ]; then err "Need entry point"; fi
+  if [ -z ${RESUME} ]; then RESUME="N"; fi
+
+  case $RUNMODE in
+    init) init && exit 0;;
+    stubrun) runstubrun && exit 0;;
+    run) runslurm && exit 0;;
+    runlocal) runlocal && exit 0;;
+    testrun) runtest && exit 0;;
+    *) err "Unknown RUNMODE \"$RUNMODE\"";;
+  esac
+}
+
+# call the main function
+main "$@"
