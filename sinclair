@@ -73,9 +73,7 @@ function usage() {
   3.  ENTRY: [Type: String] Valid options:
       *) GEX
   Optional Arguments:
-  1.  RESUME: [Type: String:] Valid options:
-      *) Y
-      *) N
+  1.  RESUME: [Type: String:] Valid options: Y, N; default: N
   "
 }
 
@@ -118,7 +116,10 @@ function init() {
   if [ ! -d $WORKDIR/stats ];then mkdir -p $WORKDIR/stats;echo "Stats Dir: $WORKDIR/stats";fi
 
   echo
+  echo "************************************************************************************************"
   echo "Done Initializing $WORKDIR."
+  echo
+  echo "You can now update $WORKDIR/nextflow.config as needed."
   echo "You can now edit $WORKDIR/assets/contrast_manifest.csv and $WORKDIR/assets/input_manifest.csv"
 }
 
@@ -202,12 +203,14 @@ function run() {
     if [[ $RESUME == "Y" ]]; then
         echo "----Resuming pipeline"
         nextflow run ${PIPELINE_HOME}/main.nf -resume \
+        -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
         -profile biowulf \
         $args
     elif [[ $RESUME == "N" ]]; then
         echo "----Starting pipeline"
         nextflow run ${PIPELINE_HOME}/main.nf \
+        -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
         -profile biowulf \
         $args
@@ -235,11 +238,13 @@ function run() {
     if [[ $RESUME == "Y" ]]; then
         echo "----Resuming pipeline"
         nextflow run ${PIPELINE_HOME}/main.nf -resume \
+        -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
         -profile biowulf \
         $args
     elif [[ $RESUME == "N" ]]; then
         nextflow run ${PIPELINE_HOME}/main.nf \
+        -c ${WORKDIR}/nextflow.config \
         -entry $ENTRY \
         -profile biowulf \
         $args
