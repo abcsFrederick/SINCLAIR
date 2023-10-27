@@ -112,9 +112,12 @@ VariableFeatures(combinedObj.integratedRNA) = selectFeatures
 ```
 
 ```{r mergedObjDims, message=FALSE, echo=FALSE, include=FALSE}
+# removing scaling prior to transformation to keep with other methods
+#so_merged <- ScaleData(combinedObj.integratedRNA, vars.to.regress = c("percent.mt", "nFeature_RNA"), assay = "RNA")
+
 # add reduction methods to the mergedObj for plotting
-so_merged <- ScaleData(combinedObj.integratedRNA, vars.to.regress = c("percent.mt", "nFeature_RNA"), assay = "RNA")
-so_merged <- RunPCA(so_merged, npcs = 50, verbose = F)
+so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = c("percent.mt", "nFeature_RNA"), assay = "RNA")
+so_merged <- RunPCA(combinedObj.integratedRNA, npcs = 50, verbose = F)
 so_merged <- RunTSNE(so_merged, reduction = "pca", dims = 1:30, perplexity = 30, max_iter = 1000,
                    theta = 0.5, eta = 200, num_threads = 0)
 so_merged <- RunUMAP(so_merged, reduction = "pca", dims = 1:30, n.components = 2, n.neighbors = 30,
@@ -127,4 +130,3 @@ so_merged
 fpath=paste0(gid,"_seurat_merged.rds")
 saveRDS(so_merged,fpath)
 ```
-
