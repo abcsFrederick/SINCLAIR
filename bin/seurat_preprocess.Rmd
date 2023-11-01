@@ -19,8 +19,8 @@ params:
   run_doublet_finder: "N"
   npcs: 30
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
-  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/conf/Rpack.config"
-  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/SINCLAIR/bin/scRNA_functions.R"
+  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/conf/Rpack.config"
+  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/bin/scRNA_functions.R"
   testing: "N"
 ---
 
@@ -93,7 +93,7 @@ rnaCounts = Read10X_h5(h5)
 
 # create S object
 if (testing=="Y"){
-  pbmc.data=Read10X(data.dir="/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/data_storage/10xFQ/filtered_gene_bc_matrices/hg19/")
+  pbmc.data=Read10X(data.dir="/data/CCBR_Pipeliner/testdata/SINCLAIR/data_storage/10xFQ/filtered_gene_bc_matrices/hg19/")
   so = CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 } else {
   so <- CreateSeuratObject(counts=rnaCounts)
@@ -128,11 +128,11 @@ VlnPlot(so_qc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 
 
 ```{r qc2, message=FALSE}
 # define feature info
-nCount_out = outliers_mad(so_qc$nCount_RNA,threshold = 3)$LL_CI_MAD#
+nCount_out = outliers_mad(so_qc$nCount_RNA,threshold = 3)$LL_CI_MAD
 nFeature_out = outliers_mad(so_qc$nFeature_RNA,threshold = 3)$LL_CI_MAD
 mt_out = outliers_mad(so_qc$percent.mt,threshold = 3)$UL_CI_MAD
 
-# perform QC depenedent on user choice
+# perform QC dependent on user choice
 if(qc_filtering == "manual") {
   so_qc_select =  subset(so_qc,
   nCount_RNA_max >= nCount_RNA & nCount_RNA >= nCount_RNA_min & 
