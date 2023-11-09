@@ -170,7 +170,7 @@ RUN_SINGLEr_AVERAGE <- function(obj, refFile, fineORmain) {
   return(annotVect)
 }
 
-MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, conda_env = "") {
+MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, v_list, conda_env = "") {
   # set assay to RNA to avoid double transform/norm
   DefaultAssay(so_in) <- "RNA"
 
@@ -203,8 +203,14 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
   } else {
     print("--running SCT")
 
-    # transform and runPCA
-    so_transform <- SCTransform(so_in)
+    # use variables to regress, if provided by user
+    if (length(v_list) > 0) {
+      so_transform <- SCTransform(so_in, vars.to.regress = v_list)
+    } else {
+      so_transform <- SCTransform(so_in)
+    }
+
+    # runPCA
     so_pca <- RunPCA(so_transform)
 
     so_integrate <- IntegrateLayers(
