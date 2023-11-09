@@ -1,0 +1,159 @@
+---
+title: "merge Notebook"
+output:
+  pdf_document:
+    toc: yes
+editor_options:
+  chunk_output_type: console
+params:
+  species: "hg19"
+  samplesheet: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/assets/input_manifest_cellranger.csv"
+  rdsFiles: "/data/sevillas2/sinclair/dev/results/seurat/preprocess/sample2_seurat_preprocess.rds /data/sevillas2/sinclair/dev/results/seurat/preprocess/sample4_seurat_preprocess.rds"
+  gid: "group1-group2"
+  Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
+  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/conf/Rpack.config"
+  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/bin/scRNA_functions.R"
+  testing: "Y"
+---
+
+```{r, prep_args,  message=FALSE,include=FALSE}
+# set up params
+species <- params$species
+rds_files <- strsplit(params$rdsFiles, " ")[[1]]
+gid <- params$gid
+samplesheet <- params$samplesheet
+
+scRNA_functions <- params$scRNA_functions
+Rlib_dir <- params$Rlib_dir
+Rpkg_config <- params$Rpkg_config
+testing <- params$testing
+```
+
+```{r, handle_pkg, message=FALSE,include=FALSE}
+# set library dir, load this and remove any other dirs to avoid confusion
+# between personally created pkgs and the pipeline package
+## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
+print(paste0("Using the lib.loc location: ", Rlib_dir))
+assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
+message(.libPaths())
+
+# read in package info
+pkg_df <- read.csv(Rpkg_config)
+pkg_df <- subset(pkg_df, merge == "Y")
+pkg_df
+
+# for each package check installation, if present then load library
+for (rowid in rownames(pkg_df)) {
+  pkg <- pkg_df[rowid, "package"]
+  source <- pkg_df[rowid, "source"]
+  version <- pkg_df[rowid, "version"]
+  gh_name <- pkg_df[rowid, "gh_name"]
+
+  need_install <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(need_install) != 0) {
+    print(paste0("Installing: ", pkg))
+    if (source == "bc") BiocManager::install(pkg)
+    if (source == "cr") {
+      install.packages(pkg,
+        version = version, repos = "http://cran.us.r-project.org",
+        local = FALSE
+      )
+    }
+    if (source == "gh") remotes::install_github(gh_name, version = version, local = FALSE)
+  }
+
+  print(paste0("Loading: ", pkg))
+  invisible(lapply(pkg, library, character.only = TRUE))
+}
+
+# source functions
+source(scRNA_functions)
+
+# additional options
+# tinytex::install_tinytex(force = TRUE)
+options(future.globals.maxSize = 1e12)
+```
+
+```{r, processing, message=FALSE,include=FALSE}
+# print group info
+print(paste0("This merged object includes groups: ", gid))
+
+# read in samplesheet
+## needed to assign correct groupID
+samplesheet_df <- read.csv(samplesheet)
+
+# read in individuals RDS files
+readObj <- list()
+for (obj in rds_files) {
+  sampleID <- strsplit(basename(obj), "_seurat")[[1]][1]
+  print(sampleID)
+  assign(paste0("S_", sampleID), readRDS(obj))
+  readObj <- append(readObj, paste0("S_", sampleID))
+}
+
+# combine list
+combinedObj.list <- list()
+i <- 1
+for (p in readObj) {
+  combinedObj.list[[p]] <- eval(parse(text = readObj[[i]]))
+  combinedObj.list[[p]]$Sample <- names(combinedObj.list)[i]
+  combinedObj.list[[p]]$Group <- subset(samplesheet_df, uniqueID == strsplit(names(combinedObj.list)[i], "_")[[1]][2])$groupID
+  i <- i + 1
+}
+```
+
+```{r merge_objs, message=FALSE,include=FALSE}
+# create ref list
+reference.list <- combinedObj.list[unlist(readObj)]
+
+# set features
+selectFeatures <- SelectIntegrationFeatures(
+  object.list = reference.list,
+  nfeatures = 3000
+)
+
+# merge the objects
+combinedObj.integratedRNA <- merge(reference.list[[1]], reference.list[2:length(reference.list)])
+VariableFeatures(combinedObj.integratedRNA) <- selectFeatures
+```
+
+# Benchmark
+## Merged Object
+| ID | variables_to_include |
+| ---| --- |
+| test1 | None |
+| test2 | percent.mt, nfeatureRNA |
+| test 3 | S.Score, G2M.Score, percent.mt, nfeatureRNA, nCount_RNA |
+
+```{r mergedObjDims, message=FALSE, echo=FALSE, warning=FALSE}
+library(patchwork)
+library(ggpubr)
+v_all <- c("percent.mt", "nFeature_RNA", "S.Score", "G2M.Score", "nCount_RNA")
+v_some <- c("percent.mt", "nFeature_RNA", "nCount_RNA")
+
+# test 1-3
+t1 <- SCTransform(combinedObj.integratedRNA, assay = "RNA")
+t2 <- SCTransform(combinedObj.integratedRNA, vars.to.regress = v_some, assay = "RNA")
+t3 <- SCTransform(combinedObj.integratedRNA, vars.to.regress = v_all, assay = "RNA")
+
+run_plots <- function(obj_in, variable_in, title_in) {
+  p1 <- VlnPlot(object = obj_in, features = variable_in, split.by = "annot", stack = TRUE)
+  pf <- p1 + plot_annotation(title = title_in)
+  return(pf)
+}
+p1 <- run_plots(t1, v_all, "Test 1")
+p2 <- run_plots(t2, v_all, "Test 2")
+p3 <- run_plots(t3, v_all, "Test 3")
+ggarrange(p1, p2, p3)
+
+run_feat <- function(obj_in, variable_in, title_in) {
+  obj_in <- RunPCA(obj_in, npcs = 50, verbose = F)
+  p1 <- FeaturePlot(object = obj_in, features = variable_in, cols = c("grey", "blue"), reduction = "pca")
+  pf <- p1 + plot_annotation(title = title_in)
+  return(pf)
+}
+p1 <- run_feat(t1, v_all, "Test 1")
+p2 <- run_feat(t2, v_all, "Test 2")
+p3 <- run_feat(t3, v_all, "Test 3")
+ggarrange(p1, p2, p3)
+```
