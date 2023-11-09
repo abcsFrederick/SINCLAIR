@@ -10,6 +10,7 @@
 PYTHON_VERSION="python/3.9"
 NEXTFLOW_VERSION="nextflow/23.04.1"
 SINGULARITY_VERSION="singularity/3.10.5"
+CCBRPIPELINER_VERSION="ccbrpipeliner/5"
 
 set -eo pipefail
 module purge
@@ -140,6 +141,7 @@ function runcheck(){
   check_essential_files
   module load $PYTHON_VERSION
   module load $NEXTFLOW_VERSION
+  module load $CCBRPIPELINER_VERSION
 }
 
 function runlocal() {
@@ -235,6 +237,7 @@ function run() {
 
     module load $PYTHON_VERSION
     module load $NEXTFLOW_VERSION
+    module load $CCBRPIPELINER_VERSION
 
     cd \$SLURM_SUBMIT_DIR
 
