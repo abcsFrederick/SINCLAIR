@@ -1,6 +1,6 @@
 ## development version
 
-- feature: issue #29 (variables to regress)
+- feature: issue #29 (variables to regress), PR#55
 
 ## SINCLAIR v0.2.0
 
