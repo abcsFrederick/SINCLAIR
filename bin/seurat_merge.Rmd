@@ -17,7 +17,7 @@ params:
   testing: "Y"
 ---
 
-```{r, prep_args,  message=FALSE}
+```{r, prep_args,  message=FALSE, include=FALSE}
 # set up params
 species <- params$species
 vars_to_regress_list <- strsplit(gsub(" ", "", params$vars_to_regress), ",")[[1]]
@@ -29,9 +29,14 @@ scRNA_functions <- params$scRNA_functions
 Rlib_dir <- params$Rlib_dir
 Rpkg_config <- params$Rpkg_config
 testing <- params$testing
+
+print("These variables are used:")
+print(paste0("species:", species))
+print(paste0("vars_to_regress_list:", vars_to_regress_list))
+print(paste0("gid:", gid))
 ```
 
-```{r, handle_pkg, message=TRUE}
+```{r, handle_pkg, message=FALSE, include=FALSE}
 # set library dir, load this and remove any other dirs to avoid confusion
 # between personally created pkgs and the pipeline package
 ## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
