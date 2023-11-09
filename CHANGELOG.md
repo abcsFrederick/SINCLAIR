@@ -1,5 +1,6 @@
 ## development version
 
+- feature: issue #53 (add spooker), PR#57
 - feature: issue #29 (variables to regress), PR#55
 
 ## SINCLAIR v0.2.0

@@ -181,7 +181,6 @@ workflow GEX_EXQC {
             params.script_functions
         )
 
-
     emit:
         harmony_rds         = BATCH_CORRECT_HARMONY.out.rds
         rpca_rds            = BATCH_CORRECT_RPCA.out.rds
