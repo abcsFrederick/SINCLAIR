@@ -43,7 +43,7 @@ jobs:
           mkdir tmp && cd tmp
           which sinclair
           sinclair init
-          sinclair run -stub -profile ci_stub --input ../test_dir/gex_samplesheet.csv -entry GEX
+          sinclair run -stub -profile docker,ci_stub --input ../test_dir/gex_samplesheet.csv -entry GEX
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
         if: always() # run even if previous steps fail
