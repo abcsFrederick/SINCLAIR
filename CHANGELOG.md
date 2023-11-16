@@ -1,6 +1,6 @@
 ## SINCLAIR development version
 
-- Overhaul the CLI to use python rather than bash, which introduces breaking changes.
+- Overhaul the CLI to use python rather than bash, which introduces breaking changes (@kelly-sovacool #61).
 
 ## SINCLAIR 0.2.0
 
