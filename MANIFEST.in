@@ -6,6 +6,7 @@ recursive-include modules
 recursive-include src
 recursive-include submodules
 recursive-include tests
+recursive-include workflows
 include CITATION.cff
 include LICENSE
 include main.nf
