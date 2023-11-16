@@ -40,6 +40,8 @@ work/
 # tmp ignore testing fastqs
 test_dir/*/*/*.gz
 test.sh
+/tmp/
+/results/
 
 # tmp files
 *Delete*
@@ -56,3 +58,8 @@ tmp_images
 test_dir/**
 
 **/.koparde*
+
+# python
+/build/
+*.egg-info/
+__pycache__/
