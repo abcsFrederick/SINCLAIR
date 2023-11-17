@@ -53,6 +53,7 @@ tmp_images
 */.Rhistory
 .Rproj.user
 .Rhistory
+*.Rproj
 
 **/.koparde*
 test_dir/**
