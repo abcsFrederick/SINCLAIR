@@ -38,6 +38,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install .[dev,test]
+          python -c 'from sinclair.src.util import chmod_bins_exec; chmod_bins_exec()'
       - name: Stub run
         run: |
           mkdir tmp && cd tmp
