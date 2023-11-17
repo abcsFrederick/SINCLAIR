@@ -38,6 +38,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install .[dev,test]
+          python -c 'from sinclair.src.util import chmod_bins_exec; chmod_bins_exec()'
       - name: Check CLI basics
         run: |
           which sinclair
@@ -47,8 +48,12 @@ jobs:
         run: |
           mkdir tmp && cd tmp
           sinclair init
-          # TODO define stubs for all processes
-          #sinclair run -stub -profile docker,ci_stub --input ../test_dir/gex_samplesheet.csv -entry GEX
+          sinclair run \
+            -stub \
+            -profile docker,ci_stub \
+            -entry GEX \
+            --input ../test_dir/gex_samplesheet.csv \
+            --contrast ../assets/contrast_manifest.csv
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
         if: always() # run even if previous steps fail
