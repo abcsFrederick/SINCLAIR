@@ -2,6 +2,8 @@ process SAMPLESHEET_CHECK {
     tag "$samplesheet"
     label 'process_low'
 
+    container "${params.containers.base}"
+
     input:
     path (samplesheet)
     path (contrast_samplesheet)
