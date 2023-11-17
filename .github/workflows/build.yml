@@ -43,8 +43,12 @@ jobs:
           mkdir tmp && cd tmp
           which sinclair
           sinclair init
-          # TODO define stubs for all processes
-          #sinclair run -stub -profile docker,ci_stub --input ../test_dir/gex_samplesheet.csv -entry GEX
+          sinclair run \
+            -stub \
+            -profile docker,ci_stub \
+            -entry GEX \
+            --input ../test_dir/gex_samplesheet.csv \
+            --contrast ../assets/contrast_manifest.csv
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
         if: always() # run even if previous steps fail
