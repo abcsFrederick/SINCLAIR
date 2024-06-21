@@ -114,7 +114,7 @@ color = "red", face = "bold", size = 14))
 
 ### Groups
 
-```{r groupBatchCorrection, echo=FALSE, fig.width=15, fig.height=15,eval=FALSE}
+```{r groupBatchCorrection, echo=FALSE, fig.width=15, fig.height=15}
 for(i in 1:length(objList)){
   obj = OBJECT_SELECT(objList[i])
   title = NAME_SELECT(objList[i])

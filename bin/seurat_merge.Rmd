@@ -93,7 +93,7 @@ i=1
 for (p in readObj){
   combinedObj.list[[p]] <- eval(parse(text = readObj[[i]])) 
   combinedObj.list[[p]]$Sample = names(combinedObj.list)[i]
-  combinedObj.list[[p]]$Group = subset(samplesheet_df,uniqueID==strsplit(names(combinedObj.list)[i],"_")[[1]][2])$groupID
+  combinedObj.list[[p]]$Group = subset(samplesheet_df,uniqueID==gsub("^S_","",names(combinedObj.list)[i],"_"))$groupID
   i <- i + 1
  }
 ```
