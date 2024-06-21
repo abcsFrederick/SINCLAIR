@@ -148,7 +148,7 @@ if(qc_filtering == "manual") {
 }
 
 # Process data
-so_processed = MAIN_PROCESS_SO(so_qc, species, npcs_val)
+so_processed = MAIN_PROCESS_SO(so_qc_select, species, npcs_val)
 
 # Label data
 so_labeled = MAIN_SINGLER(so_processed,species)
