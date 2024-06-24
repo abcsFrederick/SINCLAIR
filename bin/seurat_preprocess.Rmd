@@ -31,12 +31,12 @@ sampleid = params$sampleid
 h5 = params$h5
 
 qc_filtering = params$qc_filtering  # manual, miqc, mads
-nCount_RNA_max = params$nCount_RNA_max
-nCount_RNA_min = params$nCount_RNA_min
-nFeature_RNA_max = params$nFeature_RNA_max
-nFeature_RNA_min = params$nFeature_RNA_min
-percent_mt_max = params$percent_mt_max
-percent_mt_min = params$percent_mt_min
+nCount_RNA_max = as.numeric(params$nCount_RNA_max)
+nCount_RNA_min = as.numeric(params$nCount_RNA_min)
+nFeature_RNA_max = as.numeric(params$nFeature_RNA_max)
+nFeature_RNA_min = as.numeric(params$nFeature_RNA_min)
+percent_mt_max = as.numeric(params$percent_mt_max)
+percent_mt_min = as.numeric(params$percent_mt_min)
 run_doublet_finder = params$run_doublet_finder #Y, N
 npcs_val = params$npcs
 
