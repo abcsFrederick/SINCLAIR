@@ -93,7 +93,7 @@ i=1
 for (p in readObj){
   combinedObj.list[[p]] <- eval(parse(text = readObj[[i]])) 
   combinedObj.list[[p]]$Sample = names(combinedObj.list)[i]
-  combinedObj.list[[p]]$Group = subset(samplesheet_df,uniqueID==strsplit(names(combinedObj.list)[i],"_")[[1]][2])$groupID
+  combinedObj.list[[p]]$Group = subset(samplesheet_df,uniqueID==gsub("^S_","",names(combinedObj.list)[i],"_"))$groupID
   i <- i + 1
  }
 ```
@@ -117,7 +117,7 @@ VariableFeatures(combinedObj.integratedRNA) = selectFeatures
 
 # add reduction methods to the mergedObj for plotting
 so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = c("percent.mt", "nFeature_RNA"), assay = "RNA")
-so_merged <- RunPCA(combinedObj.integratedRNA, npcs = 50, verbose = F)
+so_merged <- RunPCA(so_merged, npcs = 50, verbose = F)
 so_merged <- RunTSNE(so_merged, reduction = "pca", dims = 1:30, perplexity = 30, max_iter = 1000,
                    theta = 0.5, eta = 200, num_threads = 0)
 so_merged <- RunUMAP(so_merged, reduction = "pca", dims = 1:30, n.components = 2, n.neighbors = 30,
