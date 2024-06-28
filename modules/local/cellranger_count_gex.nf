@@ -7,8 +7,8 @@ process CELLRANGER_COUNT {
     val(run_cellranger)
 
     output:
-    path '*/outs/filtered_feature_bc_matrix.h5'                  , emit:h5
-    
+    tuple val(id), path('*/outs/filtered_feature_bc_matrix.h5'), emit:h5
+
     script:
     def args = task.ext.args ?: ''
     def localmem = task.memory.toGiga()

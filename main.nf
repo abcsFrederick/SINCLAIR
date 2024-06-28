@@ -12,7 +12,7 @@
 nextflow.enable.dsl=2
 
 log.info """\
-         s c R N A S E Q - N F   P I P E L I N E  
+         s c R N A S E Q - N F   P I P E L I N E
          ===================================
          NF version   : $nextflow.version
          profile      : $workflow.profile
@@ -30,7 +30,7 @@ log.info """\
     Identify workflows
 ===================================================================
 */
-include { PREPROCESS_EXQC                           } from './workflows/pre_process' 
+include { PREPROCESS_EXQC                           } from './workflows/pre_process'
 include { GEX_EXQC                                  } from './workflows/gex'
 include { ATAC_EXQC                                 } from './workflows/atac'
 // include { VDJ_EXQC                            } from '.workflows/sCRNA_vdj'
@@ -43,9 +43,8 @@ workflow GEX {
     main:
         PREPROCESS_EXQC ()
         GEX_EXQC (
-            PREPROCESS_EXQC.out.ch_meta,
+            PREPROCESS_EXQC.out.ch_fqdir_h5,
             PREPROCESS_EXQC.out.group_samplesheet,
-            PREPROCESS_EXQC.out.h5
         )
 
 }

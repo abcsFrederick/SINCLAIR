@@ -3,8 +3,7 @@ process SEURAT_PREPROCESS {
     label 'process_medium'
 
     input:
-    tuple val(id), val(inDir)
-    path(h5)
+    tuple val(id), val(inDir), path(h5)
     val(species)
     val(qc_filtering)
     val(nCount_RNA_max)
@@ -23,7 +22,7 @@ process SEURAT_PREPROCESS {
     output:
     tuple val(id), path ("*.rds")                 , emit:rds
     tuple val(id), path ("*.pdf")                 , emit:logs
-    
+
     script:
     def args = task.ext.args ?: ''
     """
