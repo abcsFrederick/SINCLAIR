@@ -15,7 +15,7 @@ The [SINCLAIR - **SIN**gle **C**el**L** **A**nalys**I**s **R**esource](#sinclair
 
 The pipeline currently begins with either sample FASTQ file or h5 Aligned reads, completing per sample quality control, and per-contrast integration. Quality control reports are generated, as are per-contrast integration reports.
 
-![Single cell RNA-Seq GEX pipeline](./resources/scRNA.svg) <sup>**Overview of Single Cell RNASeq Gene Expression Pipeline**</sup>
+![Single cell RNA-Seq GEX pipeline](./assets/scRNA.svg) <sup>**Overview of Single Cell RNASeq Gene Expression Pipeline**</sup>
 
 ### 3. Basic Deployment
 
