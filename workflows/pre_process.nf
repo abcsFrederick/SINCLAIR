@@ -32,18 +32,18 @@ include { CELLRANGER_COUNT                              } from '../modules/local
 RUN MAIN WORKFLOW
 =======================================================================================================
 */
-workflow PREPROCESS_EXQC {    
+workflow PREPROCESS_EXQC {
     main:
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
-        
+
         // Read in samplesheet, contrast manifest
         INPUT_CHECK_GEX (
             ch_input,
             ch_contrast,
             params.run_cellranger
         )
-        
+
         // create metadata
         // creates GEX mapped input of sample:gex_input_dir
         ch_meta = INPUT_CHECK_GEX.out.gex_samplesheet
@@ -60,9 +60,9 @@ workflow PREPROCESS_EXQC {
             params.genome_dir,
             params.run_cellranger
         )
-
+        // [id, fastq input dir, h5 file]
+        ch_fqdir_h5 = ch_meta.join(CELLRANGER_COUNT.out.h5)
     emit:
         group_samplesheet   = INPUT_CHECK_GEX.out.group_samplesheet
-        h5                  = CELLRANGER_COUNT.out.h5
-        ch_meta             = ch_meta
+        ch_fqdir_h5 = ch_fqdir_h5
 }
