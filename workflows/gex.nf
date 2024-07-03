@@ -87,6 +87,7 @@ workflow GEX_EXQC {
             ch_groups,
             ch_input,
             params.species,
+            params.vars_to_regress,
             params.Rlib_dir,
             params.Rpkg,
             params.script_merge,
@@ -98,6 +99,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
+            params.vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -110,6 +112,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
+            params.vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -122,6 +125,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
+            params.vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -134,6 +138,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
+            params.vars_to_regress,
             params.resolution_list,
             params.conda_path,
             params.python_path,
@@ -148,6 +153,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
+            params.vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -171,7 +177,6 @@ workflow GEX_EXQC {
             params.script_bc_integration,
             params.script_functions
         )
-
 
     emit:
         harmony_rds         = BATCH_CORRECT_HARMONY.out.rds
