@@ -39,17 +39,14 @@ RUN MAIN WORKFLOW
 */
 workflow GEX_EXQC {
     take:
-        ch_meta
+        ch_fqdir_h5
         group_samplesheet
-        h5
     main:
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
-
         // Run Seurat for individual samples
         SEURAT_PREPROCESS (
-            ch_meta,
-            h5,
+            ch_fqdir_h5,
             params.species,
             params.qc_filtering,
             params.nCount_RNA_max,

@@ -28,7 +28,6 @@ log.info """\
         outDir       : $params.outdir
         """
         .stripIndent()
-//
 
 /*
 ===================================================================
@@ -77,9 +76,8 @@ workflow GEX {
     main:
         PREPROCESS_EXQC ()
         GEX_EXQC (
-            PREPROCESS_EXQC.out.ch_meta,
+            PREPROCESS_EXQC.out.ch_fqdir_h5,
             PREPROCESS_EXQC.out.group_samplesheet,
-            PREPROCESS_EXQC.out.h5
         )
 
 }
@@ -91,26 +89,3 @@ workflow ATAC {
     emit:
         samplesheet         = PREPROCESS_EXQC.out.samplesheet
 }
-
-// //
-// // WORKFLOW: Run file sample type 1
-// //
-// workflow GEX {
-//     main:
-//         GEX_EXQC()
-//     emit:
-//         file1                   = GEX_EXQC.out.file1
-//         file2                   = GEX_EXQC.out.file2
-// }
-
-
-// //
-// // WORKFLOW: Run file sample type 2
-// //
-// workflow ATAC {
-//     main:
-//         ATAC_EXQC()
-//     emit:
-//         file1                   = SUBWK_2_EXQC.out.file1
-//         file2                   = SUBWK_2_EXQC.out.file2
-// }

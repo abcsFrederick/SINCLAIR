@@ -15,33 +15,24 @@ The [SINCLAIR - **SIN**gle **C**el**L** **A**nalys**I**s **R**esource](#sinclair
 
 The pipeline currently begins with either sample FASTQ file or h5 Aligned reads, completing per sample quality control, and per-contrast integration. Quality control reports are generated, as are per-contrast integration reports.
 
-![Single cell RNA-Seq GEX pipeline](./resources/scRNA.svg) <sup>**Overview of Single Cell RNASeq Gene Expression Pipeline**</sup>
+![Single cell RNA-Seq GEX pipeline](./assets/scRNA.svg) <sup>**Overview of Single Cell RNASeq Gene Expression Pipeline**</sup>
 
 ### 3. Basic Deployment
 
+Usage
+
 ```
-  USAGE:
-    bash sinclair -m/--runmode=<RUNMODE> -w/--workdir=<WORKDIR>
-  Required Arguments:
-    1.  RUNMODE: [Type: String] Valid options:
-      *) init : initialize workdir
-      *) run : run with slurm
-      *) resume : continue pipeline
-      *) stubrun : nextflow stubrun; will run locally with test data
-      *) runlocal : run without submitting to sbatch
-      *) testrun: run on cluster with test dataset
-    2.  WORKDIR: [Type: String]: Absolute or relative path to the output folder with write permissions.
-    3.  ENTRY: [Type: String] Valid options:
-      *) GEX
-  Optional Arguments:
-    1.  RESUME: [Type: String:] Valid options: Y, N; default: N
+sinclair --help
+sinclair --version
 ```
 
 Example workflow
 
 ```
 # 1) run initialization
-bash sinclair --runmode=init --workdir=/path/to/output/dir --entry=GEX
+mkdir -p /path/to/output/dir
+cd /path/to/output/dir
+sinclair init
 
 # 2) update the config files as needed
 ## can change whether cellranger is deployed, species, names of manifest files (default locations listed below)
@@ -50,16 +41,16 @@ bash sinclair --runmode=init --workdir=/path/to/output/dir --entry=GEX
 
 # 3) deploy the pipeline
 ## A) STUBRUN
-bash sinclair --runmode=stubrun --workdir=/path/to/output/dir --entry=GEX
+sinclair run -stub -entry GEX
 
 ## B) local run
-bash sinclair --runmode=runlocal --workdir=/path/to/output/dir --entry=GEX
+sinclair run -entry GEX
 
 ## C) submit to slurm
-bash sinclair --runmode=run --workdir=/path/to/output/dir --entry=GEX
+sinclair run --mode slurm -entry GEX
 
 # 4) OPTIONAL resume
-bash sinclair --runmode=run --workdir=/path/to/output/dir --entry=GEX --resume=Y
+sinclair run --mode slurm -entry GEX -resume
 ```
 
 ### 4. Detailed Documentation
