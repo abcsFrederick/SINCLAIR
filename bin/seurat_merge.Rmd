@@ -133,7 +133,7 @@ if (length(vars_to_regress_list) > 0) {
   so_merged <- SCTransform(combinedObj.integratedRNA, assay = "RNA")
 }
 # add reduction methods to the mergedObj for plotting
-so_merged <- RunPCA(combinedObj.integratedRNA, npcs = 50, verbose = F)
+so_merged <- RunPCA(so_merged, npcs = 50, verbose = F)
 so_merged <- RunTSNE(so_merged,
   reduction = "pca", dims = 1:30, perplexity = 30, max_iter = 1000,
   theta = 0.5, eta = 200, num_threads = 0
