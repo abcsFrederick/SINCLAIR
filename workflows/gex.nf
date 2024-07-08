@@ -87,6 +87,7 @@ workflow GEX_EXQC {
             ch_groups,
             ch_input,
             params.species,
+            params.npcs,
             params.vars_to_regress,
             params.Rlib_dir,
             params.Rpkg,

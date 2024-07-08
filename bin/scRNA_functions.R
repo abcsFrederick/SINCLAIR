@@ -223,7 +223,7 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
   # run neighbors, clusters
   so <- FindNeighbors(so_integrate, reduction = reduction_in, dims = 1:npcs)
   for (res in resolution_list) {
-    so <- FindClusters(so, dims = 1:npcs, resolution = res, algorithm = 3)
+    so <- FindClusters(so, resolution = res, algorithm = 3)
   }
 
   # reduction
