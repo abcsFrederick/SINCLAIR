@@ -127,7 +127,7 @@ combinedObj.integratedRNA <- merge(reference.list[[1]], reference.list[2:length(
 VariableFeatures(combinedObj.integratedRNA) <- selectFeatures
 ```
 
-```{r mergedObjDims, message=FALSE, echo=FALSE, include=FALSE}
+```{r mergedObjDims, message=FALSE, echo=FALSE}
 # use variables to regress, if provided by user
 if (length(vars_to_regress_list) > 0) {
   so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = vars_to_regress_list, assay = "RNA")

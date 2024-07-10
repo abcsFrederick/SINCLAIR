@@ -98,6 +98,7 @@ if (testing=="Y"){
 } else {
   so <- CreateSeuratObject(counts=rnaCounts)
 }
+so
 
 # add metadata
 so$Sample = sampleid
@@ -107,6 +108,8 @@ so$Sample = sampleid
 so[["percent.mt"]] = PercentageFeatureSet(so, pattern = "^mt-|^MT-")
 so[["percent.RP"]] = PercentageFeatureSet(so, pattern = "^R[PL,pl]|R[PS,ps]")
 FeatureScatter(so, feature1 = "nFeature_RNA", feature2 = "percent.mt")
+
+VlnPlot(so, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 ```
 
 ```{r, QC, message=FALSE}
@@ -120,10 +123,8 @@ so_qc <- RunMiQC(so_filt,
               nFeature_RNA = "nFeature_RNA", 
               posterior.cutoff = 0.7,
               model.slot = "flexmix_model")
-print(so_qc)
 #PlotMiQC(so_qc, color.by = "miQC.probability") + 
   #ggplot2::scale_color_gradient(low = "grey", high = "purple")
-VlnPlot(so_qc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 ```
 
 ```{r qc2, message=FALSE}
@@ -146,6 +147,9 @@ if(qc_filtering == "manual") {
   nCount_RNA > nCount_out & 
   percent.mt < mt_out)
 }
+so_qc_select
+
+VlnPlot(so_qc_select, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
 # Process data
 so_processed = MAIN_PROCESS_SO(so_qc_select, species, npcs_val)
@@ -161,6 +165,8 @@ so_doublet = MAIN_DOUBLETS(so_labeled, run_doublet_finder)
 # clean final object
 so_output = UpdateSeuratObject(so_doublet)
 so_output
+
+VlnPlot(so_output, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
 
 #save file
 fpath=paste0(sampleid,"_seurat_preprocess.rds")
