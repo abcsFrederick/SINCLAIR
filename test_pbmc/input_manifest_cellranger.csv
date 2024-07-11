@@ -1,0 +1,15 @@
+masterID,uniqueID,groupID,dataType,input_dir
+10x_Chromium_V2,pbmc1.10x_Chromium_V2_A,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.10x_Chromium_V2_A
+10x_Chromium_V2,pbmc1.10x_Chromium_V2_B,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.10x_Chromium_V2_B
+10x_Chromium_V3,pbmc1.10x_Chromium_V3,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.10x_Chromium_V3
+CEL_Seq2,pbmc1.CEL_Seq2,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.CEL_Seq2
+Drop_seq,pbmc1.Drop_seq,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.Drop_seq
+Seq_Well,pbmc1.Seq_Well,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.Seq_Well
+Smart_seq2,pbmc1.Smart_seq2,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.Smart_seq2
+inDrops,pbmc1.inDrops,pbmc1,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc1.inDrops
+10x_Chromium_V2,pbmc2.10x_Chromium_V2,pbmc2,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc2.10x_Chromium_V2
+CEL_Seq2,pbmc2.CEL_Seq2,pbmc2,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc2.CEL_Seq2
+Drop_seq,pbmc2.Drop_seq,pbmc2,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc2.Drop_seq
+Seq_Well,pbmc2.Seq_Well,pbmc2,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc2.Seq_Well
+Smart_seq2,pbmc2.Smart_seq2,pbmc2,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc2.Smart_seq2
+inDrops,pbmc2.inDrops,pbmc2,gex,/data/khanlab3/gb_omics/software/pbmc_test_data/pbmc2.inDrops
