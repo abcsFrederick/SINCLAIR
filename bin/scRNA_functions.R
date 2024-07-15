@@ -38,7 +38,7 @@ SEURAT_CLUSTERING <- function(so_in, npcs_in) {
     npcs = 50
   )
   so <- FindNeighbors(so, dims = 1:npcs_in)
-  so <- FindClusters(so, print.output = 0, resolution = 0.8, algorithm = 3)
+  so <- FindClusters(so, resolution = 0.8, algorithm = 3, verbose=TRUE)
   so <- RunUMAP(so, dims = 1:npcs_in, n.components = 3)
   return(so)
 }
@@ -223,7 +223,7 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
   # run neighbors, clusters
   so <- FindNeighbors(so_integrate, reduction = reduction_in, dims = 1:npcs)
   for (res in resolution_list) {
-    so <- FindClusters(so, dims = 1:npcs, resolution = res, algorithm = 3)
+    so <- FindClusters(so, resolution = res, algorithm = 3)
   }
 
   # reduction

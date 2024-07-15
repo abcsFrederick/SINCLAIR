@@ -7,6 +7,7 @@ editor_options:
   chunk_output_type: console
 params:
   species: "hg19"
+  npcs: 50
   vars_to_regress: "percent.mt,nFeature_RNA"
   samplesheet: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/assets/input_manifest_cellranger.csv"
   rdsFiles: "/data/sevillas2/sinclair/dev/results/seurat/preprocess/sample2_seurat_preprocess.rds /data/sevillas2/sinclair/dev/results/seurat/preprocess/sample4_seurat_preprocess.rds"
@@ -24,6 +25,7 @@ vars_to_regress_list <- strsplit(gsub(" ", "", params$vars_to_regress), ",")[[1]
 rds_files <- strsplit(params$rdsFiles, " ")[[1]]
 gid <- params$gid
 samplesheet <- params$samplesheet
+npcs <- as.numeric(params$npcs)
 
 scRNA_functions <- params$scRNA_functions
 Rlib_dir <- params$Rlib_dir
@@ -125,7 +127,7 @@ combinedObj.integratedRNA <- merge(reference.list[[1]], reference.list[2:length(
 VariableFeatures(combinedObj.integratedRNA) <- selectFeatures
 ```
 
-```{r mergedObjDims, message=FALSE, echo=FALSE, include=FALSE}
+```{r mergedObjDims, message=FALSE, echo=FALSE}
 # use variables to regress, if provided by user
 if (length(vars_to_regress_list) > 0) {
   so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = vars_to_regress_list, assay = "RNA")
@@ -133,14 +135,14 @@ if (length(vars_to_regress_list) > 0) {
   so_merged <- SCTransform(combinedObj.integratedRNA, assay = "RNA")
 }
 # add reduction methods to the mergedObj for plotting
-so_merged <- RunPCA(combinedObj.integratedRNA, npcs = 50, verbose = F)
+so_merged <- RunPCA(so_merged, npcs = 50, verbose = F)
 so_merged <- RunTSNE(so_merged,
-  reduction = "pca", dims = 1:30, perplexity = 30, max_iter = 1000,
+  reduction = "pca", dims = 1:npcs, perplexity = 30, max_iter = 1000,
   theta = 0.5, eta = 200, num_threads = 0
 )
 so_merged <- RunUMAP(so_merged,
-  reduction = "pca", dims = 1:30, n.components = 2, n.neighbors = 30,
-  n.epochs = 200, min.dist = 0.3, learning.rate = 1, spread = 1
+  reduction = "pca", dims = 1:npcs, n.components = 2, n.neighbors = 30,
+  min.dist = 0.3, learning.rate = 1, spread = 1
 )
 ```
 

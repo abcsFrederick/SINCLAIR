@@ -36,9 +36,7 @@ scviObj=params$scviObj
 ligerObj=params$ligerObj
 
 resolution=as.numeric(strsplit(params$resolution_list,",")[[1]])
-citeseq=params$citeseq
-annot=params$annot
-npcs=params$npcs
+npcs=as.numeric(params$npcs)
 
 citeseq=params$citeseq
 annot=params$annot
@@ -102,7 +100,7 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("s",i),value=sampleImage)
 }
-p = ggarrange(s1,s2,s3,s4,s5,
+p = ggarrange(s1,s2,s3,s4,s5,s6,
           ncol=3,nrow=2,
           common.legend=T,
           legend="bottom")
@@ -124,7 +122,7 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(override.aes = list(size=3)))
   assign(x=paste0("g",i),value=sampleImage)
 }
-p = ggarrange(g1,g2,g3,g4,g5,
+p = ggarrange(g1,g2,g3,g4,g5,g6,
           ncol=3,nrow=2,
           common.legend=T,
           legend="bottom")
@@ -146,7 +144,7 @@ for(i in 1:length(objList)){
     guides(colour=guide_legend(ncol=6,override.aes = list(size=3)))
   assign(x=paste0("c",i),value=sampleImage)
 }
-p = ggarrange(c1,c2,c3,c4,c5,
+p = ggarrange(c1,c2,c3,c4,c5,c6,
           ncol=3,nrow=2,
           common.legend=T,legend="bottom")
 

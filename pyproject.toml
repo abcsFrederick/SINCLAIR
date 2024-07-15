@@ -13,7 +13,7 @@ keywords = ["bioinformatics", "nextflow", "scRNA-seq", "single-cell analysis"]
 authors = [
     {name = "Samantha Sevilla"},
     {name = "Nathan Wong"},
-    {name = "Erica Persson"},
+    {name = "Erica Pehrsson"},
     {name = "Abdalla Abdelmaksoud"},
     {name = "Kelly Sovacool", email = "kelly.sovacool@nih.gov"},
     {name = "Vishal Koparde", email = "vishal.koparde@nih.gov"},

@@ -10,6 +10,10 @@
   - Fix the $SLURM_JOB_ID variable name for biowulf. (#82, @kelly-sovacool)
   - Fix file paths for test dataset. (#82, @kelly-sovacool)
   - Add the tex module for preprocess and merge, which produce PDF files from R Markdown. (#82, @kelly-sovacool)
+  - Use same number of PCs for merged object clustering as for integration. (#85, @epehrsson)
+  - Add LIGER UMAP to integration report. (#85, @epehrsson)
+  - Set all default parameters in `nextflow.config`. (#85, @epehrsson)
+    - Previously, some parameters were set in `conf/process_params.config`, but we found this confusing, so we consolidated them to the main `nextflow.config` file.
 - New features
   - Allows users to determine what variables to regress out. (#55, @slsevilla)
 
