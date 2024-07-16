@@ -3,10 +3,10 @@ name: Add issues/PRs to user projects
 on:
   issues:
     types:
-    - assigned
+      - assigned
   pull_request:
     types:
-    - assigned
+      - assigned
 
 jobs:
   add-to-project:
