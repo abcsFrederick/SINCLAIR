@@ -10,14 +10,6 @@ on:
       - main
       - develop
   workflow_dispatch:
-    inputs:
-      test_run:
-        type: boolean
-        default: false
-        required: true
-
-env:
-  test_run: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.test_run }}
 
 jobs:
   build:
