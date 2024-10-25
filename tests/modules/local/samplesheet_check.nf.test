@@ -8,9 +8,6 @@ nextflow_process {
 
         when {
             params {
-                input = "tests/test_dir/gex_samplesheet.csv"
-                contrast = "assets/contrast_manifest.csv"
-                run_cellranger = "Y"
             }
             process {
                 """
