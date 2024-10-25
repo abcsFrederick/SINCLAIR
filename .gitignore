@@ -36,6 +36,7 @@ work/
 .nextflow.log*
 .nextflow/cache/
 .nextflow/history
+.nf-test/
 
 # tmp ignore testing fastqs
 test_dir/*/*/*.gz
