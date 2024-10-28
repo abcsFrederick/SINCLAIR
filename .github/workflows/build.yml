@@ -58,10 +58,8 @@ jobs:
           sinclair init
           sinclair run \
             -stub \
-            -profile ci_stub,docker \
-            -entry GEX \
-            --input ../tests/test_dir/gex_samplesheet.csv \
-            --contrast ../tests/test_dir/contrast_manifest.csv
+            -profile ci_stub,docker,test \
+            -entry GEX
       - name: "Upload Artifact"
         uses: actions/upload-artifact@v3
         if: always() # run even if previous steps fail
