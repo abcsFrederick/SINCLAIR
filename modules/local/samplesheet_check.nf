@@ -14,7 +14,7 @@ process SAMPLESHEET_CHECK {
     path '*atac_samplesheet.csv'                     , optional:true, emit:atac_samplesheet
     path '*contrast_samplesheet.csv'                 , emit:contrast_samplesheet
     path '*groups_samplesheet.csv'                   , emit:group_samplesheet
-    
+
     script:
     """
     if [[ $run_cellranger == N ]]; then
@@ -30,18 +30,4 @@ process SAMPLESHEET_CHECK {
     fi
     """
 
-    stub:
-    """
-    if [[ $run_cellranger == N ]]; then
-        check_samplesheet_input_cellranger.py \\
-        $samplesheet \\
-        $contrast_samplesheet \\
-        project
-    else
-        check_samplesheet.py \\
-        $samplesheet \\
-        $contrast_samplesheet \\
-        project
-    fi
-    """
 }
