@@ -16,6 +16,8 @@
     - Previously, some parameters were set in `conf/process_params.config`, but we found this confusing, so we consolidated them to the main `nextflow.config` file.
 - New features
   - Allows users to determine what variables to regress out. (#55, @slsevilla)
+- Documentation improvements
+  - The docs website now has a drop-down menu to switch between different versions. (#103, @kelly-sovacool)
 
 ## SINCLAIR v0.2.0
 
