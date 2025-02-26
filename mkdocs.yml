@@ -98,6 +98,8 @@ nav:
       - 3. Running the Pipeline: user-guide/run.md
       - 4. Expected Output: user-guide/output.md
       - 5. Running Test Data: user-guide/test-info.md
+  - Analysis:
+      - 1. Differential Expression Analysis: user-guide/differentialExpression.md
   - FAQ:
       - Troubleshooting: user-guide/troubleshooting.md
       - How to contribute: contributing.md
