@@ -20,7 +20,7 @@
 - Documentation improvements
   - The docs website now has a drop-down menu to switch between different versions. (#103, @kelly-sovacool)
 
-## SINCLAIR v0.2.0
+## SINCLAIR 0.2.0
 
 ### What's Changed
 
@@ -32,7 +32,7 @@
 - fix: issue #43
 - doc: add workflow image
 
-## SINCLAIR v0.1.1
+## SINCLAIR 0.1.1
 
 ### What's Changed
 
@@ -41,7 +41,7 @@
 - Feature/documentation by @slsevilla in #37
 - updated docs, gex_patch by @slsevilla in #38
 
-## SINCLAIR v0.1.0
+## SINCLAIR 0.1.0
 
 This is the first release of SINCLAIR 🎉
 
