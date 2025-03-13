@@ -159,9 +159,9 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
 
             # split lines
             MASTERID, UNIQUEID, GROUPID, DATATYPE, INPUTDIR = lspl[: len(HEADER)]
-            
+
             ## Check sample name entries
-            UNIQUEID = UNIQUEID.replace(" ", "_").replace("-","_")
+            UNIQUEID = UNIQUEID.replace(" ", "_").replace("-", "_")
             if not UNIQUEID:
                 print_error("Sample entry has not been specified!", "Line", line)
 
