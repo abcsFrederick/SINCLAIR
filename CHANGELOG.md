@@ -19,6 +19,7 @@
   - Allows users to determine what variables to regress out. (#55, @slsevilla)
 - Documentation improvements
   - The docs website now has a drop-down menu to switch between different versions. (#103, @kelly-sovacool)
+  - Fix broken image link. (#108, @wong-nw)
 
 ## SINCLAIR 0.2.0
 
