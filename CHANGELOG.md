@@ -1,7 +1,15 @@
 ## SINCLAIR development version
 
-- Overhaul the CLI to use python rather than bash, which introduces breaking changes (#61, @kelly-sovacool).
-  - Create a script (`bin/sinclair`) to provide an interface to the CLI that works out-of-the-box without the need to install the python package with pip. (#80, @kelly-sovacool)
+- New features
+  - Allows users to determine what variables to regress out. (#55, @slsevilla)
+  - Overhaul the CLI to use python rather than bash, which introduces breaking changes (#61, @kelly-sovacool).
+    - Create a script (`bin/sinclair`) to provide an interface to the CLI that works out-of-the-box without the need to install the python package with pip. (#80, @kelly-sovacool)
+  - Use `nextflow run -resume` by default, or turn it off with `sinclair run --forceall`. (#110, @kelly-sovacool)
+  - Add `--output` argument for `sinclair init` and `sinclair run`. (#110, @kelly-sovacool)
+    - If not provided, commands are run in the current working directory.
+    - This is equivalent to the nextflow `$launchDir` constant.
+  - Set the `publish_dir_mode` nextflow option to `link` by default. (#110, @kelly-sovacool)
+  - Set the `process.cache` nextflow option to `deep` by default rather than lenient on biowulf. (#110, @kelly-sovacool)
 - Bug fixes
   - Fix biowulf module syntax in `conf/modules.config`. (#81, @epehrsson)
   - Fix filtering thresholds and use filtered object for downstream steps in `SEURAT_PROCESS`. (#81, @epehrsson)
@@ -15,8 +23,6 @@
   - Set all default parameters in `nextflow.config`. (#85, @epehrsson)
     - Previously, some parameters were set in `conf/process_params.config`, but we found this confusing, so we consolidated them to the main `nextflow.config` file.
   - Allow sample IDs to contain hyphens. (#94, @wong-nw)
-- New features
-  - Allows users to determine what variables to regress out. (#55, @slsevilla)
 - Documentation improvements
   - The docs website now has a drop-down menu to switch between different versions. (#103, @kelly-sovacool)
   - Fix broken image link. (#108, @wong-nw)

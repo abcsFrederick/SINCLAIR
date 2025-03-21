@@ -36,27 +36,26 @@ Example workflow
 
 ```
 # 1) run initialization
-mkdir -p /path/to/output/dir
-cd /path/to/output/dir
-sinclair init
+# --output is optional and defaults to your current working directory.
+sinclair init --output /path/to/output/dir
 
 # 2) update the config files as needed
 ## can change whether cellranger is deployed, species, names of manifest files (default locations listed below)
-/path/to/output/dirnextflow.config
+/path/to/output/dir/nextflow.config
 /path/to/output/dir/assets/contrast_manifest.csv /path/to/output/dir/assets/input_manifest.csv
 
 # 3) deploy the pipeline
 ## A) STUBRUN
-sinclair run -stub -entry GEX
+sinclair run -stub -entry GEX --output /path/to/output/dir
 
 ## B) local run
-sinclair run -entry GEX
+sinclair run -entry GEX --output /path/to/output/dir
 
 ## C) submit to slurm
-sinclair run --mode slurm -entry GEX
+sinclair run --mode slurm -entry GEX --output /path/to/output/dir
 
 # 4) OPTIONAL resume
-sinclair run --mode slurm -entry GEX -resume
+sinclair run --mode slurm -entry GEX -resume --output /path/to/output/dir
 ```
 
 ### 4. Detailed Documentation
