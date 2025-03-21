@@ -44,14 +44,9 @@ jobs:
           python -m pip install --upgrade pip setuptools
           pip install .[dev,test]
           python -c 'from sinclair.src.util import chmod_bins_exec; chmod_bins_exec()'
-      - name: Check out-of-the-box CLI script
+      - name: pytest
         run: |
-          bash bin/sinclair --help
-      - name: Check CLI basics
-        run: |
-          which sinclair
-          sinclair --version
-          sinclair --citation
+          pytest tests
       - name: Stub run
         run: |
           mkdir tmp && cd tmp
