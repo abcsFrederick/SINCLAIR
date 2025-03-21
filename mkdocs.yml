@@ -9,7 +9,7 @@ repo_url: https://github.com/CCBR/SINCLAIR
 edit_uri: https://github.com/CCBR/SINCLAIR/edit/feature/gex_only/docs/
 
 # Copyright
-copyright: Copyright &copy; 2023 CCR Collaborative Bioinformatics Resource
+copyright: Copyright &copy; 2023-{{ now().year }} CCR Collaborative Bioinformatics Resource
 
 # Configuration
 theme:
