@@ -23,6 +23,13 @@
   - Set all default parameters in `nextflow.config`. (#85, @epehrsson)
     - Previously, some parameters were set in `conf/process_params.config`, but we found this confusing, so we consolidated them to the main `nextflow.config` file.
   - Allow sample IDs to contain hyphens. (#94, @wong-nw)
+  - Disables SCVI batch correction. (#109, @wong-nw)
+    - This feature is on hold until a later release.
+  - LIGER now runs with 50 PCs by default instead of 20 (#109, @wong-nw)
+- New features
+
+  - Allows users to determine what variables to regress out. (#55, @slsevilla)
+
 - Documentation improvements
   - The docs website now has a drop-down menu to switch between different versions. (#103, @kelly-sovacool)
   - Fix broken image link. (#108, @wong-nw)
