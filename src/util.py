@@ -177,12 +177,13 @@ def run_nextflow(
     # add any additional Nextflow commands
     args_dict = dict()
     prev_arg = ""
-    for arg in nextflow_args:
-        if arg.startswith("-"):
-            args_dict[arg] = ""
-        elif prev_arg.startswith("-"):
-            args_dict[prev_arg] = arg
-        prev_arg = arg
+    if nextflow_args:
+        for arg in nextflow_args:
+            if arg.startswith("-"):
+                args_dict[arg] = ""
+            elif prev_arg.startswith("-"):
+                args_dict[prev_arg] = arg
+            prev_arg = arg
     # make sure profile matches biowulf or frce
     profiles = (
         set(args_dict["-profile"].split(","))
@@ -205,10 +206,14 @@ def run_nextflow(
         args_dict["-resume"] = ""
 
     nextflow_command += list(f"{k} {v}" for k, v in args_dict.items())
-
-    # Print nextflow command
     nextflow_command = " ".join(str(nf) for nf in nextflow_command)
+    # Print nextflow command
     msg_box("Nextflow command", errmsg=nextflow_command)
+    # Print a preview before launching the actual run
+    if "-preview" not in args_dict.keys():
+        preview_command = nextflow_command + " -preview"
+        msg_box("Pipeline Preview", errmsg=preview_command)
+        subprocess.run(preview_command, shell=True, check=True)
 
     if mode == "slurm":
         slurm_filename = "submit_slurm.sh"
