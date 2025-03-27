@@ -11,6 +11,7 @@
   - This is equivalent to the nextflow `$launchDir` constant.
 - Set the `publish_dir_mode` nextflow option to `link` by default. (#110, @kelly-sovacool)
 - Set the `process.cache` nextflow option to `deep` by default rather than lenient on biowulf. (#110, @kelly-sovacool)
+- The nextflow preview is printed before launching the actual run. (#117, @kelly-sovacool)
 
 ### Bug fixes
 
