@@ -169,7 +169,6 @@ def run_nextflow(
     nextflow_args=None,
 ):
     """Run a Nextflow workflow"""
-    nextflow_command = ["nextflow", "run", nextfile_path]
 
     hpc = get_hpc()
     if mode == "slurm" and not hpc:
@@ -205,15 +204,17 @@ def run_nextflow(
     elif not force_all and "-resume" not in args_dict.keys():
         args_dict["-resume"] = ""
 
-    nextflow_command += list(f"{k} {v}" for k, v in args_dict.items())
-    nextflow_command = " ".join(str(nf) for nf in nextflow_command)
-    # Print nextflow command
-    msg_box("Nextflow command", errmsg=nextflow_command)
+    nextflow_command = ["nextflow", "run", nextfile_path] + [
+        f"{k} {v}" for k, v in args_dict.items()
+    ]
+    nextflow_command = " ".join(nextflow_command)
     # Print a preview before launching the actual run
     if "-preview" not in args_dict.keys():
         preview_command = nextflow_command + " -preview"
         msg_box("Pipeline Preview", errmsg=preview_command)
         subprocess.run(preview_command, shell=True, check=True)
+    # Print nextflow command
+    msg_box("Nextflow command", errmsg=nextflow_command)
 
     if mode == "slurm":
         slurm_filename = "submit_slurm.sh"
