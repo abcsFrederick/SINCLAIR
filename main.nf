@@ -5,14 +5,13 @@
 ===================================================================
     GitHub: https://github.com/CCBR/SINCLAIR
 -------------------------------------------------------------------
-
 */
 
 // Using DSL-2
 nextflow.enable.dsl=2
 
 log.info """\
-        S I N C L A I R   P I P E L I N E
+        SINCLAIR $workflow.manifest.version
         ===================================
         NF version   : $nextflow.version
         runName      : $workflow.runName
@@ -39,6 +38,12 @@ include { GEX_EXQC                                  } from './workflows/gex'
 include { ATAC_EXQC                                 } from './workflows/atac'
 // include { VDJ_EXQC                            } from '.workflows/sCRNA_vdj'
 // include { CITE_EXQC                           } from '.workflows/sCRNA_cite'
+
+// Plugins
+include { validateParameters } from 'plugin/nf-schema'
+include { paramsHelp } from 'plugin/nf-schema'
+
+validateParameters()
 
 /*
 ===================================================================

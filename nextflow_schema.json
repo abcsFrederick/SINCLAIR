@@ -4,7 +4,7 @@
   "title": "CCBR/SINCLAIR pipeline parameters",
   "description": "SINgle CelL AnalysIs Resource",
   "type": "object",
-  "$defs": {
+  "definitions": {
     "input_output_options": {
       "title": "Input/output options",
       "type": "object",
@@ -20,24 +20,100 @@
           "mimetype": "text/csv",
           "pattern": "^\\S+\\.csv$",
           "description": "Path to comma-separated file containing information about the samples in the experiment.",
-          "help_text": "You will need to create a manifest file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location.",
+          "help_text": "You will need to create a design file with information about the samples in your experiment before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row.",
+          "fa_icon": "fas fa-file-csv",
+          "default": "${launchDir}/assets/input_manifest_cellranger.csv"
+        },
+        "contrast": {
+          "type": "string",
+          "default": "${launchDir}/assets/contrast_manifest.csv",
           "fa_icon": "fas fa-file-csv"
         },
         "outdir": {
           "type": "string",
           "format": "directory-path",
-          "description": "The output directory where the results will be saved.",
+          "description": "The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.",
           "fa_icon": "fas fa-folder-open",
-          "help_text": "Recommended value: \"${launchDir}/output/\""
-        },
-        "contrast": {
+          "default": "${launchDir}/output"
+        }
+      }
+    },
+    "main_options": {
+      "title": "main options",
+      "type": "object",
+      "description": "Most commonly used parameters",
+      "default": "",
+      "properties": {
+        "species": {
           "type": "string",
-          "default": "assets/contrast_manifest.csv",
-          "format": "file-path",
-          "exists": true,
-          "mimetype": "text/csv",
-          "pattern": "^\\S+\\.csv$",
-          "description": "Path to comma-separated file containing information about the contrast groups in the experiment."
+          "default": "hg19",
+          "enum": ["hg19", "hg38", "mm10"]
+        },
+        "run_cellranger": {
+          "type": "string",
+          "default": "Y",
+          "description": "whether to run cellranger",
+          "enum": ["Y", "N"]
+        },
+        "vars_to_regress": {
+          "type": "string",
+          "default": "percent.mt,nFeature_RNA",
+          "description": "comma-separated list of variables to regress"
+        },
+        "qc_filtering": {
+          "type": "string",
+          "default": "manual"
+        },
+        "nCount_RNA_max": {
+          "type": "integer",
+          "default": 500000
+        },
+        "nCount_RNA_min": {
+          "type": "integer",
+          "default": 1000
+        },
+        "nFeature_RNA_max": {
+          "type": "integer",
+          "default": 5000
+        },
+        "nFeature_RNA_min": {
+          "type": "integer",
+          "default": 200
+        },
+        "percent_mt_max": {
+          "type": "integer",
+          "default": 10
+        },
+        "percent_mt_min": {
+          "type": "integer",
+          "default": 0
+        },
+        "run_doublet_finder": {
+          "type": "string",
+          "default": "Y"
+        },
+        "seurat_resolution": {
+          "type": "string",
+          "default": "0.1,0.2,0.3,0.5,0.6,0.8,1"
+        },
+        "npcs": {
+          "type": "integer",
+          "default": 50,
+          "description": "Number of principle components"
+        },
+        "resolution_list": {
+          "type": "string",
+          "default": "0.1,0.2,0.3,0.5,0.6,0.8,1"
+        },
+        "genome_dir": {
+          "type": "string",
+          "fa_icon": "fas fa-folder",
+          "description": "Path to genome reference. This is set by platforms-specific config files, e.g. conf/biowulf.config"
+        },
+        "tracedir": {
+          "type": "string",
+          "default": "${params.outdir}/pipeline_info",
+          "fa_icon": "fas fa-folder"
         }
       }
     },
@@ -51,7 +127,7 @@
         "max_cpus": {
           "type": "integer",
           "description": "Maximum number of CPUs that can be requested for any single job.",
-          "default": 16,
+          "default": 48,
           "fa_icon": "fas fa-microchip",
           "hidden": true,
           "help_text": "Use to set an upper-limit for the CPU requirement for each process. Should be an integer e.g. `--max_cpus 1`"
@@ -100,130 +176,106 @@
           "hidden": true
         }
       }
+    },
+    "institutional_config_options": {
+      "title": "Institutional config options",
+      "type": "object",
+      "description": "Parameters used to describe centralised config profiles.",
+      "default": "",
+      "properties": {
+        "config_profile_description": {
+          "type": "string",
+          "hidden": true
+        },
+        "config_profile_contact": {
+          "type": "string",
+          "hidden": true
+        },
+        "config_profile_url": {
+          "type": "string",
+          "hidden": true
+        }
+      },
+      "fa_icon": "fas fa-university"
     }
   },
   "allOf": [
     {
-      "$ref": "#/$defs/input_output_options"
+      "$ref": "#/definitions/input_output_options"
     },
     {
-      "$ref": "#/$defs/max_job_request_options"
+      "$ref": "#/definitions/main_options"
     },
     {
-      "$ref": "#/$defs/generic_options"
+      "$ref": "#/definitions/max_job_request_options"
+    },
+    {
+      "$ref": "#/definitions/generic_options"
+    },
+    {
+      "$ref": "#/definitions/institutional_config_options"
     }
   ],
   "properties": {
-    "species": {
-      "type": "string",
-      "default": "hg19"
-    },
-    "run_cellranger": {
-      "type": "string",
-      "default": "Y"
-    },
-    "vars_to_regress": {
-      "type": "string",
-      "default": "percent.mt,nFeature_RNA"
-    },
-    "qc_filtering": {
-      "type": "string",
-      "default": "manual"
-    },
-    "nCount_RNA_max": {
-      "type": "integer",
-      "default": 500000
-    },
-    "nCount_RNA_min": {
-      "type": "integer",
-      "default": 1000
-    },
-    "nFeature_RNA_max": {
-      "type": "integer",
-      "default": 5000
-    },
-    "nFeature_RNA_min": {
-      "type": "integer",
-      "default": 200
-    },
-    "percent_mt_max": {
-      "type": "integer",
-      "default": 10
-    },
-    "percent_mt_min": {
-      "type": "integer",
-      "default": 0
-    },
-    "run_doublet_finder": {
-      "type": "string",
-      "default": "Y"
-    },
-    "seurat_resolution": {
-      "type": "string",
-      "default": "0.1,0.2,0.3,0.5,0.6,0.8,1"
-    },
-    "npcs": {
-      "type": "integer",
-      "default": 50
-    },
-    "resolution_list": {
-      "type": "string",
-      "default": "0.1,0.2,0.3,0.5,0.6,0.8,1"
-    },
     "Rlib_dir": {
       "type": "string",
-      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8",
+      "hidden": true
     },
     "conda_path": {
       "type": "string",
-      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env",
+      "hidden": true
     },
     "python_path": {
       "type": "string",
-      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin"
-    },
-    "tracedir": {
-      "type": "string",
-      "default": "output/pipeline_info"
-    },
-    "genome_dir": {
-      "type": "string"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin",
+      "hidden": true
     },
     "Rpkg": {
       "type": "string",
-      "default": "conf/Rpack.config"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/conf/Rpack.config",
+      "hidden": true
     },
     "script_functions": {
       "type": "string",
-      "default": "bin/scRNA_functions.R"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/scRNA_functions.R",
+      "hidden": true
     },
     "script_preprocess": {
       "type": "string",
-      "default": "bin/seurat_preprocess.Rmd"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/seurat_preprocess.Rmd",
+      "hidden": true
     },
     "script_merge": {
       "type": "string",
-      "default": "bin/seurat_merge.Rmd"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/seurat_merge.Rmd",
+      "hidden": true
     },
     "script_bc_harmony": {
       "type": "string",
-      "default": "bin/batch_correction_harmony.Rmd"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_harmony.Rmd",
+      "hidden": true
     },
     "script_bc_rpca": {
       "type": "string",
-      "default": "bin/batch_correction_rpca.Rmd"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_rpca.Rmd",
+      "hidden": true
     },
     "script_bc_cca": {
       "type": "string",
-      "default": "bin/batch_correction_cca.Rmd"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_cca.Rmd",
+      "hidden": true
     },
     "script_liger": {
       "type": "string",
-      "default": "bin/batch_correction_liger.Rmd"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_liger.Rmd",
+      "hidden": true
     },
     "script_bc_integration": {
       "type": "string",
-      "default": "bin/batch_correction_integration.Rmd"
+      "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_integration.Rmd",
+      "hidden": true
     }
   }
 }
