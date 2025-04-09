@@ -30,7 +30,6 @@ nextflow run main.nf \
 
 ## 1.4 Help & Contributing
 
-
 Come across a **bug**? Open an [issue](https://github.com/CCBR/SINCLAIR/issues) and include a minimal reproducible example.
 
 Have a **question**? Ask it in [discussions](https://github.com/CCBR/SINCLAIR/discussions).
@@ -38,4 +37,3 @@ Have a **question**? Ask it in [discussions](https://github.com/CCBR/SINCLAIR/di
 Want to **contribute** to this project? Check out the [contributing guidelines](contributing.md).
 
 **General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).
-
