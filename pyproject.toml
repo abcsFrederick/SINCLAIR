@@ -47,7 +47,8 @@ dependencies = [
 dev = [
     "black >= 22.0.0",
     "pre-commit",
-    "cffconvert"
+    "cffconvert",
+    "nf-core >= 2.14.0"
 ]
 test = [
     "pytest"
