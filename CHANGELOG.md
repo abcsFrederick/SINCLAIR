@@ -20,6 +20,7 @@
 - Documentation improvements
   - The docs website now has a drop-down menu to switch between different versions. (#103, @kelly-sovacool)
   - Fix broken image link. (#108, @wong-nw)
+  - Update to include quickstart and clarify existing documentation (#122, @wong-nw)
 
 ## SINCLAIR 0.2.0
 
