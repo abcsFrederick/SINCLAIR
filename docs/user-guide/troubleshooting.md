@@ -28,7 +28,7 @@ nextflow run main.nf \
     $args
 ```
 
-## 1.4 Contact information
+## 1.4 Help & Contributing
 
 
 Come across a **bug**? Open an [issue](https://github.com/CCBR/SINCLAIR/issues) and include a minimal reproducible example.
