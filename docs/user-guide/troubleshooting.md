@@ -30,4 +30,4 @@ nextflow run main.nf \
 
 ## 1.4 Contact information
 
-If after troubleshooting, the error cannot be resolved, or if a bug is found, please create an [issue](https://github.com/CCBR/TechDev_scRNASeq_Dev2023/issues) and send and email to [Samantha Chill](mailto:samantha.sevilla@nih.gov).
+If after troubleshooting, the error cannot be resolved, or if a bug is found, please create an [issue](https://github.com/CCBR/SINCLAIR/issues) and send and email to [Nathan Wong](mailto:nathan.wong@nih.gov) or [Kelly Sovacool](mailto:kelly.sovacool@nih.gov).

@@ -1,8 +1,26 @@
 # 3. Running the Pipeline
 
+##
+
 ## 3.1 Pipeline Overview
 
-The Nextflow workflow can be run as follows:
+### Running with SINCLAIR command:
+
+As of CCBRPipeliner version 8, sinclair can be run with the command:
+
+```
+sinclair run <parameters>
+```
+
+If the package has been downloaded from GitHub, a minor modification to the command is required:
+
+```
+bin/sinclair run <parameters>
+```
+
+### Running via Nextflow
+
+The Nextflow workflow can be also run as follows:
 
 ```
 nextflow run main.nf \
@@ -19,13 +37,13 @@ nextflow run main.nf \
 
 The following explains each of the command options:
 
-- entry: accepts the datatype to be used; IE gex
-- profile: how to run the processes; IE biowulf singularity, docker
-- input: input_manifest.csv location
-- contrast: contrast_manifest.csv location
-- outdir: complete path to the output dir
-- species: species to be used
-- run_cellranger: whether or not to run cellranger on dataset; IE Y, N
+- `-entry`: accepts the datatype to be used; IE gex
+- `-profile`: how to run the processes; IE biowulf singularity, docker
+- `--input`: input_manifest.csv location
+- `--contrast`: contrast_manifest.csv location
+- `--outdir`: complete path to the output dir
+- `--species`: species to be used
+- `--run_cellranger`: whether or not to run cellranger on dataset; IE Y, N
 - args: any additional arguments; IE --stub-run
 
 ## 3.3 Typical Workflow

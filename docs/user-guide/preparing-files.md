@@ -2,7 +2,7 @@
 
 The pipeline is controlled through editing configuration and manifest files. Defaults are found in the /PIPELINEDIR/conf and /PIPELINEDIR/ directories
 
-![SINCLAIR Process Overview](https://https://github.com/CCBR/SINCLAIR/blob/dev/assets/img/scRNA.jpeg?raw=true) <sup>**Overview of Single Cell RNASeq Gene Expression Process**</sup>
+![SINCLAIR Process Overview](https://github.com/CCBR/SINCLAIR/blob/main/docs/img/scRNA.svg?raw=true) <sup>**Overview of Single Cell RNASeq Gene Expression Process**</sup>
 
 ## 2.1 Configs
 
@@ -57,14 +57,14 @@ This manifest will include information to sample level information. It includes 
 
 An example sampleManifest file is shown below:
 
-| masterID   | uniqueID | groupID | dataType                                                              | input_dir                                                         |
-| ---------- | -------- | ------- | --------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
-| WB_Lysis_1 | sample1  | group1  | gex                                                                   | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample1 |
-| WB_Lysis_1 | sample2  | group1  | gex                                                                   | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample2 |
-| WB_Lysis_2 | sample3  | group2  | gex                                                                   | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample3 |
-| WB_Lysis_2 | sample4  | group2  | gex                                                                   | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample4 |
-| WB_Lysis_3 | sample5  | group3  | gex,/data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample5           |
-| WB_Lysis_1 | sample6  | group1  | atac                                                                  | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample1 |
+| masterID   | uniqueID | groupID | dataType | input_dir                                                         |
+| ---------- | -------- | ------- | -------- | ----------------------------------------------------------------- | ------------------------------------------------------- |
+| WB_Lysis_1 | sample1  | group1  | gex      | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample1 |
+| WB_Lysis_1 | sample2  | group1  | gex      | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample2 |
+| WB_Lysis_2 | sample3  | group2  | gex      | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample3 |
+| WB_Lysis_2 | sample4  | group2  | gex      | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample4 |
+| WB_Lysis_3 | sample5  | group3  | gex      | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample5 |
+| WB_Lysis_1 | sample6  | group1  | atac     | /data/CCBR_Pipeliner/Pipelines/TechDev_scRNASeq_Dev2023/test_dir/ | WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs/sample1 |
 
 ### 2.2.2 Contrast Manifest
 
