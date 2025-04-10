@@ -107,7 +107,6 @@ def run(main_path, output, _mode, force_all, **kwargs):
                 f"Path to the sinclair main.nf file not found: {main_path}"
             )
     output_dir = output if isinstance(output, pathlib.Path) else pathlib.Path(output)
-    msg_box("output directory", errmsg=str(output_dir))
     if not output_dir.is_dir() or not (output_dir / "nextflow.config").exists():
         raise FileNotFoundError(
             f"output directory not initialized: {output_dir}. Hint: you must initialize the output directory with `sinclair init --output {output_dir}`"

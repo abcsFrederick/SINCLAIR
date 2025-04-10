@@ -169,7 +169,6 @@ def run_nextflow(
     nextflow_args=None,
 ):
     """Run a Nextflow workflow"""
-    nextflow_command = ["nextflow", "run", nextfile_path]
 
     hpc = get_hpc()
     if mode == "slurm" and not hpc:
@@ -177,12 +176,13 @@ def run_nextflow(
     # add any additional Nextflow commands
     args_dict = dict()
     prev_arg = ""
-    for arg in nextflow_args:
-        if arg.startswith("-"):
-            args_dict[arg] = ""
-        elif prev_arg.startswith("-"):
-            args_dict[prev_arg] = arg
-        prev_arg = arg
+    if nextflow_args:
+        for arg in nextflow_args:
+            if arg.startswith("-"):
+                args_dict[arg] = ""
+            elif prev_arg.startswith("-"):
+                args_dict[prev_arg] = arg
+            prev_arg = arg
     # make sure profile matches biowulf or frce
     profiles = (
         set(args_dict["-profile"].split(","))
@@ -204,10 +204,16 @@ def run_nextflow(
     elif not force_all and "-resume" not in args_dict.keys():
         args_dict["-resume"] = ""
 
-    nextflow_command += list(f"{k} {v}" for k, v in args_dict.items())
-
+    nextflow_command = ["nextflow", "run", nextfile_path] + [
+        f"{k} {v}" for k, v in args_dict.items()
+    ]
+    nextflow_command = " ".join(nextflow_command)
+    # Print a preview before launching the actual run
+    if "-preview" not in args_dict.keys():
+        preview_command = nextflow_command + " -preview"
+        msg_box("Pipeline Preview", errmsg=preview_command)
+        subprocess.run(preview_command, shell=True, check=True)
     # Print nextflow command
-    nextflow_command = " ".join(str(nf) for nf in nextflow_command)
     msg_box("Nextflow command", errmsg=nextflow_command)
 
     if mode == "slurm":
