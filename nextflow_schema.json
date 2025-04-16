@@ -16,7 +16,6 @@
           "type": "string",
           "format": "file-path",
           "exists": true,
-          "schema": "assets/schema_input.json",
           "mimetype": "text/csv",
           "pattern": "^\\S+\\.csv$",
           "description": "Path to CSV file containing information about the samples in the experiment.",
@@ -108,6 +107,7 @@
         },
         "genome_dir": {
           "type": "string",
+          "format": "directory-path",
           "description": "Path to the genome references. Overridden by platform configs, e.g. conf/biowulf.config",
           "fa_icon": "fas fa-folder"
         }
@@ -141,62 +141,74 @@
       "properties": {
         "Rlib_dir": {
           "type": "string",
+          "format": "directory-path",
           "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8",
           "hidden": true
         },
         "conda_path": {
           "type": "string",
+          "format": "directory-path",
           "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env",
           "hidden": true
         },
         "python_path": {
           "type": "string",
+          "format": "directory-path",
           "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin",
           "hidden": true
         },
         "Rpkg": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/conf/Rpack.config",
+          "format": "file-path",
+          "default": "${projectDir}/conf/Rpack.config",
           "hidden": true
         },
         "script_functions": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/scRNA_functions.R",
+          "format": "file-path",
+          "default": "${projectDir}/bin/scRNA_functions.R",
           "hidden": true
         },
         "script_preprocess": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/seurat_preprocess.Rmd",
+          "format": "file-path",
+          "default": "${projectDir}/bin/seurat_preprocess.Rmd",
           "hidden": true
         },
         "script_merge": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/seurat_merge.Rmd",
+          "format": "file-path",
+          "default": "${projectDir}/bin/seurat_merge.Rmd",
           "hidden": true
         },
         "script_bc_harmony": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_harmony.Rmd",
+          "format": "file-path",
+          "default": "${projectDir}/bin/batch_correction_harmony.Rmd",
           "hidden": true
         },
         "script_bc_rpca": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_rpca.Rmd",
+          "format": "file-path",
+          "default": "${projectDir}/bin/batch_correction_rpca.Rmd",
           "hidden": true
         },
         "script_bc_cca": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_cca.Rmd",
+          "format": "file-path",
+          "default": "${projectDir}/bin/batch_correction_cca.Rmd",
           "hidden": true
         },
         "script_liger": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_liger.Rmd",
+          "format": "file-path",
+          "default": "${projectDir}/bin/batch_correction_liger.Rmd",
           "hidden": true
         },
         "script_bc_integration": {
           "type": "string",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/Pipelines/SINCLAIR/sinclar-dev-sovacool/bin/batch_correction_integration.Rmd",
+          "format": "file-path",
+          "default": "${projectDir}/bin/batch_correction_integration.Rmd",
           "hidden": true
         }
       }
@@ -213,6 +225,7 @@
         },
         "tracedir": {
           "type": "string",
+          "format": "directory-path",
           "default": "${params.outdir}/pipeline_info"
         },
         "max_memory": {
