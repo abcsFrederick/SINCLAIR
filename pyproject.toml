@@ -46,7 +46,6 @@ dependencies = [
 dev = [
     "black >= 22.0.0",
     "pre-commit",
-    "cffconvert@git+https://github.com/citation-file-format/cffconvert@b6045d78aac9e02b039703b030588d54d53262ac",
     "nf-core >= 3.2.0"
 ]
 test = [
