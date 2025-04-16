@@ -1,0 +1,4 @@
+input: "${launchDir}/assets/input_manifest_cellranger.csv"
+contrast: "${launchDir}/assets/contrast_manifest.csv"
+outdir: "${launchDir}/output"
+species: "hg19"
