@@ -136,6 +136,60 @@
         }
       }
     },
+    "generic_options": {
+      "title": "Generic options",
+      "type": "object",
+      "description": "",
+      "default": "",
+      "properties": {
+        "publish_dir_mode": {
+          "type": "string",
+          "default": "link"
+        },
+        "tracedir": {
+          "type": "string",
+          "format": "directory-path",
+          "default": "${params.outdir}/pipeline_info"
+        },
+        "max_memory": {
+          "type": "string",
+          "default": "128.GB"
+        },
+        "max_cpus": {
+          "type": "integer",
+          "default": 48
+        },
+        "max_time": {
+          "type": "string",
+          "default": "240.h"
+        }
+      },
+      "required": [
+        "publish_dir_mode",
+        "tracedir",
+        "max_memory",
+        "max_cpus",
+        "max_time"
+      ]
+    },
+    "containers": {
+      "title": "Containers",
+      "type": "object",
+      "description": "Docker/Singularity containers to use for processes. Must be available in dockerhub",
+      "default": "",
+      "properties": {
+        "base_container": {
+          "type": "string",
+          "default": "nciccbr/ccbr_ubuntu_base_20.04:v6.1",
+          "hidden": true
+        },
+        "baser_container": {
+          "type": "string",
+          "default": "nciccbr/sinclair_baser:0.1.0",
+          "hidden": true
+        }
+      }
+    },
     "hidden_options": {
       "title": "Hidden options",
       "type": "object",
@@ -212,60 +266,6 @@
           "type": "string",
           "format": "file-path",
           "default": "${projectDir}/bin/batch_correction_integration.Rmd",
-          "hidden": true
-        }
-      }
-    },
-    "generic_options": {
-      "title": "Generic options",
-      "type": "object",
-      "description": "",
-      "default": "",
-      "properties": {
-        "publish_dir_mode": {
-          "type": "string",
-          "default": "link"
-        },
-        "tracedir": {
-          "type": "string",
-          "format": "directory-path",
-          "default": "${params.outdir}/pipeline_info"
-        },
-        "max_memory": {
-          "type": "string",
-          "default": "128.GB"
-        },
-        "max_cpus": {
-          "type": "integer",
-          "default": 48
-        },
-        "max_time": {
-          "type": "string",
-          "default": "240.h"
-        }
-      },
-      "required": [
-        "publish_dir_mode",
-        "tracedir",
-        "max_memory",
-        "max_cpus",
-        "max_time"
-      ]
-    },
-    "containers": {
-      "title": "Containers",
-      "type": "object",
-      "description": "Docker/Singularity containers to use for processes. Must be available in dockerhub",
-      "default": "",
-      "properties": {
-        "base_container": {
-          "type": "string",
-          "default": "nciccbr/ccbr_ubuntu_base_20.04:v6.1",
-          "hidden": true
-        },
-        "baser_container": {
-          "type": "string",
-          "default": "nciccbr/sinclair_baser:0.1.0",
           "hidden": true
         }
       }
