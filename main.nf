@@ -52,16 +52,6 @@ validateParameters()
 */
 workflow.onComplete {
     if (!workflow.stubRun && !workflow.commandLine.contains('-preview')) {
-        println "Running spooker"
-        def message = Utils.spooker(workflow)
-        if (message) {
-            println message
-        }
-    }
-}
-workflow.onError {
-    if (!workflow.stubRun && !workflow.commandLine.contains('-preview')) {
-        println "Running spooker (failed)"
         def message = Utils.spooker(workflow)
         if (message) {
             println message
@@ -77,7 +67,7 @@ workflow.onError {
 //
 // WORKFLOW: Run initialization on input samples, check manifests files
 //
-workflow GEX {
+workflow {
     main:
         PREPROCESS_EXQC ()
         GEX_EXQC (
@@ -85,12 +75,4 @@ workflow GEX {
             PREPROCESS_EXQC.out.group_samplesheet,
         )
 
-}
-
-workflow ATAC {
-    main:
-        PREPROCESS_EXQC ()
-        ATAC_EXQC ()
-    emit:
-        samplesheet         = PREPROCESS_EXQC.out.samplesheet
 }
