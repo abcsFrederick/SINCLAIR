@@ -10,24 +10,6 @@
 // Using DSL-2
 nextflow.enable.dsl=2
 
-log.info """\
-        SINCLAIR $workflow.manifest.version
-        ===================================
-        NF version   : $nextflow.version
-        runName      : $workflow.runName
-        username     : $workflow.userName
-        configs      : $workflow.configFiles
-        profile      : $workflow.profile
-        cmd line     : $workflow.commandLine
-        start time   : $workflow.start
-        projectDir   : $workflow.projectDir
-        launchDir    : $workflow.launchDir
-        workDir      : $workflow.workDir
-        homeDir      : $workflow.homeDir
-        outDir       : $params.outdir
-        """
-        .stripIndent()
-
 /*
 ===================================================================
     Import workflows
@@ -43,7 +25,6 @@ include { ATAC_EXQC                                 } from './workflows/atac'
 include { validateParameters } from 'plugin/nf-schema'
 include { paramsHelp } from 'plugin/nf-schema'
 
-validateParameters()
 
 /*
 ===================================================================
@@ -69,6 +50,25 @@ workflow.onComplete {
 //
 workflow {
     main:
+        log.info """\
+                SINCLAIR $workflow.manifest.version
+                ===================================
+                NF version   : $nextflow.version
+                runName      : $workflow.runName
+                username     : $workflow.userName
+                configs      : $workflow.configFiles
+                profile      : $workflow.profile
+                cmd line     : $workflow.commandLine
+                start time   : $workflow.start
+                projectDir   : $workflow.projectDir
+                launchDir    : $workflow.launchDir
+                workDir      : $workflow.workDir
+                homeDir      : $workflow.homeDir
+                outDir       : $params.outdir
+                """
+                .stripIndent()
+
+        validateParameters()
         PREPROCESS_EXQC ()
         GEX_EXQC (
             PREPROCESS_EXQC.out.ch_fqdir_h5,
