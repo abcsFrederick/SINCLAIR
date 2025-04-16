@@ -22,8 +22,8 @@ include { ATAC_EXQC                                 } from './workflows/atac'
 // include { CITE_EXQC                           } from '.workflows/sCRNA_cite'
 
 // Plugins
-include { validateParameters } from 'plugin/nf-schema'
-include { paramsHelp } from 'plugin/nf-schema'
+include { validateParameters; paramsSummaryLog } from 'plugin/nf-schema'
+
 
 
 /*
@@ -53,22 +53,14 @@ workflow {
         log.info """\
                 SINCLAIR $workflow.manifest.version
                 ===================================
-                NF version   : $nextflow.version
-                runName      : $workflow.runName
-                username     : $workflow.userName
-                configs      : $workflow.configFiles
-                profile      : $workflow.profile
                 cmd line     : $workflow.commandLine
                 start time   : $workflow.start
-                projectDir   : $workflow.projectDir
-                launchDir    : $workflow.launchDir
-                workDir      : $workflow.workDir
-                homeDir      : $workflow.homeDir
-                outDir       : $params.outdir
+                NF outdir    : $params.outdir
                 """
                 .stripIndent()
 
-        validateParameters()
+        log.info paramsSummaryLog(workflow)
+        //validateParameters()
         PREPROCESS_EXQC ()
         GEX_EXQC (
             PREPROCESS_EXQC.out.ch_fqdir_h5,
