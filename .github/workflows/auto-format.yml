@@ -52,7 +52,7 @@ jobs:
       - name: commit & push
         run: |
           git add docs/params.md
-          git commit -m "ci: 📑 update params docs with 'nf-core schema docs'" || echo "nothing to commit"
+          git commit -m "ci: 📑 update params docs with 'nf-core pipelines schema docs'" || echo "nothing to commit"
 
           git add .
           git commit -m "ci: 🤖 format everything with pre-commit" || echo "nothing to commit"
