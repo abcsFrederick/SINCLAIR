@@ -24,13 +24,6 @@ include { ATAC_EXQC                                 } from './workflows/atac'
 // Plugins
 include { validateParameters; paramsSummaryLog } from 'plugin/nf-schema'
 
-
-
-/*
-===================================================================
-    Set handlers
-===================================================================
-*/
 workflow.onComplete {
     if (!workflow.stubRun && !workflow.commandLine.contains('-preview')) {
         def message = Utils.spooker(workflow)
@@ -40,31 +33,28 @@ workflow.onComplete {
     }
 }
 
-/*
-===================================================================
-    Define workflows
-===================================================================
-*/
-//
-// WORKFLOW: Run initialization on input samples, check manifests files
-//
+
 workflow {
-    main:
-        log.info """\
-                SINCLAIR $workflow.manifest.version
-                ===================================
-                cmd line     : $workflow.commandLine
-                start time   : $workflow.start
-                NF outdir    : $params.outdir
-                """
-                .stripIndent()
+    LOG()
+    //validateParameters()
+    PREPROCESS_EXQC ()
+    GEX_EXQC (
+        PREPROCESS_EXQC.out.ch_fqdir_h5,
+        PREPROCESS_EXQC.out.group_samplesheet,
+    )
 
-        log.info paramsSummaryLog(workflow)
-        //validateParameters()
-        PREPROCESS_EXQC ()
-        GEX_EXQC (
-            PREPROCESS_EXQC.out.ch_fqdir_h5,
-            PREPROCESS_EXQC.out.group_samplesheet,
-        )
+}
 
+
+workflow LOG {
+    log.info """\
+            SINCLAIR $workflow.manifest.version
+            ===================================
+            cmd line     : $workflow.commandLine
+            start time   : $workflow.start
+            NF outdir    : $params.outdir
+            """
+            .stripIndent()
+
+    log.info paramsSummaryLog(workflow)
 }
