@@ -25,7 +25,7 @@ If working on Biowulf, start an interactive session with a minimum of 16 CPUs, 8
 sinteractive --mem=64g --cpus-per-task=16 --time=8:00:00 --gres=lscratch:128
 ```
 
-As of CCBR Pipeliner v8, instantiate Pipeliner as a module:
+As of CCBR Pipeliner release 8, instantiate Pipeliner as a module:
 
 ```
 module load ccbrpipeliner

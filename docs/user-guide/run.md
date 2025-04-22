@@ -2,7 +2,7 @@
 
 ## Running with SINCLAIR command:
 
-As of CCBRPipeliner version 8, sinclair can be run with the command:
+As of ccbrpipeliner version 8, sinclair can be run with the command:
 
 ```
 sinclair run <parameters>

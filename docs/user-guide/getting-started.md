@@ -53,7 +53,7 @@ git clone https://github.com/CCBR/SINCLAIR
 SINCLAIR can also be initialized on Biowulf using the ccbrpipeliner module (as of ccbrpipeliner version 8):
 
 ```
-sinclair init
+sinclair init --output /path/to/output/dir
 ```
 
 From here, proceed to [preparing the files](./preparing-files.md).
