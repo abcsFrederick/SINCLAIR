@@ -17,7 +17,7 @@ The final outputs are a set of Seurat `.rds` files that contain all provided sam
 
 ## Installation and Initialization
 
-### Via CCBRPipeliner on Biowulf (NIH HPC)
+### Via CCBR Pipeliner on Biowulf (NIH HPC)
 
 If working on Biowulf, start an interactive session with a minimum of 16 CPUs, 8 hours wall-time, and a local scratch allocation (temporary RAM) of 128 GB:
 
@@ -37,18 +37,24 @@ Navigate to your working directory and initialize SINCLAIR:
 sinclair init
 ```
 
-### From GitHub
+## Setting up input files
 
-Clone the repository from GitHub:
+All input files should follow nomenclature as if generated via CellRanger. When starting from fastq files, each sample should have its own directory containing at least `R1` and `R2` (i.e. forward and reverse reads). Additional files that may be included include `I1` index files and reads from multiple lanes. Example minimum data structure for two samples:
 
 ```
-git clone https://github.com/CCBR/SINCLAIR
+`/path/to/sample1/sample1_S1_L0001_R1_001.fastq.gz`
+`/path/to/sample1/sample1_S1_L0001_R2_001.fastq.gz`
+
+`/path/to/sample2/sample2_S1_L0001_R1_001.fastq.gz`
+`/path/to/sample2/sample2_S1_L0001_R2_001.fastq.gz`
 ```
 
-Additional required dependencies:
+When starting from `.h5` files that are generated from CellRanger alignment, the directory structure is simpler:
 
-- NextFlow
-- Singularity
+`/path/to/sample1/outputs/filtered_feature_bc_matrix.h5`
+`/path/to/sample2/outputs/filtered_feature_bc_matrix.h5`
+
+The `.h5` matrix files should be indicated as `filtered_feature_bc_matrix.h5`, with the sample name indicated in the directory path.
 
 ## Setting Up Manifest Files
 
