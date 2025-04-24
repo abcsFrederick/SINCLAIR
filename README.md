@@ -3,7 +3,7 @@
 **SIN**gle **C**el**L** **A**nalys**I**s **R**esource
 
 [![build](https://github.com/CCBR/SINCLAIR/actions/workflows/build.yml/badge.svg)](https://github.com/CCBR/SINCLAIR/actions/workflows/build.yml)
-[![docs](https://github.com/CCBR/SINCLAIR/actions/workflows/mkdocs.yml/badge.svg)](https://ccbr.github.io/SINCLAIR/)
+[![docs](https://github.com/CCBR/SINCLAIR/actions/workflows/docs-mkdocs.yml/badge.svg)](https://ccbr.github.io/SINCLAIR/)
 [![release](https://img.shields.io/github/v/release/CCBR/SINCLAIR?color=blue&label=latest%20release)](https://github.com/CCBR/SINCLAIR/releases/latest)
 
 ## Table of contents
@@ -46,16 +46,16 @@ sinclair init --output /path/to/output/dir
 
 # 3) deploy the pipeline
 ## A) STUBRUN
-sinclair run -stub -entry GEX --output /path/to/output/dir
+sinclair run -stub --output /path/to/output/dir
 
 ## B) local run
-sinclair run -entry GEX --output /path/to/output/dir
+sinclair run --output /path/to/output/dir
 
 ## C) submit to slurm
-sinclair run --mode slurm -entry GEX --output /path/to/output/dir
+sinclair run --mode slurm --output /path/to/output/dir
 
 # 4) OPTIONAL resume
-sinclair run --mode slurm -entry GEX -resume --output /path/to/output/dir
+sinclair run --mode slurm -resume --output /path/to/output/dir
 ```
 
 ### 4. Detailed Documentation
@@ -70,4 +70,4 @@ Have a **question**? Ask it in [discussions](https://github.com/CCBR/SINCLAIR/di
 
 Want to **contribute** to this project? Check out the [contributing guidelines](.github/CONTRIBUTING.md).
 
-**General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@nih.gov](mailto:CCBR_Pipeliner@nih.gov).
+**General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).

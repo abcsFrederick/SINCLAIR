@@ -1,9 +1,11 @@
 ## SINCLAIR development version
 
+- **Breaking change**: GEX is now the default workflow. The `-entry` argument is no longer used. (#129, @kelly-sovacool)
+
 ### New features
 
 - Allows users to determine what variables to regress out. (#55, @slsevilla)
-- Overhaul the CLI to use python rather than bash, which introduces breaking changes (#61, @kelly-sovacool).
+- Overhaul the CLI to use python rather than bash, which introduces **breaking changes** (#61, @kelly-sovacool).
   - Create a script (`bin/sinclair`) to provide an interface to the CLI that works out-of-the-box without the need to install the python package with pip. (#80, @kelly-sovacool)
 - Use `nextflow run -resume` by default, or turn it off with `sinclair run --forceall`. (#110, @kelly-sovacool)
 - Add `--output` argument for `sinclair init` and `sinclair run`. (#110, @kelly-sovacool)
@@ -11,6 +13,9 @@
   - This is equivalent to the nextflow `$launchDir` constant.
 - Set the `publish_dir_mode` nextflow option to `link` by default. (#110, @kelly-sovacool)
 - Set the `process.cache` nextflow option to `deep` by default rather than lenient on biowulf. (#110, @kelly-sovacool)
+- Before launching the pipeline run:
+  - The nextflow preview is printed. (#117, @kelly-sovacool)
+  - The nextflow parameters are validated. (#127, @kelly-sovacool)
 
 ### Bug fixes
 
@@ -29,6 +34,7 @@
   - This feature is on hold until a later release.
 - LIGER now runs with 50 PCs by default instead of 20 (#109, @wong-nw)
 - Output all R Markdown documents as HTML rather than PDF. (#112, @kelly-sovacool)
+- Make sure values in the contrasts sheet are treated as strings. (#133, @kelly-sovacool)
 
 ### Documentation improvements
 
