@@ -6,15 +6,23 @@
 
 Clone the repository from GitHub:
 
-```
+```sh
 git clone https://github.com/CCBR/SINCLAIR
+cd SINCLAIR
+```
+
+Install the CLI dependencies in `pyproject.toml` with:
+
+```sh
+pip install .
 ```
 
 Additional required dependencies:
 
-- NextFlow
+- Nextflow
 - Singularity
 
+If you're running sinclair on biowulf, the nextflow and singularity modules will be loaded automatically. 
 ### Preparation and Running
 
 Prepare files as described in the (quickstart)[quickstart.md] and the (preparation)[preparing-files.md] guides.
