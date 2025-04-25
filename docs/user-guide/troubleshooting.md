@@ -32,6 +32,6 @@ Come across a **bug**? Open an [issue](https://github.com/CCBR/SINCLAIR/issues) 
 
 Have a **question**? Ask it in [discussions](https://github.com/CCBR/SINCLAIR/discussions).
 
-Want to **contribute** to this project? Check out the [contributing guidelines](contributing.md).
+Want to **contribute** to this project? Check out the [contributing guidelines](../contributing.md).
 
 **General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).
