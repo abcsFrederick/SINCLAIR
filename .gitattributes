@@ -1,1 +1,5 @@
 docs/**.html linguist-vendored true
+docs/overrides/** linguist-vendored true
+docs/css/** linguist-vendored true
+docs/js/** linguist-vendored true
+tests/**/*.html linguist-vendored true
