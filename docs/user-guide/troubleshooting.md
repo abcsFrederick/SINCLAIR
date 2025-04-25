@@ -18,14 +18,12 @@ Review the logs in two ways:
 After addressing the issue, unlock the output directory, perform another dry-run and check the status of the pipeline, then resubmit to the cluster.
 
 ```
-nextflow run main.nf \
-    -entry $datatype \
+sinclair run \
     -profile biowulf \
     --input assets/input_manifest.csv \
     --contrast assets/contrast_manifest.csv \
-    --outdir /data/sevillas2/scRNA_test \
-    --species $species \
-    $args
+    --output /data/$USER/scRNA_test \
+    -params-file assets/params.yml
 ```
 
 ## 1.4 Help & Contributing
