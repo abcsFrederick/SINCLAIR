@@ -6,7 +6,7 @@ The scRNA github repository is stored locally, and will be used for project depl
 
 ## 1.1 Introduction
 
-The scRNA Pipelie beings at various stages, depending on the users needs. The pipeline can begin with GEX FASTQ files, performing cell counting, with 10X Genomic's [CellRanger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger). Then, normalization and pre-processing occurs, using custom [R](https://www.r-project.org/) scripts with packages like [Seurat](https://satijalab.org/seurat/). Alternatively the user can begin with .h5 files, beginning the pipeline post-preprocessing. [TODO: add as we go!]
+The scRNA Pipeline begins at various stages, depending on the users needs. The pipeline can begin with GEX FASTQ files, performing cell counting, with 10X Genomics [CellRanger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger). Then, normalization and pre-processing occurs, using custom [R](https://www.r-project.org/) scripts with packages like [Seurat](https://satijalab.org/seurat/). Alternatively the user can begin with .h5 files, beginning the pipeline post-preprocessing.
 
 ## 1.2 Setup Dependencies
 
@@ -20,7 +20,7 @@ Docker containers to run the pipeline are currently in development.
 
 ## 1.3 Login to the cluster
 
-scRNA has been exclusively tested on Biowulf HPC. Login to the cluster's head node and move into the pipeline location.
+scRNA has been exclusively tested on Biowulf HPC. Log in to the cluster's head node and move into the pipeline location.
 
 ```
 # ssh into cluster's head node
@@ -33,5 +33,27 @@ An interactive session should be started before performing any of the pipeline s
 
 ```
 # Grab an interactive node
-sinteractive --time=12:00:00 --mem=8gb  --cpus-per-task=4 --pty bash
+sinteractive --mem=64g --cpus-per-task=16 --time=8:00:00 --gres=lscratch:128
 ```
+
+## 1.5 Installing and setting up SINCLAIR
+
+The CCBRPipeliner module on Biowulf also loads module dependencies, and should be loaded prior to running SINCLAIR:
+
+```
+module load ccbrpipeliner
+```
+
+SINCLAIR can be downloaded directly from the CCBR Github page with the `git clone` command:
+
+```
+git clone https://github.com/CCBR/SINCLAIR
+```
+
+SINCLAIR can also be initialized on Biowulf using the ccbrpipeliner module (as of ccbrpipeliner version 8):
+
+```
+sinclair init --output /path/to/output/dir
+```
+
+From here, proceed to [preparing the files](./preparing-files.md).

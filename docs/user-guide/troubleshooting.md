@@ -28,6 +28,12 @@ nextflow run main.nf \
     $args
 ```
 
-## 1.4 Contact information
+## 1.4 Help & Contributing
 
-If after troubleshooting, the error cannot be resolved, or if a bug is found, please create an [issue](https://github.com/CCBR/TechDev_scRNASeq_Dev2023/issues) and send and email to [Samantha Chill](mailto:samantha.sevilla@nih.gov).
+Come across a **bug**? Open an [issue](https://github.com/CCBR/SINCLAIR/issues) and include a minimal reproducible example.
+
+Have a **question**? Ask it in [discussions](https://github.com/CCBR/SINCLAIR/discussions).
+
+Want to **contribute** to this project? Check out the [contributing guidelines](contributing.md).
+
+**General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).

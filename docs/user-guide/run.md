@@ -1,100 +1,91 @@
 # 3. Running the Pipeline
 
-## 3.1 Pipeline Overview
+## Running with SINCLAIR command:
 
-The Nextflow workflow can be run as follows:
-
-```
-nextflow run main.nf \
-    -entry $datatype \
-    -profile biowulf \
-    --input assets/input_manifest.csv \
-    --contrast assets/contrast_manifest.csv \
-    --outdir /data/sevillas2/scRNA_test \
-    --species $species \
-    $args
-```
-
-## 3.2 Commands explained
-
-The following explains each of the command options:
-
-- entry: accepts the datatype to be used; IE gex
-- profile: how to run the processes; IE biowulf singularity, docker
-- input: input_manifest.csv location
-- contrast: contrast_manifest.csv location
-- outdir: complete path to the output dir
-- species: species to be used
-- run_cellranger: whether or not to run cellranger on dataset; IE Y, N
-- args: any additional arguments; IE --stub-run
-
-## 3.3 Typical Workflow
-
-A typical command workflow, running the pipeline for the first time locally, is as follows:
+As of ccbrpipeliner version 8, sinclair can be run with the command:
 
 ```
-nextflow run main.nf \
-    -entry gex \
-    -profile biowulf \
-    --input assets/input_manifest.csv \
-    --contrast assets/contrast_manifest.csv \
-    --outdir /path/to/scRNA_test \
-    --species hg19
+sinclair run <parameters>
 ```
 
-A typical command workflow, running the pipeline for a repeated time locally, running cellranger, is as follows:
+Various parameters can be adjusted in the command line call and the `params.yml` file. These include the following:
+
+_Default values indicated with \*_
+
+### General parameters
+
+- `--help` Returns the help statement
+- `--mode` Determines if the workflow runs on the current system or is submitted as a slurm job
+  - `local`\*
+  - `slurm`
+- `--forceall` Forces all steps of the workflow to be run
+- `-profile` Uses pre-defined profiles to determine particular run configurations
+  _Note that this parameter is prepended by a single hyphen, not a double hyphen_
+
+  - `biowulf` Uses the configuration optimized for the Biowulf NIH HPC
+  - `test` Applies samples and manifests for the test dataset run
+
+### Input and output options:
+
+- `--input` Points to the input manifest `.csv` file
+  - `./assets/input_manifest_cellranger.csv`\*
+  - `./assets/input_manifest.csv`
+  - `other/user-defined/manifest.csv`
+- `--contrast` Points to the contrast manifest `.csv` file
+  - `./assets/contrasts.csv`\*
+- `--outdir` Points to the output directory. Can be manually set
+  - `./outputs`\*
+- `--species` Which species and genome is to be used for reference in alignment (option) cell type annotation
+  - `hg19`\*
+  - `hg38`
+  - `mm10`
+- `--run_cellranger` Whether to run CellRanger for alignment. Also indicates which input manifest file to parse
+  - `Y`\*
+  - `N`
+
+### Seurat parameters:
+
+<details>
+<summary></summary>
+
+- `vars_to_regress` Variables whose effects should be regressed to eliminate potential noise
+  - `percent.mt`
+  - `nFeature_RNA`
+  - `S.Score`
+  - `G2M.Score`
+  - `nCount_RNA`
+- `qc_filtering` Filtering method
+  - `miqc`\* Uses the MiQC parameters
+  - `manual` Uses the
+- `nCount_RNA_max` Maximum number of reads allowed per cell. Cells exceeding the threshold are removed
+  - 50000\*
+- `nCount_RNA_min` Minimum number of reads allowed per cell. Cells below the threshold are removed
+  - 1000\*
+- `nFeatures_RNA_max` Maximum number of features (e.g. genes) allowed per cell
+  - 5000\*
+- `nFeature_RNA_min` Minimum number of features (e.g. genes) allowed per cell
+  - 200\*
+- `percent_mt_max` Maximum mitochondrial percentage allowed per cell
+  - 10\*
+- `percent_mt_min` Minimum mitochondrial percentage allowed per cell
+  - 0\*
+- `run_doublet_finder` Boolean for running the DoubletFinder tool (default T)
+- `seurat_resolution` Comma-separated string for resolutions to use when finding unsupervised clusters
+  - "0.1,0.2,0.3,0.5,0.6,0.8,1"\*
+- `npcs` Number of principal components calculated and used downstream in neighbor-identification, dimensionality reduction (e.g. UMAP/T-SNE), and unsupervised clustering
+  - 50\*
+  </details>
+
+## Examples:
+
+This run will operate on the `slurm` workflow manager, perform CellRanger alignment to the `mm10` mouse genome, and cluster the cells at the specified resolutions:
 
 ```
-nextflow run main.nf -resume \
-    -entry gex \
-    -profile biowulf \
-    --run_cellranger Y \
-    --input assets/input_manifest.csv \
-    --contrast assets/contrast_manifest.csv \
-    --outdir /path/to/scRNA_test \
-    --run_cellranger Y \
-    --species hg19
+sinclair run --mode slurm --run_cellranger Y --species mm10 --seurat_resolution 0.2,0.4,0.6,0.8,1
 ```
 
-A typical command workflow, running the pipeline in a `dryrun mode`, without running cellranger, is as follows:
+This run will operate locally, starting from pre-aligned .h5 files generated from CellRanger and take the human `hg38` genome as its cue for downstream cell type annotation, while forcing the run to start from the beginning.
 
 ```
-nextflow run main.nf \
-    -entry gex \
-    -profile biowulf \
-    --run_cellranger Y \
-    --input assets/input_manifest.csv \
-    --contrast assets/contrast_manifest.csv \
-    --outdir /path/to/scRNA_test \
-    --species hg19 \
-    --run_cellranger N \
-    --stub-run
-```
-
-Alternatively a script was created to run the pipeline, which takes the following flags:
-
-- species: hg19
-- datatype: GEX
-- outDir: /path/to/output/dir
-- resume: Y or N
-- run_cellranger: Y or N
-- stubrun: Y or N
-
-Examples:
-
-```
-# run GEX on test data, for the first time
-sh run_scRNA.sh hg19 GEX N /path/to/output/dir
-
-# first pass, with and without cellranger
-sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y N
-sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y N
-
-# resume, with and without cellranger
-sh run_scRNA.sh hg19 GEX /path/to/output/dir Y Y N
-sh run_scRNA.sh hg19 GEX /path/to/output/dir Y N N
-
-# first pass, with cellranger, with and without a dryrun
-sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y Y
-sh run_scRNA.sh hg19 GEX /path/to/output/dir N Y N
+sinclair run --mode local --run_cellranger N --species hg38 --forceall
 ```
