@@ -6,9 +6,9 @@ output:
 editor_options:
   chunk_output_type: console
 params:
-  species: "hg19"
+  species: "hg38"
   npcs: 50
-  vars_to_regress: "percent.mt,nFeature_RNA"
+  vars_to_regress: "None"
   samplesheet: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/assets/input_manifest_cellranger.csv"
   rdsFiles: "/data/sevillas2/sinclair/dev/results/seurat/preprocess/sample2_seurat_preprocess.rds /data/sevillas2/sinclair/dev/results/seurat/preprocess/sample4_seurat_preprocess.rds"
   gid: "group1-group2"
@@ -129,10 +129,10 @@ VariableFeatures(combinedObj.integratedRNA) <- selectFeatures
 
 ```{r mergedObjDims, message=FALSE, echo=FALSE}
 # use variables to regress, if provided by user
-if (length(vars_to_regress_list) > 0) {
-  so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = vars_to_regress_list, assay = "RNA")
-} else {
+if (length(vars_to_regress_list) == 0 | vars_to_regress_list=="None") {
   so_merged <- SCTransform(combinedObj.integratedRNA, assay = "RNA")
+} else {
+  so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = vars_to_regress_list, assay = "RNA")
 }
 # add reduction methods to the mergedObj for plotting
 so_merged <- RunPCA(so_merged, npcs = 50, verbose = F)
