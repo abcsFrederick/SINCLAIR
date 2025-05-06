@@ -24,6 +24,7 @@
 - Before launching the pipeline run:
   - The nextflow preview is printed. (#117, @kelly-sovacool)
   - The nextflow parameters are validated. (#127, @kelly-sovacool)
+- Default parameters for variables to regress is "None", species is "hg38", and filtering method is "miqc" (@wong-nw)
 
 ### Bug fixes
 

@@ -6,12 +6,12 @@ output: html_document
 editor_options:
   chunk_output_type: console
 params:
-  species: "hg19"
+  species: "hg38"
   gid: "group1-group2"
   mergedObj: "/data/sevillas2/sinclair/dev/results/seurat/merge/group1-group2_seurat_merged.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   npcs: 50
-  vars_to_regress: "percent.mt,nFeature_RNA"
+  vars_to_regress: "None"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/conf/Rpack.config"
   scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/bin/scRNA_functions.R"

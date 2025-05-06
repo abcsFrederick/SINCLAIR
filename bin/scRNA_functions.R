@@ -204,10 +204,10 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
     print("--running SCT")
 
     # use variables to regress, if provided by user
-    if (length(v_list) > 0) {
-      so_transform <- SCTransform(so_in, vars.to.regress = v_list)
-    } else {
+    if (length(v_list) == 0 | v_list=="None") {
       so_transform <- SCTransform(so_in)
+    } else {
+      so_transform <- SCTransform(so_in, vars.to.regress = v_list)
     }
 
     # runPCA
