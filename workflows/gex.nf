@@ -42,6 +42,9 @@ workflow GEX_EXQC {
         if (params.input)    { ch_input    = file(params.input)    } else { exit 1, 'Input samplesheet not specified!' }
         if (params.contrast) { ch_contrast = file(params.contrast) } else { exit 1, 'Contrast samplesheet not specified!' }
 
+        // if vars_to_regress is null, set it to 'NULL' for R to evaluate
+        def vars_to_regress = params.vars_to_regress ?: 'NULL'
+
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
         // Run Seurat for individual samples
@@ -88,7 +91,7 @@ workflow GEX_EXQC {
             ch_input,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.Rlib_dir,
             params.Rpkg,
             params.script_merge,
@@ -100,7 +103,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -113,7 +116,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -126,7 +129,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,
@@ -140,7 +143,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.conda_path,
             params.python_path,
@@ -156,7 +159,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.Rlib_dir,
             params.Rpkg,

@@ -18,7 +18,7 @@ Define where the pipeline should find input data and save output data.
 | -------------------- | --------------------------------------------------------------------------------------- | --------- | ------------------------- | -------- | ------ |
 | `species`            |                                                                                         | `string`  | hg19                      |          |        |
 | `run_cellranger`     | whether to run cellranger                                                               | `string`  | Y                         |          |        |
-| `vars_to_regress`    |                                                                                         | `string`  | percent.mt,nFeature_RNA   |          |        |
+| `vars_to_regress`    |                                                                                         | `string`  |                           |          |        |
 | `qc_filtering`       |                                                                                         | `string`  | manual                    |          |        |
 | `nCount_RNA_max`     |                                                                                         | `integer` | 500000                    |          |        |
 | `nCount_RNA_min`     |                                                                                         | `integer` | 1000                      |          |        |
