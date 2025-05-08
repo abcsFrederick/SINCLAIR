@@ -11,7 +11,7 @@ params:
   mergedObj: "/data/sevillas2/sinclair/dev/results/seurat/merge/group1-group2_seurat_merged.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   npcs: "50"
-  vars_to_regress: "None"
+  vars_to_regress: NULL
   python_path: "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin"
   conda_path: "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
@@ -27,8 +27,12 @@ gid <- params$gid
 mergedObj <- params$mergedObj
 resolution <- as.numeric(strsplit(params$resolution_list, ",")[[1]])
 npcs <- as.numeric(params$npcs)
-vars_to_regress_list <- strsplit(gsub(" ", "", params$vars_to_regress), ",")[[1]]
-
+vars_to_regress <- params$vars_to_regress
+vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress) == "NULL") {
+  NULL
+} else {
+  unlist(strsplit(gsub(" ", "", vars_to_regress), ","))
+}
 python_path <- params$python_path
 conda_path <- params$conda_path
 Rlib_dir <- params$Rlib_dir

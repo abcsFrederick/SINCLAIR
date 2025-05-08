@@ -60,8 +60,7 @@
           "description": "whether to run cellranger"
         },
         "vars_to_regress": {
-          "type": "string",
-          "default": "percent.mt,nFeature_RNA"
+          "type": "string"
         },
         "qc_filtering": {
           "type": "string",

@@ -8,7 +8,7 @@ editor_options:
 params:
   species: "hg38"
   npcs: 50
-  vars_to_regress: "None"
+  vars_to_regress: NULL
   samplesheet: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/assets/input_manifest_cellranger.csv"
   rdsFiles: "/data/sevillas2/sinclair/dev/results/seurat/preprocess/sample2_seurat_preprocess.rds /data/sevillas2/sinclair/dev/results/seurat/preprocess/sample4_seurat_preprocess.rds"
   gid: "group1-group2"
@@ -21,7 +21,12 @@ params:
 ```{r, prep_args,  message=FALSE, include=FALSE}
 # set up params
 species <- params$species
-vars_to_regress_list <- strsplit(gsub(" ", "", params$vars_to_regress), ",")[[1]]
+vars_to_regress <- params$vars_to_regress
+vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress) == "NULL") {
+  NULL
+} else {
+  unlist(strsplit(gsub(" ", "", vars_to_regress), ","))
+}
 rds_files <- strsplit(params$rdsFiles, " ")[[1]]
 gid <- params$gid
 samplesheet <- params$samplesheet
@@ -128,12 +133,9 @@ VariableFeatures(combinedObj.integratedRNA) <- selectFeatures
 ```
 
 ```{r mergedObjDims, message=FALSE, echo=FALSE}
-# use variables to regress, if provided by user
-if (length(vars_to_regress_list) == 0 | vars_to_regress_list=="None") {
-  so_merged <- SCTransform(combinedObj.integratedRNA, assay = "RNA")
-} else {
-  so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = vars_to_regress_list, assay = "RNA")
-}
+# vars.to.regress is NULL by default
+so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = vars_to_regress_list, assay = "RNA")
+
 # add reduction methods to the mergedObj for plotting
 so_merged <- RunPCA(so_merged, npcs = 50, verbose = F)
 so_merged <- RunTSNE(so_merged,
