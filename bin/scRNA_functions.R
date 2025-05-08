@@ -38,7 +38,7 @@ SEURAT_CLUSTERING <- function(so_in, npcs_in) {
     npcs = 50
   )
   so <- FindNeighbors(so, dims = 1:npcs_in)
-  so <- FindClusters(so, resolution = 0.8, algorithm = 3, verbose=TRUE)
+  so <- FindClusters(so, resolution = 0.8, algorithm = 3, verbose = TRUE)
   so <- RunUMAP(so, dims = 1:npcs_in, n.components = 3)
   return(so)
 }
@@ -170,7 +170,7 @@ RUN_SINGLEr_AVERAGE <- function(obj, refFile, fineORmain) {
   return(annotVect)
 }
 
-MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, v_list, conda_env = "") {
+MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, v_list = NULL, conda_env = "") {
   # set assay to RNA to avoid double transform/norm
   DefaultAssay(so_in) <- "RNA"
 
@@ -203,12 +203,8 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
   } else {
     print("--running SCT")
 
-    # use variables to regress, if provided by user
-    if (length(v_list) == 0 | v_list=="None") {
-      so_transform <- SCTransform(so_in)
-    } else {
-      so_transform <- SCTransform(so_in, vars.to.regress = v_list)
-    }
+    # vars.to.regress is NULL by default
+    so_transform <- SCTransform(so_in, vars.to.regress = v_list)
 
     # runPCA
     so_pca <- RunPCA(so_transform)
