@@ -1,3 +1,5 @@
+## SINCLAIR development version
+
 ## SINCLAIR 0.3.2
 
 - Improve error messages in SAMPLESHEET_CHECK processes. (#143, @kelly-sovacool)
