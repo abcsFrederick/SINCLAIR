@@ -39,7 +39,7 @@ sinclair init
 
 ## Setting up input files
 
-All input files should follow nomenclature as if generated via CellRanger. When starting from fastq files, each sample should have its own directory containing at least `R1` and `R2` (i.e. forward and reverse reads). Additional files that may be included include `I1` index files and reads from multiple lanes. Example minimum data structure for two samples:
+All input files should follow nomenclature as if generated via CellRanger (https://www.10xgenomics.com/support/jp/software/cell-ranger/8.0/tutorials/inputs/cr-specifying-fastqs). When starting from fastq files, each sample should have its own directory containing at least `R1` and `R2` (i.e. forward and reverse reads). Additional files that may be included include `I1` index files and reads from multiple lanes. Example minimum data structure for two samples:
 
 ```
 `/path/to/sample1/sample1_S1_L0001_R1_001.fastq.gz`
@@ -92,7 +92,11 @@ This file contains the comparisons to be generated, and will indicate samples th
 | group1    | group2    |
 | group1    | group2    | group3    |
 
-As many contrasts as there exists groups can be included, with a minimum of 2 groups, as specified both in the `input_manifest.csv`/`input_manifest_cellranger.csv` and the `contrast_manifest.csv` files.
+As many contrasts as there exists groups can be included, with a minimum of 2 groups, as specified both in the `input_manifest.csv`/`input_manifest_cellranger.csv` and the `contrast_manifest.csv` files. If running SINCLAIR on a single sample, the above can be formatted as:
+
+| contrast1 |
+| --------- |
+| group1    |
 
 ## Starting the Run
 
@@ -114,20 +118,20 @@ By default, the genome is `hg19`; other options include `mm10` and `hg38`. In or
 
 ## Expected Outputs
 
-While the SINCLAIR workflow is running, all the temporary outputs will be stored within the `work` directory. This directory will also be utilized in the event of a failed workflow run by providing the intermediate files in order to resume from the point of failure upon restarting.
+During execution, the SINCLAIR workflow stores all temporary outputs in the `work` directory. This directory also supports workflow recovery: if the run fails, intermediate files in work allow the pipeline to resume from the point of failure when the user re-runs the pipeline.
 
-Final results will be included in the `results` directory, unless the output directory was otherwise specified in the parameters. The `results` directory will contain 4 subdirectories:
+Final results are saved in the `results` directory unless a different output directory was specified in the parameters. The `results` directory will contain 4 subdirectories:
 
-- `batch_correct` contains all the combined Seurat `.rds` files for each of the contrasts, with a separate file for each batch correction method, as well as a summary `.html` file.
+- `batch_correct` contains the combined Seurat `.rds` files for each of the contrasts, with a separate file for each batch correction method, as well as a summary `.html` file.
 - `cellranger_counts` contains the `.h5` counts files for each sample produced by the CellRanger software.
 - `samplesheets` contains the parsed sample sheets based on the manifest files, as interpreted by NextFlow and SINCLAIR.
 - `seurat` contains two subdirectories:
   > - `merge` contains the combined sample Seurat `.rds` files for each set of contrasts prior to batch correction (which can otherwise be referred to as the "uncorrected" object).
   > - `preprocess` contains the individual sample `.rds` files.
 
-When proceeding to downstream secondary analysis, such as [differential expression](./differentialExpression.md), please utilize the `batch_correction_integration.html` files to determine which batch correction method, or even lack thereof, best fits the data. The appropriate file can then be analyzed in R through Seurat.
+When proceeding to downstream secondary analysis, such as [differential expression](./differentialExpression.md), please utilize the `batch_correction_integration.html` files to determine which batch correction method, or even lack thereof, best fits the data. The appropriate file can then be analyzed in R through the Seurat workflow.
 
-A sample output directory structure is included below:
+For multi-sample analsyses, the output directory will have the following structure:
 
 ```
 results
@@ -159,5 +163,25 @@ results
         ├── ...
         ├── sampleN_seurat_preprocess.pdf
         └── sampleN_seurat_preprocess.rds
+
+```
+
+For single-sample analsyses, the output directory will be similar in structure to the above, but missing batch_correct results:
+
+```
+results
+├── cellranger_counts
+│   ├── sample1
+│   │   └── outs
+│   │       └── filtered_feature_bc_matrix.h5
+├── samplesheets
+│   ├── project_contrast_samplesheet.csv
+│   ├── project_gex_samplesheet.csv
+│   └── project_groups_samplesheet.csv
+└── seurat
+    ├── merge
+    │   ├── group1-group2_seurat_merged.pdf
+    └── preprocess
+        ├── sample1_seurat_preprocess.pdf
 
 ```

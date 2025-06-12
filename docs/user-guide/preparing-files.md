@@ -1,6 +1,6 @@
 # 2. Preparing Files
 
-The pipeline is controlled through editing configuration and manifest files. Defaults are found in the `nextflow.config` file.
+The pipeline is controlled by editing configuration and manifest files. Defaults are found in the `nextflow.config` file.
 
 ![SINCLAIR Process Overview](https://github.com/CCBR/SINCLAIR/blob/main/docs/img/scRNA.svg?raw=true) <sup>**Overview of Single Cell RNASeq Gene Expression Process**</sup>
 

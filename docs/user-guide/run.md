@@ -1,5 +1,17 @@
 # 3. Running the Pipeline
 
+## Setting Biowulf Interactive Session
+Before running SINCLAIR, open the terminal and log in to Biowulf using your NIH credentials. Then, create an interactive session and navigate to your project / working directory. A guide to navigating Biowulf can be found in (https://hpc.nih.gov/docs/userguide.html).
+
+```sh
+# login to Biowulf
+ssh your_username@biowulf.nih.gov
+# create interactive session with desired job specifications
+sinteractive --mem=<ram> --cpus-per-task=<cores> --time=<wall_time> --gres=lscratch:<local_scratch_space>
+# load ccbrpipeliner containing SINCLAIR and other analytical tools
+module load ccbrpipeliner
+```
+
 ## Running the SINCLAIR command
 
 As of ccbrpipeliner version 8, sinclair can be run with the command:
@@ -61,15 +73,17 @@ View the full list of pipeline parameters [here](../params.md).
 
 #### Seurat parameters
 
+The following is a list containing parameters that can be used for downstream Seurat analysis.
+
 <details>
 <summary></summary>
 
-- `vars_to_regress` Variables whose effects should be regressed to eliminate potential noise
-  - `percent.mt`
-  - `nFeature_RNA`
-  - `S.Score`
-  - `G2M.Score`
-  - `nCount_RNA`
+- `vars_to_regress` Variables that should be regressed out during analysis to eliminate potential noise and signals from technical differences across samples
+  - `percent.mt` percentage of reads mapped to mitochondrial genes. High values may indicate dead / stressed cells whose mitochondrial transcripts becomes overrepresented due to cytoplasmic degradation 
+  - `nFeature_RNA` Number of detected features
+  - `S.Score` S-phase cell cycle score
+  - `G2M.Score` G2/M-phase cell cycle score
+  - `nCount_RNA` Total RNA molecule count per cell
 - `qc_filtering` Filtering method
   - `miqc`\* Uses the MiQC parameters
   - `manual` Uses the

@@ -56,5 +56,9 @@ Whole transcriptome/Gene Expression libraries were generated as described in the
 
 ## grouping tests should be
 
+# for single sample
+- group1
+
+# for multiple samples
 - group1,group2
 - group1,group2,group3
