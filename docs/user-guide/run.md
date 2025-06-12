@@ -1,6 +1,7 @@
 # 3. Running the Pipeline
 
 ## Setting Biowulf Interactive Session
+
 Before running SINCLAIR, open the terminal and log in to Biowulf using your NIH credentials. Then, create an interactive session and navigate to your project / working directory. A guide to navigating Biowulf can be found in (https://hpc.nih.gov/docs/userguide.html).
 
 ```sh
@@ -79,7 +80,7 @@ The following is a list containing parameters that can be used for downstream Se
 <summary></summary>
 
 - `vars_to_regress` Variables that should be regressed out during analysis to eliminate potential noise and signals from technical differences across samples
-  - `percent.mt` percentage of reads mapped to mitochondrial genes. High values may indicate dead / stressed cells whose mitochondrial transcripts becomes overrepresented due to cytoplasmic degradation 
+  - `percent.mt` percentage of reads mapped to mitochondrial genes. High values may indicate dead / stressed cells whose mitochondrial transcripts becomes overrepresented due to cytoplasmic degradation
   - `nFeature_RNA` Number of detected features
   - `S.Score` S-phase cell cycle score
   - `G2M.Score` G2/M-phase cell cycle score
