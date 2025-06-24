@@ -1,3 +1,0 @@
-bash setupQC.bash SCAF3418_Parent
-bash setupQC.bash SCAF3419_Mutant
-bash setupQC.bash SCAF3420_WT

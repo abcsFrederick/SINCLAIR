@@ -1,7 +1,0 @@
-sample,fastqs,library_type
-<sample_directory_name_GEX>,<path/to/GEX/fastqs>,Gene Expression
-<sample_directory_name_ADT>,<path/to/antibody/fastqs>,Antibody Capture
-
-#The sample directory name should be the match the tailing pattern of the directory of the fastqs, after the prefix "Sample_". Example:
-#test_sample1_GEX,/data/flowcell/Sample_test_sample1_GEX,Gene Expression
-#test_sample1_ADT,/data/flowcell/Sample_test_sample1_ADT,Antibody Capture
