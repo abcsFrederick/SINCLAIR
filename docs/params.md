@@ -64,9 +64,9 @@ Docker/Singularity containers to use for processes. Must be available in dockerh
 
 | Parameter               | Description | Type     | Default                                                              | Required | Hidden |
 | ----------------------- | ----------- | -------- | -------------------------------------------------------------------- | -------- | ------ |
-| `Rlib_dir`              |             | `string` | /gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8 |          | True   |
-| `conda_path`            |             | `string` | /gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env      |          | True   |
-| `python_path`           |             | `string` | /gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin  |          | True   |
+| `Rlib_dir`              |             | `string` | /data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8 |          | True   |
+| `conda_path`            |             | `string` | /data/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env      |          | True   |
+| `python_path`           |             | `string` | /data/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin  |          | True   |
 | `Rpkg`                  |             | `string` | ${projectDir}/conf/Rpack.config                                      |          | True   |
 | `script_functions`      |             | `string` | ${projectDir}/bin/scRNA_functions.R                                  |          | True   |
 | `script_preprocess`     |             | `string` | ${projectDir}/bin/seurat_preprocess.Rmd                              |          | True   |
