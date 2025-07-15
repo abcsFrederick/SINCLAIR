@@ -12,8 +12,8 @@ params:
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   npcs: "50"
   vars_to_regress: NULL
-  python_path: "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin"
-  conda_path: "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env"
+  python_path: "/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin"
+  conda_path: "/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env"
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/conf/Rpack.config"
   scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/bin/scRNA_functions.R"
