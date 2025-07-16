@@ -197,19 +197,19 @@
         "Rlib_dir": {
           "type": "string",
           "format": "directory-path",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8",
+          "default": "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8",
           "hidden": true
         },
         "conda_path": {
           "type": "string",
           "format": "directory-path",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env",
+          "default": "/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env",
           "hidden": true
         },
         "python_path": {
           "type": "string",
           "format": "directory-path",
-          "default": "/gpfs/gsfs10/users/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin",
+          "default": "/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin",
           "hidden": true
         },
         "Rpkg": {
