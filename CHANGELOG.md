@@ -61,7 +61,7 @@
 - Output all R Markdown documents as HTML rather than PDF. (#112, @kelly-sovacool)
 - Make sure values in the contrasts sheet are treated as strings. (#133, @kelly-sovacool)
 - Migrates all intermediate html reports to output directory. (#157, @wong-nw)
-- Updates filepath for environments and repos. (#162, @wong-nw)
+- Fix file paths for environments and repos on biowulf. (#162, @wong-nw)
 
 ### Documentation improvements
 
