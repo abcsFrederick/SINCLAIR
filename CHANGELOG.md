@@ -1,5 +1,7 @@
 ## SINCLAIR development version
 
+## SINCLAIR 0.3.3
+
 - Improve help message for `sinclair run`. (#153, @kelly-sovacool)
   - the default `--mode` is now `slurm`.
 - The `run_cellranger` parameter is now a boolean set to `true` by default. (#155, @kelly-sovacool)
