@@ -7,6 +7,7 @@
 - New profiles:
   - `test_h5` for starting from h5 files. (#155, @kelly-sovacool)
   - `debug`, which sets `process.scratch` to `false` so intermediate files will be in the workDir. (#155, @kelly-sovacool)
+- Fix file paths for environments and repos on biowulf. (#162, @wong-nw)
 
 ## SINCLAIR 0.3.2
 
@@ -61,7 +62,6 @@
 - Output all R Markdown documents as HTML rather than PDF. (#112, @kelly-sovacool)
 - Make sure values in the contrasts sheet are treated as strings. (#133, @kelly-sovacool)
 - Migrates all intermediate html reports to output directory. (#157, @wong-nw)
-- Fix file paths for environments and repos on biowulf. (#162, @wong-nw)
 
 ### Documentation improvements
 
