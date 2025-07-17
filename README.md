@@ -48,9 +48,9 @@ can change whether cellranger is deployed, species, names of manifest files (def
 
 In `/path/to/output/dir`:
 
--   `assets/params.yml`
--   `assets/input_manifest.csv`
--   `assets/contrast_manifest.csv`
+- `assets/params.yml`
+- `assets/input_manifest.csv`
+- `assets/contrast_manifest.csv`
 
 ##### 3. Run the pipeline
 

@@ -19,21 +19,21 @@ _Default values indicated with \*_
 
 ### General CLI arguments
 
--   `--help` Prints the help statement
--   `--output` The pipeline output directory (same as the nextflow `launchDir`)
--   `--mode` Determines if the workflow runs on the current system or is submitted as a slurm job
-    -   `local`\*
-    -   `slurm`
--   `--forceall` Forces all steps of the workflow to be run
+- `--help` Prints the help statement
+- `--output` The pipeline output directory (same as the nextflow `launchDir`)
+- `--mode` Determines if the workflow runs on the current system or is submitted as a slurm job
+    - `local`\*
+    - `slurm`
+- `--forceall` Forces all steps of the workflow to be run
 
 ### Nextflow arguments
 
 _Note that [nextflow arguments](https://www.nextflow.io/docs/latest/reference/cli.html#run) are prepended by a **single hyphen** rather than a double hyphen_
 
--   `-params-file assets/params.yml` Specify the pipeline parameters in a YAML file
--   `-profile` Uses pre-defined profiles to determine particular run configurations
-    -   `test` Applies samples and manifests for the test dataset run
--   `-preview` Preview the pipeline without executing it
+- `-params-file assets/params.yml` Specify the pipeline parameters in a YAML file
+- `-profile` Uses pre-defined profiles to determine particular run configurations
+    - `test` Applies samples and manifests for the test dataset run
+- `-preview` Preview the pipeline without executing it
 
 ### Pipeline parameters
 
@@ -43,54 +43,55 @@ View the full list of pipeline parameters [here](../params.md).
 
 #### Input and output parameters
 
--   `--input` The input manifest `.csv` file
-    -   `./assets/input_manifest_cellranger.csv`\*
-    -   `./assets/input_manifest.csv`
-    -   `other/user-defined/manifest.csv`
--   `--contrast` The contrast manifest `.csv` file
-    -   `./assets/contrasts.csv`\*
--   `--outdir` The nextflow results directory inside the pipeline output directory. Can be manually set
-    -   `./output`\*
--   `--species` Which species and genome is to be used for reference in alignment (option) cell type annotation
-    -   `hg19`\*
-    -   `hg38`
-    -   `mm10`
--   `--run_cellranger` Whether to run CellRanger for alignment. Also indicates which input manifest file to parse
-    -   `true`
-    -   `false`
+- `--input` The input manifest `.csv` file
+    - `./assets/input_manifest_cellranger.csv`\*
+    - `./assets/input_manifest.csv`
+    - `other/user-defined/manifest.csv`
+- `--contrast` The contrast manifest `.csv` file
+    - `./assets/contrasts.csv`\*
+- `--outdir` The nextflow results directory inside the pipeline output directory. Can be manually set
+    - `./output`\*
+- `--species` Which species and genome is to be used for reference in alignment (option) cell type annotation
+    - `hg19`\*
+    - `hg38`
+    - `mm10`
+- `--run_cellranger` Whether to run CellRanger for alignment. Also indicates which input manifest file to parse
+    - `true`
+    - `false`
 
 #### Seurat parameters
 
 <details>
 <summary></summary>
 
--   `vars_to_regress` Variables whose effects should be regressed to eliminate potential noise
-    -   `percent.mt`
-    -   `nFeature_RNA`
-    -   `S.Score`
-    -   `G2M.Score`
-    -   `nCount_RNA`
--   `qc_filtering` Filtering method
-    -   `miqc`\* Uses the MiQC parameters
-    -   `manual` Uses the
--   `nCount_RNA_max` Maximum number of reads allowed per cell. Cells exceeding the threshold are removed
-    -   50000\*
--   `nCount_RNA_min` Minimum number of reads allowed per cell. Cells below the threshold are removed
-    -   1000\*
--   `nFeatures_RNA_max` Maximum number of features (e.g. genes) allowed per cell
-    -   5000\*
--   `nFeature_RNA_min` Minimum number of features (e.g. genes) allowed per cell
-    -   200\*
--   `percent_mt_max` Maximum mitochondrial percentage allowed per cell
-    -   10\*
--   `percent_mt_min` Minimum mitochondrial percentage allowed per cell
-    -   0\*
--   `run_doublet_finder` Boolean for running the DoubletFinder tool (default T)
--   `seurat_resolution` Comma-separated string for resolutions to use when finding unsupervised clusters
-    -   "0.1,0.2,0.3,0.5,0.6,0.8,1"\*
--   `npcs` Number of principal components calculated and used downstream in neighbor-identification, dimensionality reduction (e.g. UMAP/T-SNE), and unsupervised clustering
-    -   50\*
-    </details>
+- `vars_to_regress` Variables whose effects should be regressed to eliminate potential noise
+    - `percent.mt`
+    - `nFeature_RNA`
+    - `S.Score`
+    - `G2M.Score`
+    - `nCount_RNA`
+- `qc_filtering` Filtering method
+    - `miqc`\* Uses the MiQC parameters
+    - `manual` Uses the
+- `nCount_RNA_max` Maximum number of reads allowed per cell. Cells exceeding the threshold are removed
+    - 50000\*
+- `nCount_RNA_min` Minimum number of reads allowed per cell. Cells below the threshold are removed
+    - 1000\*
+- `nFeatures_RNA_max` Maximum number of features (e.g. genes) allowed per cell
+    - 5000\*
+- `nFeature_RNA_min` Minimum number of features (e.g. genes) allowed per cell
+    - 200\*
+- `percent_mt_max` Maximum mitochondrial percentage allowed per cell
+    - 10\*
+- `percent_mt_min` Minimum mitochondrial percentage allowed per cell
+    - 0\*
+- `run_doublet_finder` Boolean for running the DoubletFinder tool (default T)
+- `seurat_resolution` Comma-separated string for resolutions to use when finding unsupervised clusters
+    - "0.1,0.2,0.3,0.5,0.6,0.8,1"\*
+- `npcs` Number of principal components calculated and used downstream in neighbor-identification, dimensionality reduction (e.g. UMAP/T-SNE), and unsupervised clustering
+    - 50\*
+
+</details>
 
 ## Examples
 

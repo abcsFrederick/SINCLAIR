@@ -6,12 +6,12 @@
 
 In short, SINCLAIR performs the following functions:
 
--   Alignment from FASTQ (optional)
--   Initial quality control and cell filtering per sample
--   Sample combination
--   Batch correction
--   Preliminary cell type annotation
--   Preliminary clustering
+- Alignment from FASTQ (optional)
+- Initial quality control and cell filtering per sample
+- Sample combination
+- Batch correction
+- Preliminary cell type annotation
+- Preliminary clustering
 
 The final outputs are a set of Seurat `.rds` files that contain all provided samples with and without batch correction, with the latter evaluated with several algorithms.
 
@@ -118,12 +118,12 @@ While the SINCLAIR workflow is running, all the temporary outputs will be stored
 
 Final results will be included in the `results` directory, unless the output directory was otherwise specified in the parameters. The `results` directory will contain 4 subdirectories:
 
--   `batch_correct` contains all the combined Seurat `.rds` files for each of the contrasts, with a separate file for each batch correction method, as well as a summary `.html` file.
--   `cellranger_counts` contains the `.h5` counts files for each sample produced by the CellRanger software.
--   `samplesheets` contains the parsed sample sheets based on the manifest files, as interpreted by NextFlow and SINCLAIR.
--   `seurat` contains two subdirectories:
-    > -   `merge` contains the combined sample Seurat `.rds` files for each set of contrasts prior to batch correction (which can otherwise be referred to as the "uncorrected" object).
-    > -   `preprocess` contains the individual sample `.rds` files.
+- `batch_correct` contains all the combined Seurat `.rds` files for each of the contrasts, with a separate file for each batch correction method, as well as a summary `.html` file.
+- `cellranger_counts` contains the `.h5` counts files for each sample produced by the CellRanger software.
+- `samplesheets` contains the parsed sample sheets based on the manifest files, as interpreted by NextFlow and SINCLAIR.
+- `seurat` contains two subdirectories:
+    > - `merge` contains the combined sample Seurat `.rds` files for each set of contrasts prior to batch correction (which can otherwise be referred to as the "uncorrected" object).
+    > - `preprocess` contains the individual sample `.rds` files.
 
 When proceeding to downstream secondary analysis, such as [differential expression](./differentialExpression.md), please utilize the `batch_correction_integration.html` files to determine which batch correction method, or even lack thereof, best fits the data. The appropriate file can then be analyzed in R through Seurat.
 
