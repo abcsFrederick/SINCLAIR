@@ -12,9 +12,9 @@ The scRNA Pipeline begins at various stages, depending on the users needs. The p
 
 scRNA has several dependencies listed below. These dependencies can be installed by a sysadmin. All dependencies will be automatically loaded if running from Biowulf.
 
-- nextflow: "nextflow/23.04.1"
-- cellranger "cellranger:7.1.0"
-- R: "R/4.3"
+-   nextflow: "nextflow/23.04.1"
+-   cellranger "cellranger:7.1.0"
+-   R: "R/4.3"
 
 Docker containers to run the pipeline are currently in development.
 

@@ -30,31 +30,31 @@ Whole transcriptome/Gene Expression libraries were generated as described in the
 
 ## WB_1
 
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_I1_001.fastq.gz
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_I2_001.fastq.gz
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_R1_001.fastq.gz
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_R2_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_I1_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_I2_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_R1_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L001_R2_001.fastq.gz
 
 ## WB_2
 
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_I1_001.fastq.gz
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_I2_001.fastq.gz
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_R1_001.fastq.gz
-- WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_R2_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_I1_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_I2_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_R1_001.fastq.gz
+-   WB_Lysis_Granulocytes_3p_Introns_8kCells_S1_L002_R2_001.fastq.gz
 
 ## WB_3 and WB_4 are copies
 
-- WB_1 --> WB_3
-- WB_2 --> WB_4
+-   WB_1 --> WB_3
+-   WB_2 --> WB_4
 
 ## samples were then subsampled with a set seed
 
-- WB_1 --> sample1,sample2 --> s100
-- WB_2 --> sample3,sample4 --> s101
-- WB_3 --> sample5,sample6 --> s102
-- WB_4 --> sample7,sample8 --> s103
+-   WB_1 --> sample1,sample2 --> s100
+-   WB_2 --> sample3,sample4 --> s101
+-   WB_3 --> sample5,sample6 --> s102
+-   WB_4 --> sample7,sample8 --> s103
 
 ## grouping tests should be
 
-- group1,group2
-- group1,group2,group3
+-   group1,group2
+-   group1,group2,group3

@@ -77,18 +77,18 @@ DropletUtils::write10xCounts(x= counts,path=outfile)
 
 There are two manifests, which are required. These files describe information on the samples and desired contrasts. These files are:
 
-- `/assets/input_manifest.csv` OR `/assets/input_manifest_cellranger.csv`
-- `assets/contrast_manifest.csv`
+-   `/assets/input_manifest.csv` OR `/assets/input_manifest_cellranger.csv`
+-   `assets/contrast_manifest.csv`
 
 ### 2.2.1 Input Manifest
 
 This manifest will include information to sample level information. It includes the following column headers:
 
-- masterID: This is the biological sample ID; duplicates are allowed in this column
-- uniqueID: This is a unique sample level ID; duplicates are not allowed in this column
-- groupID: This is the groupID which should match to the `contrast_manifest`; duplicates are allowed in this column
-- dataType: This is the datatype for the input sample; currently only permitted to use `gex`
-- input_dir: This is the input directory for the data files of the sample type (e.g. `/path/to/sample1/fastq` or `/path/to/sample1/outs`)
+-   masterID: This is the biological sample ID; duplicates are allowed in this column
+-   uniqueID: This is a unique sample level ID; duplicates are not allowed in this column
+-   groupID: This is the groupID which should match to the `contrast_manifest`; duplicates are allowed in this column
+-   dataType: This is the datatype for the input sample; currently only permitted to use `gex`
+-   input_dir: This is the input directory for the data files of the sample type (e.g. `/path/to/sample1/fastq` or `/path/to/sample1/outs`)
 
 An example sampleManifest file is shown below:
 
@@ -104,9 +104,9 @@ An example sampleManifest file is shown below:
 
 This manifest will include sample information to performed differential comparisons. A few requirements:
 
-- groups listed must match groups within the `input_manifest` groupID column
-- headers should be included for the max number of contrasts. In the example below, the second contrast contains 3 groups, and so the header includes contrast1-contrast3
-- multiple groups can be added by increasing the header and adding additional contrasts, as needed
+-   groups listed must match groups within the `input_manifest` groupID column
+-   headers should be included for the max number of contrasts. In the example below, the second contrast contains 3 groups, and so the header includes contrast1-contrast3
+-   multiple groups can be added by increasing the header and adding additional contrasts, as needed
 
 An example contrast file:
 

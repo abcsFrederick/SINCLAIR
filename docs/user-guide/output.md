@@ -2,13 +2,13 @@
 
 The following directories are created under the WORKDIR directory:
 
-- batch_correct: contains the various RDS files for batch correction methods ([CCA](https://direct.mit.edu/neco/article/16/12/2639/6880/Canonical-Correlation-Analysis-An-Overview-with), HARMONY, ScVI, RPCA, LIGER) and batch correction report (HTML)
-- cellranger_counts: contains the h5 files, if `cellranger count` is deployed
-- pipeline_info: contains execution_reports, execution_trace and pipeline_dag files from NextFlow
-- samplesheets: contains the manifests used to identify samples, contrasts, and sample:contrast groupings
-- seurat: contains multiple seurat-generated directories:
-  - preprocess: contains sample level data; both RDS and PDF files from pre-processing
-  - merge: contrast grouped, sample level data; both RDS and PDf files of pre-processed, merging
+-   batch_correct: contains the various RDS files for batch correction methods ([CCA](https://direct.mit.edu/neco/article/16/12/2639/6880/Canonical-Correlation-Analysis-An-Overview-with), HARMONY, ScVI, RPCA, LIGER) and batch correction report (HTML)
+-   cellranger_counts: contains the h5 files, if `cellranger count` is deployed
+-   pipeline_info: contains execution_reports, execution_trace and pipeline_dag files from NextFlow
+-   samplesheets: contains the manifests used to identify samples, contrasts, and sample:contrast groupings
+-   seurat: contains multiple seurat-generated directories:
+    -   preprocess: contains sample level data; both RDS and PDF files from pre-processing
+    -   merge: contrast grouped, sample level data; both RDS and PDf files of pre-processed, merging
 
 ```
 ─ batch_correct

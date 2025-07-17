@@ -19,8 +19,8 @@ pip install .
 
 Additional required dependencies:
 
-- Nextflow
-- Singularity
+-   Nextflow
+-   Singularity
 
 If you're running sinclair on biowulf, the nextflow and singularity modules will be loaded automatically.
 
@@ -46,21 +46,21 @@ bin/sinclair run --mode slurm --species <genome> --run_cellranger true
 
 The configuration files control parameters and software of the pipeline. These files are listed below:
 
-- nextflow.config
-- conf/base.config
-- conf/modules.config
-- conf/Rpack.config
+-   nextflow.config
+-   conf/base.config
+-   conf/modules.config
+-   conf/Rpack.config
 
 ### 2.1.1 NextFlow Config
 
 The configuration file dictates the global information to be used during the pipeline. Users can alter the default values, as needed. View the full list of parameters [here](../params.md).
 
-- input: path to input manifest; example manifests with (`input_manifest_cellranger.csv`) and without (`input_manifest.csv`) `cellranger` are included in assets
-- contrast: path to contrast manifest; example manifest (`contrast_manifest.csv`) is included in assets
-- outdir: path to output dir
-- species: species [options: hg19, mm10]
-- run_cellranger: determines whether to run cell ranger; if `true` is selected, expects FQ inputs, if `false`, expects .h5 inputs [options: `true`, `false`]
-- vars_to_regress: a comma separated list of any variables to regress during `SCTransform` process; [options: "", "percent.mt,nFeature_RNA,S.Score,G2M.Score,nCount_RNA"]
+-   input: path to input manifest; example manifests with (`input_manifest_cellranger.csv`) and without (`input_manifest.csv`) `cellranger` are included in assets
+-   contrast: path to contrast manifest; example manifest (`contrast_manifest.csv`) is included in assets
+-   outdir: path to output dir
+-   species: species [options: hg19, mm10]
+-   run_cellranger: determines whether to run cell ranger; if `true` is selected, expects FQ inputs, if `false`, expects .h5 inputs [options: `true`, `false`]
+-   vars_to_regress: a comma separated list of any variables to regress during `SCTransform` process; [options: "", "percent.mt,nFeature_RNA,S.Score,G2M.Score,nCount_RNA"]
 
 ### 2.1.2 Base Config
 
@@ -70,9 +70,9 @@ The configuration file dictates submission to Biowulf HPC. There are two differe
 
 The configuration file dictates process-specific processing parameters, including:
 
-- the version of each software or program that is being used in the pipeline
-- output location and file names
-- additional arguments to be passed to the process
+-   the version of each software or program that is being used in the pipeline
+-   output location and file names
+-   additional arguments to be passed to the process
 
 ### 2.1.4 R Package Config
 
@@ -95,13 +95,13 @@ nextflow run main.nf \
 
 The following explains each of the command options:
 
-- `-entry`: accepts the datatype to be used; IE gex
-- `-profile`: how to run the processes; IE biowulf singularity, docker
-- `--input`: input_manifest.csv location
-- `--contrast`: contrast_manifest.csv location
-- `--species`: species to be used
-- `--run_cellranger`: whether or not to run cellranger on dataset; i.e. `true`/`false`
-- args: any additional arguments; IE --stub-run
+-   `-entry`: accepts the datatype to be used; IE gex
+-   `-profile`: how to run the processes; IE biowulf singularity, docker
+-   `--input`: input_manifest.csv location
+-   `--contrast`: contrast_manifest.csv location
+-   `--species`: species to be used
+-   `--run_cellranger`: whether or not to run cellranger on dataset; i.e. `true`/`false`
+-   args: any additional arguments; IE --stub-run
 
 ## 3.3 Typical Workflow
 
