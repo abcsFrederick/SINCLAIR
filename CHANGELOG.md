@@ -1,5 +1,7 @@
 ## SINCLAIR development version
 
+- Fix rendering of bulleted lists in docs website. (#164, @kelly-sovacool)
+
 ## SINCLAIR 0.3.3
 
 - Improve help message for `sinclair run`. (#153, @kelly-sovacool)
