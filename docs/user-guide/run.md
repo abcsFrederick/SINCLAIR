@@ -79,7 +79,6 @@ The following is a list containing parameters that can be used for downstream Se
 <details>
 <summary></summary>
 
-
 - `vars_to_regress` Variables that should be regressed out during analysis to eliminate potential noise and signals from technical differences across samples
     - `percent.mt` percentage of reads mapped to mitochondrial genes. High values may indicate dead / stressed cells whose mitochondrial transcripts becomes overrepresented due to cytoplasmic degradation
     - `nFeature_RNA` Number of detected features
