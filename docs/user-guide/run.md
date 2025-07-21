@@ -1,4 +1,4 @@
-# 3. Running the Pipeline
+# Running Pipeline
 
 ## Setting Biowulf Interactive Session
 
@@ -6,9 +6,14 @@ Before running SINCLAIR, open the terminal and log in to Biowulf using your NIH 
 
 ```sh
 # login to Biowulf
-ssh your_username@biowulf.nih.gov
+ssh -Y $USER@biowulf.nih.gov
+
 # create interactive session with desired job specifications
 sinteractive --mem=<ram> --cpus-per-task=<cores> --time=<wall_time> --gres=lscratch:<local_scratch_space>
+
+# if using slurm to run sinclair, a simple sinteractive command will suffice
+sinteractive --time=<wall_time>
+
 # load ccbrpipeliner containing SINCLAIR and other analytical tools
 module load ccbrpipeliner
 ```
@@ -20,6 +25,7 @@ As of ccbrpipeliner version 8, sinclair can be run with the command:
 ```sh
 # initialize the pipeline (only needs to be done once)
 sinclair init --output <output_dir>
+
 # run the pipeline
 sinclair run --output <output_dir> [OPTIONS]
 ```
@@ -56,21 +62,13 @@ View the full list of pipeline parameters [here](../params.md).
 
 #### Input and output parameters
 
-- `--input` The input manifest `.csv` file
-  - `./assets/input_manifest_cellranger.csv`\*
-  - `./assets/input_manifest.csv`
-  - `other/user-defined/manifest.csv`
-- `--contrast` The contrast manifest `.csv` file
-  - `./assets/contrasts.csv`\*
-- `--outdir` The nextflow results directory inside the pipeline output directory. Can be manually set
-  - `./output`\*
-- `--species` Which species and genome is to be used for reference in alignment (option) cell type annotation
-  - `hg19`\*
-  - `hg38`
-  - `mm10`
-- `--run_cellranger` Whether to run CellRanger for alignment. Also indicates which input manifest file to parse
-  - `true`
-  - `false`
+| Parameter          | Description                                                                        | Example(s) / Default(s)\*                                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `--input`          | Input manifest `.csv` file                                                         | `./assets/input_manifest_cellranger.csv`\*<br>`./assets/input_manifest.csv`<br>`other/user-defined/manifest.csv` |
+| `--contrast`       | Contrast manifest `.csv` file                                                      | `./assets/contrasts.csv`\*                                                                                       |
+| `--outdir`         | Results directory inside the pipeline output directory                             | `./output`\*                                                                                                     |
+| `--species`        | Species/genome reference for alignment (optional: also for cell type annotation)   | `hg19`\*<br>`hg38`<br>`mm10`                                                                                     |
+| `--run_cellranger` | Whether to run Cell Ranger for alignment; determines which input manifest to parse | `true`<br>`false`                                                                                                |
 
 #### Seurat parameters
 
@@ -78,6 +76,8 @@ The following is a list containing parameters that can be used for downstream Se
 
 <details>
 <summary></summary>
+
+<<<<<<< Updated upstream
 
 - `vars_to_regress` Variables that should be regressed out during analysis to eliminate potential noise and signals from technical differences across samples
   - `percent.mt` percentage of reads mapped to mitochondrial genes. High values may indicate dead / stressed cells whose mitochondrial transcripts becomes overrepresented due to cytoplasmic degradation
@@ -105,7 +105,21 @@ The following is a list containing parameters that can be used for downstream Se
   - "0.1,0.2,0.3,0.5,0.6,0.8,1"\*
 - `npcs` Number of principal components calculated and used downstream in neighbor-identification, dimensionality reduction (e.g. UMAP/T-SNE), and unsupervised clustering
   - 50\*
-  </details>
+    # </details>
+    | Parameter            | Description                                                                         | Example(s) / Default(s)                                                                                                                                                                                                                     |
+    | -------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    | `vars_to_regress`    | Variables to regress out during analysis to eliminate technical noise               | `percent.mt` – % of mitochondrial reads (dead/stressed cells)<br>`nFeature_RNA` – Number of detected features<br>`S.Score` – S-phase cell cycle score<br>`G2M.Score` – G2/M-phase score<br>`nCount_RNA` – Total RNA molecule count per cell |
+    | `qc_filtering`       | Filtering method                                                                    | `miqc`\* – Uses MiQC parameters<br>`manual` – Uses manual-input parameters                                                                                                                                                                  |
+    | `nCount_RNA_max`     | Max reads per cell; cells above threshold are removed                               | `50000`\*                                                                                                                                                                                                                                   |
+    | `nCount_RNA_min`     | Min reads per cell; cells below threshold are removed                               | `1000`\*                                                                                                                                                                                                                                    |
+    | `nFeatures_RNA_max`  | Max number of features (e.g., genes) allowed per cell                               | `5000`\*                                                                                                                                                                                                                                    |
+    | `nFeature_RNA_min`   | Min number of features (e.g., genes) allowed per cell                               | `200`\*                                                                                                                                                                                                                                     |
+    | `percent_mt_max`     | Max mitochondrial read percentage allowed per cell                                  | `10`\*                                                                                                                                                                                                                                      |
+    | `percent_mt_min`     | Min mitochondrial read percentage allowed per cell                                  | `0`\*                                                                                                                                                                                                                                       |
+    | `run_doublet_finder` | Boolean flag to run the DoubletFinder tool                                          | `true` (default)                                                                                                                                                                                                                            |
+    | `seurat_resolution`  | Comma-separated string for resolutions in unsupervised clustering                   | `"0.1,0.2,0.3,0.5,0.6,0.8,1"`\*                                                                                                                                                                                                             |
+    | `npcs`               | Number of principal components used in downstream analyses (e.g., UMAP, clustering) | `50`\*                                                                                                                                                                                                                                      |
+    > > > > > > > Stashed changes
 
 ## Examples
 

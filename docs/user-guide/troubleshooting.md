@@ -2,11 +2,11 @@
 
 Recommended steps to troubleshoot the pipeline.
 
-## 1.1 Email
+## Email
 
 Check your email for an email regarding pipeline failure. You will receive an email from slurm@biowulf.nih.gov with the subject: Slurm Job_id=[#] Name=CARLISLE Failed, Run time [time], FAILED, ExitCode 1
 
-## 1.2 Review the log files
+## Review the log files
 
 You can check logs in two ways to diagnose workflow errors:
 
@@ -23,7 +23,7 @@ Each file follows this naming convention:
 .out files capture standard output
 .err files capture standard error messages
 
-## 1.3 Restart the run
+## Restart the run
 
 Once you have identified and addressed the issue, you may resume the SINCLAIR run.
 
@@ -38,7 +38,7 @@ sinclair run \
     -params-file assets/params.yml
 ```
 
-## 1.4 Help & Contributing
+## Help & Contributing
 
 Come across a **bug**? Open an [issue](https://github.com/CCBR/SINCLAIR/issues) and include a minimal reproducible example.
 

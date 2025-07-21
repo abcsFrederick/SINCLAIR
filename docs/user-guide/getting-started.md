@@ -1,14 +1,19 @@
-# Overview
+# Overview and Introduction
 
 The scRNA github repository is stored locally, and will be used for project deployment. Multiple projects can be deployed from this one point simultaneously, without concern.
 
-## 1. Getting Started
-
-## 1.1 Introduction
-
 The scRNA Pipeline begins at various stages, depending on the users needs. The pipeline can begin with GEX FASTQ files, performing cell counting, with 10X Genomics [CellRanger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger). Then, normalization and pre-processing occurs, using custom [R](https://www.r-project.org/) scripts with packages like [Seurat](https://satijalab.org/seurat/). Alternatively the user can begin with .h5 files, beginning the pipeline post-preprocessing.
 
-## 1.2 Setup Dependencies
+## Login to the cluster
+
+scRNA has been exclusively tested on Biowulf HPC. Log in to the cluster's head node and move into the pipeline location.
+
+```
+# ssh into cluster's head node
+ssh -Y $USER@biowulf.nih.gov
+```
+
+## Setup Dependencies
 
 scRNA has several dependencies listed below. These dependencies can be installed by a sysadmin. All dependencies will be automatically loaded if running from Biowulf.
 
@@ -18,16 +23,7 @@ scRNA has several dependencies listed below. These dependencies can be installed
 
 Docker containers to run the pipeline are currently in development.
 
-## 1.3 Login to the cluster
-
-scRNA has been exclusively tested on Biowulf HPC. Log in to the cluster's head node and move into the pipeline location.
-
-```
-# ssh into cluster's head node
-ssh -Y $USER@biowulf.nih.gov
-```
-
-## 1.4 Load an interactive session
+## Load an interactive session (for Local Runs Only)
 
 An interactive session should be started before performing any of the pipeline sub-commands, even if the pipeline is to be executed on the cluster.
 
@@ -36,7 +32,7 @@ An interactive session should be started before performing any of the pipeline s
 sinteractive --mem=64g --cpus-per-task=16 --time=8:00:00 --gres=lscratch:128
 ```
 
-## 1.5 Installing and setting up SINCLAIR
+## Loading SINCLAIR
 
 The ccbrpipeliner module on Biowulf also loads module dependencies, and should be loaded prior to running SINCLAIR:
 

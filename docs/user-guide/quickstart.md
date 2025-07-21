@@ -13,16 +13,20 @@ In short, SINCLAIR performs the following functions:
 - Preliminary cell type annotation
 - Preliminary clustering
 
-The final outputs are a set of Seurat `.rds` files that contain all provided samples with and without batch correction, with the latter evaluated with several algorithms.
+The final outputs are a set of Seurat `.rds` files that contain all provided samples with and without batch correction, with the latter evaluated using different algorithms (HARMONY, scVI, RPCA, LIGER).
 
-## Installation and Initialization
+## Initialization
 
-### Via CCBR Pipeliner on Biowulf (NIH HPC)
-
-If working on Biowulf, start an interactive session with a minimum of 16 CPUs, 8 hours wall-time, and a local scratch allocation (temporary RAM) of 128 GB:
+Sinclair can be run locally or through slurm. To run locally, start an interactive session with a minimum of 64GB memory, 16 CPUs, 128GB of local storage space, and 8 hours wall-time:
 
 ```
 sinteractive --mem=64g --cpus-per-task=16 --time=8:00:00 --gres=lscratch:128
+```
+
+If running through slurm, a simple sinteractive command will suffice:
+
+```
+sinteractive --time=8:00:00
 ```
 
 As of CCBR Pipeliner release 8, instantiate Pipeliner as a module:
@@ -39,7 +43,7 @@ sinclair init
 
 ## Setting up input files
 
-All input files should follow nomenclature as if generated via CellRanger (https://www.10xgenomics.com/support/jp/software/cell-ranger/8.0/tutorials/inputs/cr-specifying-fastqs). When starting from fastq files, each sample should have its own directory containing at least `R1` and `R2` (i.e. forward and reverse reads). Additional files that may be included include `I1` index files and reads from multiple lanes. Example minimum data structure for two samples:
+All input files should follow nomenclature as if generated via [CellRanger](https://www.10xgenomics.com/support/jp/software/cell-ranger/8.0/tutorials/inputs/cr-specifying-fastqs). When starting from fastq files, each sample should have its own directory containing at least `R1` and `R2` (i.e. forward and reverse reads). Additional files that may be included include `I1` index files and reads from multiple lanes. Example minimum data structure for two samples:
 
 ```
 `/path/to/sample1/sample1_S1_L0001_R1_001.fastq.gz`
@@ -55,6 +59,41 @@ When starting from `.h5` files that are generated from CellRanger alignment, the
 `/path/to/sample2/outputs/filtered_feature_bc_matrix.h5`
 
 The `.h5` matrix files should be indicated as `filtered_feature_bc_matrix.h5`, with the sample name indicated in the directory path.
+
+### Converting to .h5 from Matrix Market Exchange (Mtx) Triplet Files
+
+Older versions of CellRanger, as well as some other workflows (e.g. DropSeq, Smart-Seq, PipSeq, etc.) may output matrix.mtx, features.tsv, and barcodes.tsv files. For these instances, refer to [Addendum: Starting from matrix files](preparing-files.md#addendum-starting-from-matrix-files) section for a tutorial on how to convert these files into .h5.
+
+A brief description of each file is:
+
+Matrix Market Exchange (.mtx) files can also be used to store sparse matrices of gene expression data. For each non-zero entry, its row index, column index, and value are stored within a mtx file.
+
+For example, a matrix containing 20000 genes across 5000 barcoded cells, with 10000 non-zero entries can be represented in a mtx file like:
+
+**Matrix dimensions:** 20000 rows × 5000 columns  
+**Non-zero entries:** 10000
+
+| Row | Column | Value |
+| --- | ------ | ----- |
+| 1   | 1      | 3     |
+| 1   | 2      | 5     |
+| 2   | 1      | 1     |
+
+The features.tsv file typically represents the genes (or other molecule types) represented in the rows of the matrix.mtx file. It is a tab-deliminated file with three columns (Feature ID, Feature Name, and Feature Type), like:
+
+| Feature ID      | Gene  | Feature Type    |
+| --------------- | ----- | --------------- |
+| ENSG00000121410 | CD3D  | Gene Expression |
+| ENSG00000198786 | MS4A1 | Gene Expression |
+| ENSG00000160791 | LYZ   | Gene Expression |
+
+The barcodes.tsv file list the cell barcodes, eaching representing a droplet or cell that was detected during single-cell sequencing. It is typically a single column, plain text file with one barcode per line:
+
+| Barcode            |
+| ------------------ |
+| AAACCTGAGATAGGAA-1 |
+| AAACCTGAGATAGGGA-1 |
+| AAACCTGAGATAGGTT-1 |
 
 ## Setting Up Manifest Files
 
