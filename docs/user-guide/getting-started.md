@@ -1,4 +1,4 @@
-# Overview and Introduction
+# Getting Started
 
 The scRNA github repository is stored locally, and will be used for project deployment. Multiple projects can be deployed from this one point simultaneously, without concern.
 
@@ -6,29 +6,36 @@ The scRNA Pipeline begins at various stages, depending on the users needs. The p
 
 ## Login to the cluster
 
-scRNA has been exclusively tested on Biowulf HPC. Log in to the cluster's head node and move into the pipeline location.
+scRNA has been exclusively tested on Biowulf HPC. Log in to the cluster's head node and move to / create the working directory on which to store the input and outputs files of SINCLAIR.
 
 ```
 # ssh into cluster's head node
 ssh -Y $USER@biowulf.nih.gov
 ```
 
-## Setup Dependencies
+```
+# (If not done) create working directory
+mkdir /path/to/WORKDIR
+```
 
-scRNA has several dependencies listed below. These dependencies can be installed by a sysadmin. All dependencies will be automatically loaded if running from Biowulf.
+```
+# navigate to working directory
+cd /path/to/WORKDIR
+```
 
-- nextflow: "nextflow/23.04.1"
-- cellranger "cellranger:7.1.0"
-- R: "R/4.3"
-
-Docker containers to run the pipeline are currently in development.
-
-## Load an interactive session (for Local Runs Only)
+## Load an interactive session
 
 An interactive session should be started before performing any of the pipeline sub-commands, even if the pipeline is to be executed on the cluster.
 
+To start an interactive SLURM session, a simple sinteractive command is sufficient:
+
 ```
-# Grab an interactive node
+sinteractive
+```
+
+To run SINCLAIR locally, start an interactive session with a minimum of 64GB memory, 16 CPUs, 128GB of local storage space, and 8 hours wall-time:
+
+```
 sinteractive --mem=64g --cpus-per-task=16 --time=8:00:00 --gres=lscratch:128
 ```
 
@@ -40,8 +47,7 @@ The ccbrpipeliner module on Biowulf also loads module dependencies, and should b
 module load ccbrpipeliner/8
 ```
 
-Initialize the output directory for SINCLAIR. This will create a new directory
-and copy the necessary files to run the pipeline:
+Initialize the output directory for SINCLAIR. This will create a new directory where you can copy the necessary files to run the pipeline:
 
 ```
 sinclair init --output /path/to/output/dir
