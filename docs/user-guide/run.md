@@ -41,8 +41,8 @@ _Default values indicated with \*_
 - `--help` Prints the help statement
 - `--output` The pipeline output directory (same as the nextflow `launchDir`)
 - `--mode` Determines if the workflow runs on the current system or is submitted as a slurm job
-  - `local`\*
-  - `slurm`
+    - `local`\*
+    - `slurm`
 - `--forceall` Forces all steps of the workflow to be run
 
 ### Nextflow arguments
@@ -51,7 +51,7 @@ _Note that [nextflow arguments](https://www.nextflow.io/docs/latest/reference/cl
 
 - `-params-file assets/params.yml` Specify the pipeline parameters in a YAML file
 - `-profile` Uses pre-defined profiles to determine particular run configurations
-  - `test` Applies samples and manifests for the test dataset run
+    - `test` Applies samples and manifests for the test dataset run
 - `-preview` Preview the pipeline without executing it
 
 ### Pipeline parameters
@@ -70,9 +70,11 @@ View the full list of pipeline parameters [here](../params.md).
 | `--species`        | Species/genome reference for alignment (optional: also for cell type annotation)   | `hg19`\*<br>`hg38`<br>`mm10`                                                                                     |
 | `--run_cellranger` | Whether to run Cell Ranger for alignment; determines which input manifest to parse | `true`<br>`false`                                                                                                |
 
+
 #### Seurat parameters
 
 The following is a list containing parameters that can be used for downstream Seurat analysis.
+
 
 - vars_to_regress – Optional variables to regress out, as a way of eliminating technical noise:
 
@@ -119,6 +121,7 @@ The following is a list containing parameters that can be used for downstream Se
 
   - npcs – Number of principal components used in downstream analyses (e.g., UMAP, clustering):
     - Default: 50\*
+
 
 ## Examples
 
