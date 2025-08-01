@@ -1,6 +1,8 @@
 ## SINCLAIR development version
 
 - Fix rendering of bulleted lists in docs website. (#164, @kelly-sovacool)
+- Documentation for test data outputs updated. (#174, @wong-nw)
+- Re-ordering of batch correction report. (#174 @wong-nw)
 
 ## SINCLAIR 0.3.3
 
