@@ -215,16 +215,13 @@ For comparative purposes, an integration report is included for each contrast. F
 
 Each batch correction method has undergone principal component analysis and uniform manifold approximation and projection (UMAP) for visualization. These plots can be colored by different metadata categories. This report includes coloring by sample, group identity, and preliminary cell type annotation.
 
-![Cells colored by sample](../img/test_sample_umap.svg)
-
+![Cells colored by sample](../img/test_sample_umap.png)
 _Cells colored by sample_
 
-![Cells colored by group](../img/test_group_umap.svg)
-
+![Cells colored by group](../img/test_group_umap.png)
 _Cells colored by group identity_
 
-![Cells colored by annotation](../img/test_annot_umap.svg)
-
+![Cells colored by annotation](../img/test_annot_umap.png)
 _Cells colored by annotation_
 
 The tab for cell annotation also includes a table of cell counts matching the annotation used.
@@ -233,10 +230,11 @@ The tab for cell annotation also includes a table of cell counts matching the an
 
 Clustering is used to potentially identify and classify similar cells, based on their "distance" from each other (i.e. similarity in gene expression and principal components). For this process, we have utilized the clustering method called the slow local moving algorithm, as made available in Seurat. This method uses a parameter called `resolution` to indicate how wide of a net to cast when clustering cells. Smaller resolutions will produce fewer and larger clusters, with the risk being that some genuinely disparate clusters might be bundled together. Comparatively, larger resolutions will produce more abundant smaller clusters, with the tradeoff being that some clusters may be unnecessarily separated. As such, the balance needs to be struck where the clusters are reasonably well-defined without breaking up clusters internally.
 
-![Clustering for RPCA at resolution 0.1](../img/test_cluster.svg)
+![Clustering for RPCA at resolution 0.1](../img/test_cluster.png)
+_Example cluster plot for RPCA at resolution 0.1_
+
 
 For each cluster resolution created, the report will produce silhouette scores to provide a categorical evaluation of the quality of the clustering. The silhouette score is a metric that evaluates the similarity of cells within each cluster and compares the overall similarity to cells outside the cluster. Each cluster receives a score, and a positive average silhouette score indicates that the clusters are more desirable due to being more condensed and self-contained. 
 
-![Silhouette score for RPCA clustering at resolution 0.1](../img/test_silhouette.svg)
-
+![Silhouette score for RPCA clustering at resolution 0.1](../img/test_silhouette.png)
 _Example silhouette score plot for RPCA clustering at resolution 0.1_
