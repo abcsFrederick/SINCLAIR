@@ -33,6 +33,95 @@ group1,group2,group3
 
 This run will have 5 samples, and will run 2 separate sets of contrasts. The first contrast, `group1-group2`, will contain samples 1 through 4, while the second contrast, `group1-group2-group3`, will contain all 5 samples, as indicated by the `groupID` variable in the `sample_manifest.csv`.  The contrasts are primarily used for sample filtering, in the event of multiple contrasts that are not fully inclusive of all the data points.
 
+Upon launching the test run, the following output will be generated in the command line window:
+
+```
+[<user>@cn0034 output_directory]$ sinclair run -profile test
+[2025:08:04 16:12:26] --------------------
+[2025:08:04 16:12:26] | Output Directory |
+[2025:08:04 16:12:26] --------------------
+
+/path/to/output/directory
+[2025:08:04 16:12:26] --------------------
+[2025:08:04 16:12:26] | Pipeline Preview |
+[2025:08:04 16:12:26] --------------------
+
+bash -c "module load nextflow && nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume  -preview"
+[+] Loading java 23.0.2  ... 
+[+] Loading singularity  4.2.2  on cn0034 
+[+] Loading nextflow  25.04.2 
+Nextflow 25.04.6 is available - Please consider updating your version to it
+
+ N E X T F L O W   ~  version 25.04.2
+
+WARN: It appears you have never run this project before -- Option `-resume` is ignored
+Launching `/data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf` [angry_williams] DSL2 - revision: c921f3551d
+
+SINCLAIR 0.3.3
+
+===================================
+cmd line     : nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume -preview
+start time   : 2025-08-04T16:12:30.921987287-04:00
+NF outdir    : /path/to/output/directory/output/tests
+
+Input/output options
+  input                     : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/assets/input_manifest.csv
+  contrast                  : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/assets/contrast_manifest.csv
+  outdir                    : /vf/users/wongnw/sandbox/sinclair_pipe8_202508/output/tests
+
+Main options
+  species                   : hg38
+  qc_filtering              : miqc
+  genome_dir                : /data/CCBR_Pipeliner/db/PipeDB/cellranger_ref/hg38
+
+Institutional config options
+  config_profile_name       : Test profile starting from fastq files
+  config_profile_description: Minimal test dataset to check pipeline function
+  config_profile_contact    : staff@hpc.nih.gov
+  config_profile_url        : https://hpc.nih.gov/apps/nextflow.html
+
+Generic options
+  tracedir                  : /path/to/output/directory/output/pipeline_info
+  max_memory                : 224 GB
+  max_cpus                  : 32
+  max_time                  : 72 h
+
+Core Nextflow options
+  runName                   : angry_williams
+  containerEngine           : singularity
+  launchDir                 : /path/to/output/directory
+  workDir                   : /path/to/output/directory/work
+  projectDir                : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair
+  userName                  : wongnw
+  profile                   : biowulf,slurm,test
+  configFiles               : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/nextflow.config, /path/to/output/directory/nextflow.config
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+------------------------------------------------------
+[-        ] process > PREPROCESS_EXQC:INPUT_CHECK_GEX:SAMPLESHEET_CHECK -
+[-        ] process > PREPROCESS_EXQC:CELLRANGER_COUNT                  -
+[-        ] process > GEX_EXQC:SEURAT_PREPROCESS                        -
+[-        ] process > GEX_EXQC:SEURAT_MERGE                             -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_HARMONY                    -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_RPCA                       -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_CCA                        -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_LIGER                      -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_INTEGRATION                -
+
+[2025:08:04 16:12:33] -------------------
+[2025:08:04 16:12:33] | Slurm batch job |
+[2025:08:04 16:12:33] -------------------
+
+sbatch submit_slurm.sh
+[2025:08:04 16:12:33] --------------------
+[2025:08:04 16:12:33] | Nextflow command |
+[2025:08:04 16:12:33] --------------------
+
+nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume 
+64401687
+
+```
+
 ## About the data
 
 **_Overview_**: The original dataset was downloaded from 10x Genomics in FASTQ format and unpacked from WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs.tar. This dataset was taken from a single sample and run on two sequencing lanes. 
@@ -93,7 +182,7 @@ Each group was further downsampled to make the dataset lightweight and suitable 
 
 ## Expected Output
 
-The SINCLAIR test run will produce the following structure in the `output` directory:
+The SINCLAIR test run will produce the following structure in the directory:
 
 ```
 .
@@ -178,7 +267,7 @@ The SINCLAIR test run will produce the following structure in the `output` direc
 
 ```
 
-The relevant results are found the `test` subdirectory. For live data, the directories will all exist directly within the `output` directory.
+The relevant results are found the `test` subdirectory. For live data, the directories will all exist directly within the `output` directory. If debugging is required, all intermediate files will be in the `work` directory.
 
 ### Pre-processed files
 
