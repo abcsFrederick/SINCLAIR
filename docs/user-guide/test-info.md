@@ -1,6 +1,5 @@
 # Setting up a test run
 
-
 ## The Basics
 
 A test run of the pipeline can be initiated through the following command:
@@ -9,8 +8,7 @@ A test run of the pipeline can be initiated through the following command:
 sinclair run --mode slurm -profile test
 ```
 
-This profile will automatically use the `test` sample and contrasts manifests, which are the default designs present in the `assets` directory. 
-
+This profile will automatically use the `test` sample and contrasts manifests, which are the default designs present in the `assets` directory.
 
 ```
 assets/input_manifest.csv
@@ -31,7 +29,7 @@ group1,group2
 group1,group2,group3
 ```
 
-This run will have 5 samples, and will run 2 separate sets of contrasts. The first contrast, `group1-group2`, will contain samples 1 through 4, while the second contrast, `group1-group2-group3`, will contain all 5 samples, as indicated by the `groupID` variable in the `sample_manifest.csv`.  The contrasts are primarily used for sample filtering, in the event of multiple contrasts that are not fully inclusive of all the data points.
+This run will have 5 samples, and will run 2 separate sets of contrasts. The first contrast, `group1-group2`, will contain samples 1 through 4, while the second contrast, `group1-group2-group3`, will contain all 5 samples, as indicated by the `groupID` variable in the `sample_manifest.csv`. The contrasts are primarily used for sample filtering, in the event of multiple contrasts that are not fully inclusive of all the data points.
 
 Upon launching the test run, the following output will be generated in the command line window:
 
@@ -146,7 +144,7 @@ nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -prof
 
 Whole transcriptome/Gene Expression libraries were generated as described in the Chromium Next GEM Single Cell 3' Reagent Kits v3.1 (Dual Index) User Guide (CG000204 Rev D).
 
-## Sample Design and Arrangement 
+## Sample Design and Arrangement
 
 The two lanes have been treated as separate replicates. Each replicate was then subsampled to produce leaner datasets for testing.
 
@@ -178,7 +176,6 @@ Each group was further downsampled to make the dataset lightweight and suitable 
 - WB_1 --> sample1,sample2
 - WB_2 --> sample3,sample4
 - WB_3 --> sample5
-
 
 ## Expected Output
 
@@ -277,29 +274,30 @@ The default `test` profile aligns the samples to the reference genome using the 
 
 ### Processed and filtered sample files
 
-
 **Directory:** `seurat/preprocess`
 
-Each sample undergoes an initial filtering and pre-processing step. Each sample undergoes the following quality controls and annotations: 
+Each sample undergoes an initial filtering and pre-processing step. Each sample undergoes the following quality controls and annotations:
 
 - Basic statistics: Each sample has preliminary QC statistics determined, such as the number of reads per cell, number of unique gene sequences per cell, and mitochondrial read count fraction.
-- Low cell quality filtering: Runs on the basis of [miQC](https://www.bioconductor.org/packages/release/bioc/html/miQC.html), which filters cells based on the ratio of reads to mitochondrial fraction. 
+- Low cell quality filtering: Runs on the basis of [miQC](https://www.bioconductor.org/packages/release/bioc/html/miQC.html), which filters cells based on the ratio of reads to mitochondrial fraction.
 - Preliminary UMAP creation: Generates a UMAP dimensional reduction for visualization
 - Initial cell type annotation: Uses the [SingleR](https://bioconductor.org/packages/release/bioc/html/SingleR.html) tool to annotate cells independently against species-specific databases.
 - Doublet identification and removal: Uses the [DoubletFinder](https://github.com/chris-mcginnis-ucsf/DoubletFinder) tool to identify and remove doublets.
 
-For each sample, this step produces a `.rds.` (R data structure) file, which can be imported into an R environment using the `readRDS("xxx.rds")` function for further analysis, and a `.html` quality control 
+For each sample, this step produces a `.rds.` (R data structure) file, which can be imported into an R environment using the `readRDS("xxx.rds")` function for further analysis, and a `.html` quality control
 
 ### Combined and batch corrected files
 
 **Directories:** `seurat/merge` and `batch_correct`
 
 #### Combined sample file
-When combining samples, the two processes, as labeled by the Seurat team, are _merge_ and _integrate_. In more common parlance, these terms are closer to _sample combination_ and _batch correction_. The combined sample file is in the  `seurat/merge` directory, and for each contrast run, contains all the cells of the combined samples. The cell identities are automatically appended with a numerical identifier to ensure uniqueness across samples. Here, the cell counts for each sample are all present, with no additional modifications beyond principal components calculation and UMAP projection.
+
+When combining samples, the two processes, as labeled by the Seurat team, are _merge_ and _integrate_. In more common parlance, these terms are closer to _sample combination_ and _batch correction_. The combined sample file is in the `seurat/merge` directory, and for each contrast run, contains all the cells of the combined samples. The cell identities are automatically appended with a numerical identifier to ensure uniqueness across samples. Here, the cell counts for each sample are all present, with no additional modifications beyond principal components calculation and UMAP projection.
 
 The combined sample file for each contrast (i.e. group1-group2 and group1-group2-group3), as designated in `contrast_manifest.csv`, is present as `seurat/merge/<contrast>_seurat_merged.rds`. A `.html` run report for each contrast is present as well.
 
 #### Batch corrected files
+
 The batch corrected files are in the `batch_correct` directory. Each of the following batch correction methods are run for each contrast:
 
 - [Canonical Correlation Analysis (CCA)](https://satijalab.org/seurat/articles/integration_introduction): Uses the Seurat `integrate` function
@@ -343,9 +341,9 @@ Clustering is used to potentially identify and classify similar cells, based on 
 
 _Example cluster plot for RPCA at resolution 0.1_
 
-
-For each cluster resolution created, the report will produce silhouette scores to provide a categorical evaluation of the quality of the clustering. The silhouette score is a metric that evaluates the similarity of cells within each cluster and compares the overall similarity to cells outside the cluster. Each cluster receives a score, and a positive average silhouette score indicates that the clusters are more desirable due to being more condensed and self-contained. 
+For each cluster resolution created, the report will produce silhouette scores to provide a categorical evaluation of the quality of the clustering. The silhouette score is a metric that evaluates the similarity of cells within each cluster and compares the overall similarity to cells outside the cluster. Each cluster receives a score, and a positive average silhouette score indicates that the clusters are more desirable due to being more condensed and self-contained.
 
 ![Silhouette score for RPCA clustering at resolution 0.1](../img/test_silhouette.png)
 
 _Example silhouette score plot for RPCA clustering at resolution 0.1_
+

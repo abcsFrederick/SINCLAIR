@@ -448,4 +448,3 @@ if(length(files)>0){
   print(paste0("Batch correction method was not included:",method))
 }
 ```
-
