@@ -31,13 +31,102 @@ group1,group2,group3
 
 This run will have 5 samples, and will run 2 separate sets of contrasts. The first contrast, `group1-group2`, will contain samples 1 through 4, while the second contrast, `group1-group2-group3`, will contain all 5 samples, as indicated by the `groupID` variable in the `sample_manifest.csv`. The contrasts are primarily used for sample filtering, in the event of multiple contrasts that are not fully inclusive of all the data points.
 
+Upon launching the test run, the following output will be generated in the command line window:
+
+```
+[<user>@cn0034 output_directory]$ sinclair run -profile test
+[2025:08:04 16:12:26] --------------------
+[2025:08:04 16:12:26] | Output Directory |
+[2025:08:04 16:12:26] --------------------
+
+/path/to/output/directory
+[2025:08:04 16:12:26] --------------------
+[2025:08:04 16:12:26] | Pipeline Preview |
+[2025:08:04 16:12:26] --------------------
+
+bash -c "module load nextflow && nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume  -preview"
+[+] Loading java 23.0.2  ...
+[+] Loading singularity  4.2.2  on cn0034
+[+] Loading nextflow  25.04.2
+Nextflow 25.04.6 is available - Please consider updating your version to it
+
+ N E X T F L O W   ~  version 25.04.2
+
+WARN: It appears you have never run this project before -- Option `-resume` is ignored
+Launching `/data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf` [angry_williams] DSL2 - revision: c921f3551d
+
+SINCLAIR 0.3.3
+
+===================================
+cmd line     : nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume -preview
+start time   : 2025-08-04T16:12:30.921987287-04:00
+NF outdir    : /path/to/output/directory/output/tests
+
+Input/output options
+  input                     : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/assets/input_manifest.csv
+  contrast                  : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/assets/contrast_manifest.csv
+  outdir                    : /vf/users/wongnw/sandbox/sinclair_pipe8_202508/output/tests
+
+Main options
+  species                   : hg38
+  qc_filtering              : miqc
+  genome_dir                : /data/CCBR_Pipeliner/db/PipeDB/cellranger_ref/hg38
+
+Institutional config options
+  config_profile_name       : Test profile starting from fastq files
+  config_profile_description: Minimal test dataset to check pipeline function
+  config_profile_contact    : staff@hpc.nih.gov
+  config_profile_url        : https://hpc.nih.gov/apps/nextflow.html
+
+Generic options
+  tracedir                  : /path/to/output/directory/output/pipeline_info
+  max_memory                : 224 GB
+  max_cpus                  : 32
+  max_time                  : 72 h
+
+Core Nextflow options
+  runName                   : angry_williams
+  containerEngine           : singularity
+  launchDir                 : /path/to/output/directory
+  workDir                   : /path/to/output/directory/work
+  projectDir                : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair
+  userName                  : wongnw
+  profile                   : biowulf,slurm,test
+  configFiles               : /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/nextflow.config, /path/to/output/directory/nextflow.config
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+------------------------------------------------------
+[-        ] process > PREPROCESS_EXQC:INPUT_CHECK_GEX:SAMPLESHEET_CHECK -
+[-        ] process > PREPROCESS_EXQC:CELLRANGER_COUNT                  -
+[-        ] process > GEX_EXQC:SEURAT_PREPROCESS                        -
+[-        ] process > GEX_EXQC:SEURAT_MERGE                             -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_HARMONY                    -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_RPCA                       -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_CCA                        -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_LIGER                      -
+[-        ] process > GEX_EXQC:BATCH_CORRECT_INTEGRATION                -
+
+[2025:08:04 16:12:33] -------------------
+[2025:08:04 16:12:33] | Slurm batch job |
+[2025:08:04 16:12:33] -------------------
+
+sbatch submit_slurm.sh
+[2025:08:04 16:12:33] --------------------
+[2025:08:04 16:12:33] | Nextflow command |
+[2025:08:04 16:12:33] --------------------
+
+nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume
+64401687
+
+```
+
 ## About the data
 
-**_Overview_**: The The original dataset was downloaded from 10x Genomics in FASTQ format and unpacked from WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs.tar. This dataset was taken from a single sample and run on two sequencing lanes.
+**_Overview_**: The original dataset was downloaded from 10x Genomics in FASTQ format and unpacked from WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs.tar. This dataset was taken from a single sample and run on two sequencing lanes.
 
-**TUTORIAL:** https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/tutorials/neutrophils
+**TUTORIAL:** <https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/tutorials/neutrophils>
 
-**SOURCE:** https://www.10xgenomics.com/resources/datasets/whole-blood-rbc-lysis-for-pbmcs-neutrophils-granulocytes-3-3-1-standard
+**SOURCE:** <https://www.10xgenomics.com/resources/datasets/whole-blood-rbc-lysis-for-pbmcs-neutrophils-granulocytes-3-3-1-standard>
 
 **Species:** _Homo sapiens_
 
@@ -90,80 +179,92 @@ Each group was further downsampled to make the dataset lightweight and suitable 
 
 ## Expected Output
 
-The SINCLAIR test run will produce the following structure in the `output` directory:
+The SINCLAIR test run will produce the following structure in the directory:
 
 ```
-output
-├── pipeline_info
-│   ├── execution_report_2025-07-21_14-58-51.html
-│   ├── execution_report_2025-07-21_15-00-18.html
-│   ├── execution_timeline_2025-07-21_14-58-51.html
-│   ├── execution_timeline_2025-07-21_15-00-18.html
-│   ├── execution_trace_2025-07-21_14-58-34.txt
-│   ├── execution_trace_2025-07-21_14-58-51.txt
-│   ├── execution_trace_2025-07-21_15-00-18.txt
-│   ├── pipeline_dag_2025-07-21_14-58-51.svg
-│   └── pipeline_dag_2025-07-21_15-00-18.svg
-└── tests
-    ├── batch_correct
-    │   ├── group1-group2_batch_correction_cca.html
-    │   ├── group1-group2_batch_correction_cca.rds
-    │   ├── group1-group2_batch_correction_harmony.html
-    │   ├── group1-group2_batch_correction_harmony.rds
-    │   ├── group1-group2_batch_correction_integration.html
-    │   ├── group1-group2_batch_correction_liger.html
-    │   ├── group1-group2_batch_correction_liger.rds
-    │   ├── group1-group2_batch_correction_rpca.html
-    │   ├── group1-group2_batch_correction_rpca.rds
-    │   ├── group1-group2-group3_batch_correction_cca.html
-    │   ├── group1-group2-group3_batch_correction_cca.rds
-    │   ├── group1-group2-group3_batch_correction_harmony.html
-    │   ├── group1-group2-group3_batch_correction_harmony.rds
-    │   ├── group1-group2-group3_batch_correction_integration.html
-    │   ├── group1-group2-group3_batch_correction_liger.html
-    │   ├── group1-group2-group3_batch_correction_liger.rds
-    │   ├── group1-group2-group3_batch_correction_rpca.html
-    │   └── group1-group2-group3_batch_correction_rpca.rds
-    ├── cellranger_counts
-    │   ├── sample1
-    │   │   └── outs
-    │   │       └── filtered_feature_bc_matrix.h5
-    │   ├── sample2
-    │   │   └── outs
-    │   │       └── filtered_feature_bc_matrix.h5
-    │   ├── sample3
-    │   │   └── outs
-    │   │       └── filtered_feature_bc_matrix.h5
-    │   ├── sample4
-    │   │   └── outs
-    │   │       └── filtered_feature_bc_matrix.h5
-    │   └── sample5
-    │       └── outs
-    │           └── filtered_feature_bc_matrix.h5
-    ├── samplesheets
-    │   ├── project_contrast_samplesheet.csv
-    │   ├── project_gex_samplesheet.csv
-    │   └── project_groups_samplesheet.csv
-    └── seurat
-        ├── merge
-        │   ├── group1-group2-group3_seurat_merged.html
-        │   ├── group1-group2-group3_seurat_merged.rds
-        │   ├── group1-group2_seurat_merged.html
-        │   └── group1-group2_seurat_merged.rds
-        └── preprocess
-            ├── sample1_seurat_preprocess.html
-            ├── sample1_seurat_preprocess.rds
-            ├── sample2_seurat_preprocess.html
-            ├── sample2_seurat_preprocess.rds
-            ├── sample3_seurat_preprocess.html
-            ├── sample3_seurat_preprocess.rds
-            ├── sample4_seurat_preprocess.html
-            ├── sample4_seurat_preprocess.rds
-            ├── sample5_seurat_preprocess.html
-            └── sample5_seurat_preprocess.rds
+.
+├── assets
+│   └── <files>
+├── conf
+│   └── <files>
+├── log
+│   └── <files>
+├── nextflow.config
+├── output
+│   ├── pipeline_info
+│   │   ├── execution_report_2025-07-21_14-58-51.html
+│   │   ├── execution_report_2025-07-21_15-00-18.html
+│   │   ├── execution_timeline_2025-07-21_14-58-51.html
+│   │   ├── execution_timeline_2025-07-21_15-00-18.html
+│   │   ├── execution_trace_2025-07-21_14-58-34.txt
+│   │   ├── execution_trace_2025-07-21_14-58-51.txt
+│   │   ├── execution_trace_2025-07-21_15-00-18.txt
+│   │   ├── pipeline_dag_2025-07-21_14-58-51.svg
+│   │   └── pipeline_dag_2025-07-21_15-00-18.svg
+│   └── tests
+│       ├── batch_correct
+│       │   ├── group1-group2_batch_correction_cca.html
+│       │   ├── group1-group2_batch_correction_cca.rds
+│       │   ├── group1-group2_batch_correction_harmony.html
+│       │   ├── group1-group2_batch_correction_harmony.rds
+│       │   ├── group1-group2_batch_correction_integration.html
+│       │   ├── group1-group2_batch_correction_liger.html
+│       │   ├── group1-group2_batch_correction_liger.rds
+│       │   ├── group1-group2_batch_correction_rpca.html
+│       │   ├── group1-group2_batch_correction_rpca.rds
+│       │   ├── group1-group2-group3_batch_correction_cca.html
+│       │   ├── group1-group2-group3_batch_correction_cca.rds
+│       │   ├── group1-group2-group3_batch_correction_harmony.html
+│       │   ├── group1-group2-group3_batch_correction_harmony.rds
+│       │   ├── group1-group2-group3_batch_correction_integration.html
+│       │   ├── group1-group2-group3_batch_correction_liger.html
+│       │   ├── group1-group2-group3_batch_correction_liger.rds
+│       │   ├── group1-group2-group3_batch_correction_rpca.html
+│       │   └── group1-group2-group3_batch_correction_rpca.rds
+│       ├── cellranger_counts
+│       │   ├── sample1
+│       │   │   └── outs
+│       │   │       └── filtered_feature_bc_matrix.h5
+│       │   ├── sample2
+│       │   │   └── outs
+│       │   │       └── filtered_feature_bc_matrix.h5
+│       │   ├── sample3
+│       │   │   └── outs
+│       │   │       └── filtered_feature_bc_matrix.h5
+│       │   ├── sample4
+│       │   │   └── outs
+│       │   │       └── filtered_feature_bc_matrix.h5
+│       │   └── sample5
+│       │       └── outs
+│       │           └── filtered_feature_bc_matrix.h5
+│       ├── samplesheets
+│       │   ├── project_contrast_samplesheet.csv
+│       │   ├── project_gex_samplesheet.csv
+│       │   └── project_groups_samplesheet.csv
+│       └── seurat
+│           ├── merge
+│           │   ├── group1-group2-group3_seurat_merged.html
+│           │   ├── group1-group2-group3_seurat_merged.rds
+│           │   ├── group1-group2_seurat_merged.html
+│           │   └── group1-group2_seurat_merged.rds
+│           └── preprocess
+│               ├── sample1_seurat_preprocess.html
+│               ├── sample1_seurat_preprocess.rds
+│               ├── sample2_seurat_preprocess.html
+│               ├── sample2_seurat_preprocess.rds
+│               ├── sample3_seurat_preprocess.html
+│               ├── sample3_seurat_preprocess.rds
+│               ├── sample4_seurat_preprocess.html
+│               ├── sample4_seurat_preprocess.rds
+│               ├── sample5_seurat_preprocess.html
+│               └── sample5_seurat_preprocess.rds
+├── submit_slurm.sh
+└── work
+    └── <files>
+
 ```
 
-The relevant results are found the `test` subdirectory. For live data, the directories will all exist directly within the `output` directory.
+The relevant results are found the `test` subdirectory. For live data, the directories will all exist directly within the `output` directory. If debugging is required, all intermediate files will be in the `work` directory.
 
 ### Pre-processed files
 
@@ -200,8 +301,11 @@ The combined sample file for each contrast (i.e. group1-group2 and group1-group2
 The batch corrected files are in the `batch_correct` directory. Each of the following batch correction methods are run for each contrast:
 
 - [Canonical Correlation Analysis (CCA)](https://satijalab.org/seurat/articles/integration_introduction): Uses the Seurat `integrate` function
+
 - [Harmony](https://cran.r-project.org/web/packages/harmony/index.html): Uses the Harmony correction method
+
 - [LIGER](https://github.com/welch-lab/liger): Linked Inference of Genomic Experimental Relationships
+
 - [Reciprocal PCA (RPCA)](https://satijalab.org/seurat/articles/integration_rpca): Uses RPCA from Seurat
 
 As with the `merged` directory, the batch corrected files are generated for each contrast, namely the `.rds` files and the `.html` output files
@@ -215,12 +319,15 @@ For comparative purposes, an integration report is included for each contrast. F
 Each batch correction method has undergone principal component analysis and uniform manifold approximation and projection (UMAP) for visualization. These plots can be colored by different metadata categories. This report includes coloring by sample, group identity, and preliminary cell type annotation.
 
 ![Cells colored by sample](../img/test_sample_umap.png)
+
 _Cells colored by sample_
 
 ![Cells colored by group](../img/test_group_umap.png)
+
 _Cells colored by group identity_
 
 ![Cells colored by annotation](../img/test_annot_umap.png)
+
 _Cells colored by annotation_
 
 The tab for cell annotation also includes a table of cell counts matching the annotation used.
@@ -230,9 +337,11 @@ The tab for cell annotation also includes a table of cell counts matching the an
 Clustering is used to potentially identify and classify similar cells, based on their "distance" from each other (i.e. similarity in gene expression and principal components). For this process, we have utilized the clustering method called the slow local moving algorithm, as made available in Seurat. This method uses a parameter called `resolution` to indicate how wide of a net to cast when clustering cells. Smaller resolutions will produce fewer and larger clusters, with the risk being that some genuinely disparate clusters might be bundled together. Comparatively, larger resolutions will produce more abundant smaller clusters, with the tradeoff being that some clusters may be unnecessarily separated. As such, the balance needs to be struck where the clusters are reasonably well-defined without breaking up clusters internally.
 
 ![Clustering for RPCA at resolution 0.1](../img/test_cluster.png)
+
 _Example cluster plot for RPCA at resolution 0.1_
 
 For each cluster resolution created, the report will produce silhouette scores to provide a categorical evaluation of the quality of the clustering. The silhouette score is a metric that evaluates the similarity of cells within each cluster and compares the overall similarity to cells outside the cluster. Each cluster receives a score, and a positive average silhouette score indicates that the clusters are more desirable due to being more condensed and self-contained.
 
 ![Silhouette score for RPCA clustering at resolution 0.1](../img/test_silhouette.png)
+
 _Example silhouette score plot for RPCA clustering at resolution 0.1_
