@@ -45,9 +45,9 @@ Upon launching the test run, the following output will be generated in the comma
 [2025:08:04 16:12:26] --------------------
 
 bash -c "module load nextflow && nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume  -preview"
-[+] Loading java 23.0.2  ... 
-[+] Loading singularity  4.2.2  on cn0034 
-[+] Loading nextflow  25.04.2 
+[+] Loading java 23.0.2  ...
+[+] Loading singularity  4.2.2  on cn0034
+[+] Loading nextflow  25.04.2
 Nextflow 25.04.6 is available - Please consider updating your version to it
 
  N E X T F L O W   ~  version 25.04.2
@@ -115,14 +115,14 @@ sbatch submit_slurm.sh
 [2025:08:04 16:12:33] | Nextflow command |
 [2025:08:04 16:12:33] --------------------
 
-nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume 
+nextflow run /data/CCBR_Pipeliner/Pipelines/SINCLAIR/v0.3/sinclair/main.nf -profile biowulf,slurm,test -resume
 64401687
 
 ```
 
 ## About the data
 
-**_Overview_**: The original dataset was downloaded from 10x Genomics in FASTQ format and unpacked from WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs.tar. This dataset was taken from a single sample and run on two sequencing lanes. 
+**_Overview_**: The original dataset was downloaded from 10x Genomics in FASTQ format and unpacked from WB_Lysis_Granulocytes_3p_Introns_8kCells_fastqs.tar. This dataset was taken from a single sample and run on two sequencing lanes.
 
 **TUTORIAL:** <https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/tutorials/neutrophils>
 
@@ -308,7 +308,6 @@ The batch corrected files are in the `batch_correct` directory. Each of the foll
 
 - [Reciprocal PCA (RPCA)](https://satijalab.org/seurat/articles/integration_rpca): Uses RPCA from Seurat
 
-
 As with the `merged` directory, the batch corrected files are generated for each contrast, namely the `.rds` files and the `.html` output files
 
 #### Sample combination and batch correction report
@@ -346,4 +345,3 @@ For each cluster resolution created, the report will produce silhouette scores t
 ![Silhouette score for RPCA clustering at resolution 0.1](../img/test_silhouette.png)
 
 _Example silhouette score plot for RPCA clustering at resolution 0.1_
-
