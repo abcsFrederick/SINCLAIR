@@ -158,6 +158,47 @@ By default, the genome is `hg19`; other options include `mm10` and `hg38`. In or
 
 ## Expected Outputs
 
+Upon initialization, the following folders and files will be loaded into your directory:
+
+```
+├── assets
+│   ├── contrast_manifest.csv
+│   ├── img
+│   │   ├── scRNA.jpeg
+│   │   └── scRNA_process.jpeg
+│   ├── input_manifest_cellranger.csv
+│   ├── input_manifest.csv
+│   ├── params.yml
+│   ├── README.md
+│   ├── schema_input.json
+│   ├── slurm_header_biowulf.sh
+│   └── slurm_header_frce.sh
+├── conf
+│   ├── base.config
+│   ├── base_stub.config
+│   ├── biowulf.config
+│   ├── ci_stub.config
+│   ├── debug.config
+│   ├── frce.config
+│   ├── interactive.config
+│   ├── modules.config
+│   ├── Rpack.config
+│   ├── slurm.config
+│   ├── test.config
+│   ├── test_h5.config
+│   └── test_pbmc.config
+├── log
+└── nextflow.config
+```
+
+- `assets/` – Contains input files, images, configuration templates, and documentation.
+
+- `conf/` – Nextflow configuration files for different environments and use cases.
+
+- `log/` – Directory where pipeline logs and trace files are stored.
+
+- `nextflow.config` – Main configuration file for the Nextflow pipeline.
+
 During execution, the SINCLAIR workflow stores all temporary outputs in the `work` directory. This directory also supports workflow recovery: if the run fails, intermediate files in work allow the pipeline to resume from the point of failure when the user re-runs the pipeline.
 
 Final results are saved in the `results` directory unless a different output directory was specified in the parameters. The `results` directory will contain 4 subdirectories:

@@ -77,7 +77,7 @@ nav:
   - Usage:
       - Getting Started: user-guide/getting-started.md
       - Preparing Files: user-guide/preparing-files.md
-      - Running the Pipeline: user-guide/run.md
+      - Running Pipeline: user-guide/run.md
       - Expected Output: user-guide/output.md
       - Running Test Data: user-guide/test-info.md
   - Analysis:
