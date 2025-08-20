@@ -1,12 +1,12 @@
 # Troubleshooting
 
-Recommended steps to troubleshoot the pipeline.
+## Recommended steps to troubleshoot the pipeline
 
 ## Email
 
 Check your email for an email regarding pipeline failure. You will receive an email from slurm@biowulf.nih.gov with the subject: Slurm Job_id=[#] Name=CARLISLE Failed, Run time [time], FAILED, ExitCode 1
 
-## Review the log files
+### Review the log files
 
 You can check logs in two ways to diagnose workflow errors:
 
@@ -16,14 +16,14 @@ Located in /path/to/results/dir/ and named slurm-[jobid].out, this file summariz
 Individual Rule Log Files
 After identifying the failed rule(s) from the master SLURM log, examine the corresponding log files in /path/to/results/dir/logs/.
 
+### Restart the run
+
 Each file follows this naming convention:
 
 {rulename}.{masterjobID}.{individualruleID}.{wildcards}.{out or err}`
 
 .out files capture standard output
 .err files capture standard error messages
-
-## Restart the run
 
 Once you have identified and addressed the issue, you may resume the SINCLAIR run.
 
@@ -36,6 +36,22 @@ sinclair run \
     --contrast assets/contrast_manifest.csv \
     --output /data/$USER/scRNA_test \
     -params-file assets/params.yml
+```
+
+## If a process runs out of resources
+
+You can change the resources allocated to processes by changing them in `conf/base.config`.
+
+Here is an alternate version of the `process_high` label that allocates more resources and uses the `largemem` partition:
+
+```
+    withLabel:process_high {
+        cpus   = { check_max( 48                   , 'cpus'    ) }
+        memory = { check_max( 500.GB * task.attempt, 'memory' ) }
+        time   = { check_max( 72.h                 , 'time'    ) }
+        queue = 'largemem'
+        clusterOptions = ' --gres=lscratch:750 '
+    }
 ```
 
 ## Help & Contributing
