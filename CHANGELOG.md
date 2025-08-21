@@ -1,5 +1,7 @@
 ## SINCLAIR development version
 
+- Improve error messages when checking the samplesheet - report line numbers. (#181, @kelly-sovacool)
+
 ## SINCLAIR 0.3.3
 
 - Improve help message for `sinclair run`. (#153, @kelly-sovacool)
