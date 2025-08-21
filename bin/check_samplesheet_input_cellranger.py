@@ -116,6 +116,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
 
         ## Check sample entries
         for line_num, line in enumerate(fin.readlines()):
+            line_num += 1
             lspl = [x.strip().strip('"') for x in line.strip().split(",")]
 
             # If it's a blank line, next
@@ -224,6 +225,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
 
         ## Check sample entries
         for line_num, line in enumerate(fin):
+            line_num += 1
             lspl = [x.strip().strip('"') for x in line.strip().split(",")]
 
             # Check valid number of columns per row
