@@ -115,7 +115,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
             )
 
         ## Check sample entries
-        for line in fin.readlines():
+        for line_num, line in enumerate(fin.readlines()):
             lspl = [x.strip().strip('"') for x in line.strip().split(",")]
 
             # If it's a blank line, next
@@ -127,7 +127,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
             if len(lspl) < len(HEADER):
                 print_error(
                     "Invalid number of columns (minimum = {})!".format(len(HEADER)),
-                    "Line",
+                    f"Line {line_num}",
                     line,
                 )
             num_cols = len([x for x in lspl if x])
@@ -136,7 +136,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
                     "Invalid number of populated columns (minimum = {})!".format(
                         MIN_COLS
                     ),
-                    "Line",
+                    f"Line {line_num}",
                     line,
                 )
 
@@ -147,7 +147,9 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
             UNIQUEID = UNIQUEID.replace(" ", "_").replace("-", "_")
 
             if not UNIQUEID:
-                print_error("Sample entry has not been specified!", "Line", line)
+                print_error(
+                    "Sample entry has not been specified!", f"Line {line_num}", line
+                )
 
             ## Check input dir exists, run tests for files
             if os.path.exists(INPUTDIR):
@@ -169,7 +171,9 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
                 mani_mapping_dict[UNIQUEID] = {}
             else:
                 print_error(
-                    "Samplesheet contains duplicate sample names!", "Line", line
+                    "Samplesheet contains duplicate sample names!",
+                    f"Line {line_num}",
+                    line,
                 )
             mani_mapping_dict[UNIQUEID][DATATYPE] = {}
             mani_mapping_dict[UNIQUEID][DATATYPE] = [INPUTDIR]
@@ -219,7 +223,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
         header = [x.strip('"') for x in fin.readline().strip().split(",")]
 
         ## Check sample entries
-        for line in fin:
+        for line_num, line in enumerate(fin):
             lspl = [x.strip().strip('"') for x in line.strip().split(",")]
 
             # Check valid number of columns per row
@@ -229,7 +233,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
                     "Invalid number of populated columns (minimum = {})!".format(
                         MIN_COLS
                     ),
-                    "Line",
+                    f"Line {line_num}",
                     line,
                 )
 
@@ -237,7 +241,7 @@ def check_samplesheet(file_in_s, file_in_c, file_out):
                 if cid not in group_mapping_dict:
                     print_error(
                         "CONTRAST entry is not listed in the sample manifest. Check names!",
-                        "Line",
+                        f"Line {line_num}",
                         line,
                     )
 
