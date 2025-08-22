@@ -9,7 +9,6 @@
 
 - Improve error messages when checking the sample sheet and contrast sheet. (#181, #182, @kelly-sovacool)
 
-
 ## SINCLAIR 0.3.3
 
 - Improve help message for `sinclair run`. (#153, @kelly-sovacool)
