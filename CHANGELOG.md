@@ -4,7 +4,11 @@
 - Documentation for test data outputs updated. (#174, @wong-nw)
 - Re-ordering of batch correction report. (#174 @wong-nw)
 - Minor documentation improvements (#175, @wong-nw)
-- Improve error messages when checking the samplesheet - report line numbers. (#181, @kelly-sovacool)
+
+## SINCLAIR 0.3.4
+
+- Improve error messages when checking the sample sheet and contrast sheet. (#181, #182, @kelly-sovacool)
+
 
 ## SINCLAIR 0.3.3
 
