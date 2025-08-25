@@ -5,6 +5,7 @@
 - Re-ordering of batch correction report. (#174 @wong-nw)
 - Minor documentation improvements (#175, @wong-nw)
 - Rename 'output' directory to 'results' for the nextflow workflow. (#186, @kelly-sovacool)
+- Update `test-info.md` to reflect change in directory naming (#190, @wong-nw)
 
 ## SINCLAIR 0.3.4
 

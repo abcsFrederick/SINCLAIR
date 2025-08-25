@@ -190,7 +190,7 @@ The SINCLAIR test run will produce the following structure in the directory:
 ├── log
 │   └── <files>
 ├── nextflow.config
-├── output
+├── results
 │   ├── pipeline_info
 │   │   ├── execution_report_2025-07-21_14-58-51.html
 │   │   ├── execution_report_2025-07-21_15-00-18.html
@@ -264,7 +264,7 @@ The SINCLAIR test run will produce the following structure in the directory:
 
 ```
 
-The relevant results are found the `test` subdirectory. For live data, the directories will all exist directly within the `output` directory. If debugging is required, all intermediate files will be in the `work` directory.
+The relevant results are found the `test` subdirectory. For live data, the directories will all exist directly within the `results` directory. If debugging is required, all intermediate files will be in the `work` directory.
 
 ### Pre-processed files
 
