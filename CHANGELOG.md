@@ -4,6 +4,7 @@
 - Documentation for test data outputs updated. (#174, @wong-nw)
 - Re-ordering of batch correction report. (#174 @wong-nw)
 - Minor documentation improvements (#175, @wong-nw)
+- Rename 'output' directory to 'results' for the nextflow workflow. (#186, @kelly-sovacool)
 
 ## SINCLAIR 0.3.4
 
