@@ -1,11 +1,17 @@
 ## SINCLAIR development version
 
+### Documentation updates
+
+- Major improvements to the docs website. (#160, @bianjh-cloud)
 - Fix rendering of bulleted lists in docs website. (#164, @kelly-sovacool)
 - Documentation for test data outputs updated. (#174, @wong-nw)
-- Re-ordering of batch correction report. (#174 @wong-nw)
 - Minor documentation improvements (#175, @wong-nw)
-- Rename 'output' directory to 'results' for the nextflow workflow. (#186, @kelly-sovacool)
 - Update `test-info.md` to reflect change in directory naming (#190, @wong-nw)
+
+### Other minor changes
+
+- Re-ordering of batch correction report. (#174 @wong-nw)
+- Rename 'output' directory to 'results' for the nextflow workflow. (#186, @kelly-sovacool)
 
 ## SINCLAIR 0.3.4
 
