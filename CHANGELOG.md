@@ -1,5 +1,7 @@
 ## SINCLAIR development version
 
+- Fix samplesheet check to allow multi-digit sample IDs. (#189, @kelly-sovacool)
+
 ### Documentation updates
 
 - Major improvements to the docs website. (#160, @bianjh-cloud)
