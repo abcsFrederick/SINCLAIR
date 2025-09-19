@@ -39,6 +39,7 @@ log/
 .nf-test/
 results/
 output
+.singularity/
 
 # tmp ignore testing fastqs
 test_dir/*/*/*.gz
