@@ -1,5 +1,7 @@
 ## SINCLAIR development version
 
+## SINCLAIR 0.3.5
+
 - Fix samplesheet check to allow multi-digit sample IDs. (#189, @kelly-sovacool)
 - New parameter `save_cellranger_extra_files` to control whether to save extra cellranger output files (bam, bai, cloupe) in addition to h5 files. Default is `false` to save space. (#195, @kelly-sovacool)
 - New `largemem` profile for memory-intensive processes. (#196, @kelly-sovacool)
