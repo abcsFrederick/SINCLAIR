@@ -2,7 +2,7 @@ process SEURAT_MERGE {
     tag "${gid}"
     label 'process_high'
 
-    container "${params.containers_seurat_merge}"
+    container "${params.container_seurat}"
 
     input:
     tuple val(gid), path(rdsFiles)

@@ -2,7 +2,7 @@ process BATCH_CORRECT_SCVI {
     tag "${gid}"
     label 'process_high'
 
-    container "${params.containers_scvi}"
+    container "${params.container_seurat}"
 
     input:
     tuple val(gid), path(mergedObj)

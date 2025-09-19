@@ -2,7 +2,7 @@ process SEURAT_PREPROCESS {
     tag "${id}"
     label 'process_medium'
 
-    container "${params.containers_seurat_preproc}"
+    container "${params.container_seurat}"
 
     input:
     tuple val(id), val(inDir), path(h5)

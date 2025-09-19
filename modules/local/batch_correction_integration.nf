@@ -2,7 +2,7 @@ process BATCH_CORRECT_INTEGRATION {
     tag "${gid}"
     label 'process_high'
 
-    container "${params.containers_integ}"
+    container "${params.container_seurat}"
 
     input:
     tuple val(gid), path(rds_m)
