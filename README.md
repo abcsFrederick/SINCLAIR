@@ -1,62 +1,83 @@
-# SINCLAIR - **SIN**gle **C**el**L** **A**nalys**I**s **R**esource
+# SINCLAIR
 
-## Table of contents
+**SIN**gle **C**el**L** **A**nalys**I**s **R**esource
 
-- [1. Introduction](#1-Introduction)
-- [2. Overview](#2-Overview)
-- [3. Documentation](#3-Documentation)
-- [4. Feedback](#4-Feedback)
+[![build](https://github.com/CCBR/SINCLAIR/actions/workflows/build.yml/badge.svg)](https://github.com/CCBR/SINCLAIR/actions/workflows/build.yml)
+[![docs](https://github.com/CCBR/SINCLAIR/actions/workflows/docs-mkdocs.yml/badge.svg)](https://ccbr.github.io/SINCLAIR/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15283503.svg)](https://doi.org/10.5281/zenodo.15283503)
+[![release](https://img.shields.io/github/v/release/CCBR/SINCLAIR?color=blue&label=latest%20release)](https://github.com/CCBR/SINCLAIR/releases/latest)
 
-### 1. Introduction
+View the documentation here: <https://ccbr.github.io/SINCLAIR/>
 
-The [SINCLAIR - **SIN**gle **C**el**L** **A**nalys**I**s **R**esource](#sinclair---single-cell-analysis-resource) was developed by the CCR Collaborative Bioinformatics Resource as an open-source, reproducible solution for multiple single cell next-generation modalities. It has been developed solely on [Biowulf](https://hpc.nih.gov/) using [Nextflow](https://www.nextflow.io/).
+### Introduction
 
-### 2. Overview
+SINCLAIR was developed by the CCR Collaborative Bioinformatics Resource as an open-source, reproducible solution for multiple single cell next-generation modalities. It has been developed solely on [Biowulf](https://hpc.nih.gov/) using [Nextflow](https://www.nextflow.io/).
+
+### Overview
 
 The pipeline currently begins with either sample FASTQ file or h5 Aligned reads, completing per sample quality control, and per-contrast integration. Quality control reports are generated, as are per-contrast integration reports.
 
-![Single cell RNA-Seq GEX pipeline](./assets/scRNA.svg) <sup>**Overview of Single Cell RNASeq Gene Expression Pipeline**</sup>
+![Single cell RNA-Seq GEX pipeline](docs/img/scRNA.svg) <sup>**Overview of Single Cell RNASeq Gene Expression Pipeline**</sup>
 
-### 3. Basic Deployment
+### Quickstart
 
-Usage
+SINCLAIR is available on biowulf with the ccbrpipeliner module as of release 8. You can load it on an interactive node with:
 
+```sh
+module load ccbrpipeliner/8
 ```
+
+```sh
 sinclair --help
 sinclair --version
 ```
 
-Example workflow
+#### Example usage
 
-```
-# 1) run initialization
-mkdir -p /path/to/output/dir
-cd /path/to/output/dir
-sinclair init
+##### 1. Initialize your project
 
-# 2) update the config files as needed
-## can change whether cellranger is deployed, species, names of manifest files (default locations listed below)
-/path/to/output/dirnextflow.config
-/path/to/output/dir/assets/contrast_manifest.csv /path/to/output/dir/assets/input_manifest.csv
+--output is optional and defaults to your current working directory.
 
-# 3) deploy the pipeline
-## A) STUBRUN
-sinclair run -stub -entry GEX
-
-## B) local run
-sinclair run -entry GEX
-
-## C) submit to slurm
-sinclair run --mode slurm -entry GEX
-
-# 4) OPTIONAL resume
-sinclair run --mode slurm -entry GEX -resume
+```sh
+sinclair init --output /path/to/output/dir
 ```
 
-### 4. Detailed Documentation
+##### 2. Update the config files as needed
 
-Please view the repositories [documentation](https://symmetrical-adventure-ovjq9gl.pages.github.io/) for full details on deploying the pipeline, features, testing, and expected outputs.
+can change whether cellranger is deployed, species, names of manifest files (default locations listed below)
 
-### 5. Feedback
+In `/path/to/output/dir`:
 
-For comments/suggestions/advice please reach out to [Samantha Chill](mailto:samantha.sevilla@nih.gov) or [Nathan Wong](mailto:nathan.wong@nih.gov).
+- `assets/params.yml`
+- `assets/input_manifest.csv`
+- `assets/contrast_manifest.csv`
+
+##### 3. Run the pipeline
+
+A) preview without executing
+
+```sh
+sinclair run -preview --output /path/to/output/dir -params-file assets/params.yml
+```
+
+B) local run
+
+```sh
+sinclair run --output /path/to/output/dir -params-file assets/params.yml
+```
+
+C) submit to slurm
+
+```sh
+sinclair run --mode slurm --output /path/to/output/dir -params-file assets/params.yml
+```
+
+## Help & Contributing
+
+Come across a **bug**? Open an [issue](https://github.com/CCBR/SINCLAIR/issues) and include a minimal reproducible example.
+
+Have a **question**? Ask it in [discussions](https://github.com/CCBR/SINCLAIR/discussions).
+
+Want to **contribute** to this project? Check out the [contributing guidelines](.github/CONTRIBUTING.md).
+
+**General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).

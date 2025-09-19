@@ -1,8 +1,8 @@
 ---
 title: "scRNA Notebook"
 output:
-  pdf_document:
-    toc: yes
+  html_document:
+    toc: true
 editor_options:
   chunk_output_type: console
 params:
@@ -68,7 +68,7 @@ library(SingleR)
 library(tinytex)
 ```
 
-```{r pre-processing}
+```{r, pre-processing, message=FALSE}
 # read in h5 file
 rnaCounts <- Read10X_h5(h5)
 
@@ -234,6 +234,7 @@ MAIN_DOUBLETS <- function(so_in, run_doublet_finder) {
 
   return(so_in)
 }
+
 
 # ID doublets
 so_doublet <- MAIN_DOUBLETS(so_labeled, run_doublet_finder)

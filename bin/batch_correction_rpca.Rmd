@@ -6,12 +6,12 @@ output: html_document
 editor_options:
   chunk_output_type: console
 params:
-  species: "hg19"
+  species: "hg38"
   gid: "group1_group2"
   mergedObj: "results/seurat/merge/group1-group2_seurat_merged.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
   npcs: "50"
-  vars_to_regress: "percent.mt,nFeature_RNA"
+  vars_to_regress: NULL
   scRNA_functions: "bin/scRNA_functions.R"
   testing: "Y"
 ---
@@ -24,7 +24,12 @@ gid <- params$gid
 mergedObj <- params$mergedObj
 resolution <- as.numeric(strsplit(params$resolution_list, ",")[[1]])
 npcs <- as.numeric(params$npcs)
-vars_to_regress_list <- strsplit(gsub(" ", "", params$vars_to_regress), ",")[[1]]
+vars_to_regress <- params$vars_to_regress
+vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress) == "NULL") {
+  NULL
+} else {
+  unlist(strsplit(gsub(" ", "", vars_to_regress), ","))
+}
 
 source(params$scRNA_functions)
 library(Seurat)
@@ -36,6 +41,8 @@ library(org.Hs.eg.db)
 library(org.Mm.eg.db)
 library(Orthology.eg.db)
 library(harmony)
+
+options(future.globals.maxSize = 96000 * 1024^2)
 ```
 
 ```{r, processing, message=FALSE}

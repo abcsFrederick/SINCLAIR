@@ -1,27 +1,73 @@
 # Troubleshooting
-Recommended steps to troubleshoot the pipeline.
 
-## 1.1 Email
+## Recommended steps to troubleshoot the pipeline
+
+## Email
+
 Check your email for an email regarding pipeline failure. You will receive an email from slurm@biowulf.nih.gov with the subject: Slurm Job_id=[#] Name=CARLISLE Failed, Run time [time], FAILED, ExitCode 1
 
-## 1.2 Review the log files
-Review the logs in two ways:
+### Review the log files
 
-1. Review the master slurm file: This file will be found in the `/path/to/results/dir/` and titled `slurm-[jobid].out`. Reviewing this file will tell you what rule errored, and for any local SLURM jobs, provide error details
-2. Review the individual rule log files: After reviewing the master slurm-file, review the specific rules that failed within the `/path/to/results/dir/logs/`. Each rule will include a `.err` and `.out` file, with the following formatting: `{rulename}.{masterjobID}.{individualruleID}.{wildcards from the rule}.{out or err}`
+You can check logs in two ways to diagnose workflow errors:
 
-## 1.3 Restart the run
-After addressing the issue, unlock the output directory, perform another dry-run and check the status of the pipeline, then resubmit to the cluster.
+Master SLURM Log File
+Located in /path/to/results/dir/ and named slurm-[jobid].out, this file summarizes the overall workflow run. It identifies which rule failed and provides error details for any jobs executed locally via SLURM.
+
+Individual Rule Log Files
+After identifying the failed rule(s) from the master SLURM log, examine the corresponding log files in /path/to/results/dir/logs/.
+
+### Restart the run
+
+Each file follows this naming convention:
+
+{rulename}.{masterjobID}.{individualruleID}.{wildcards}.{out or err}`
+
+.out files capture standard output
+.err files capture standard error messages
+
+Once you have identified and addressed the issue, you may resume the SINCLAIR run.
+
+Unlock the output directory, perform another dry-run, and check the status of the pipeline, then resubmit to the cluster.
+
 ```
-nextflow run main.nf \
-    -entry $datatype \
-    -profile biowulf \
-    --input assets/input_manifest.csv \
-    --contrast assets/contrast_manifest.csv \
-    --outdir /data/sevillas2/scRNA_test \
-    --species $species \
-    $args
+sinclair run \
+    --output /data/$USER/scRNA_test \
+    -params-file assets/params.yml
 ```
 
-## 1.4 Contact information
-If after troubleshooting, the error cannot be resolved, or if a bug is found, please create an [issue](https://github.com/CCBR/TechDev_scRNASeq_Dev2023/issues) and send and email to [Samantha Chill](mailto:samantha.sevilla@nih.gov).
+## If a process runs out of resources
+
+You can run sinclair with the `largemem` profile to allocate more memory and use the `largemem` slurm partition for resource-intensive processes.
+
+```sh
+sinclair run \
+    -profile largemem \
+    --output /data/$USER/scRNA_test \
+    -params-file assets/params.yml
+```
+
+### Custom resources
+
+You can change the resources allocated to processes by changing them in `conf/base.config`.
+
+Here is an alternate version of the `process_high` label that allocates more resources and uses the `largemem` slurm partition:
+
+```
+    withLabel:process_high {
+        cpus   = { check_max( 48                   , 'cpus'    ) }
+        memory = { check_max( 500.GB * task.attempt, 'memory' ) }
+        time   = { check_max( 72.h                 , 'time'    ) }
+        queue = 'largemem'
+        clusterOptions = ' --gres=lscratch:750 '
+    }
+```
+
+## Help & Contributing
+
+Come across a **bug**? Open an [issue](https://github.com/CCBR/SINCLAIR/issues) and include a minimal reproducible example.
+
+Have a **question**? Ask it in [discussions](https://github.com/CCBR/SINCLAIR/discussions).
+
+Want to **contribute** to this project? Check out the [contributing guidelines](../contributing.md).
+
+**General Inquiries and Collaboration:** Please contact the CCBR Pipeliner team at [CCBR_Pipeliner@mail.nih.gov](mailto:CCBR_Pipeliner@mail.nih.gov).

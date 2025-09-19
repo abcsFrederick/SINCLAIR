@@ -4,15 +4,6 @@ Validate inputs
 =======================================================================================================
 */
 
-// Check input path parameters to see if they exist
-def checkPathParamList = [ params.input]
-for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
-
-// Check mandatory parameters
-//input on command line
-if (params.input)    { ch_input    = file(params.input)    } else { exit 1, 'Input samplesheet not specified!' }
-if (params.contrast) { ch_contrast = file(params.contrast) } else { exit 1, 'Contrast samplesheet not specified!' }
-
 /*
 =======================================================================================================
 Assign local subworkflows
@@ -29,7 +20,7 @@ include { SEURAT_MERGE                                  } from '../modules/local
 include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
 include { BATCH_CORRECT_RPCA                            } from '../modules/local/batch_correction_rpca.nf'
 include { BATCH_CORRECT_CCA                             } from '../modules/local/batch_correction_cca.nf'
-include { BATCH_CORRECT_SCVI                            } from '../modules/local/batch_correction_scvi.nf'
+// include { BATCH_CORRECT_SCVI                            } from '../modules/local/batch_correction_scvi.nf' //BLOCKING SCVI FOR FUTURE RELEASE
 include { BATCH_CORRECT_LIGER                           } from '../modules/local/batch_correction_liger.nf'
 include { BATCH_CORRECT_INTEGRATION                     } from '../modules/local/batch_correction_integration.nf'
 /*
@@ -42,6 +33,18 @@ workflow GEX_EXQC {
         ch_fqdir_h5
         group_samplesheet
     main:
+        // Check input path parameters to see if they exist
+        def checkPathParamList = [ params.input]
+        for (param in checkPathParamList) { if (param) { file(param, checkIfExists: true) } }
+
+        // Check mandatory parameters
+        //input on command line
+        if (params.input)    { ch_input    = file(params.input)    } else { exit 1, 'Input samplesheet not specified!' }
+        if (params.contrast) { ch_contrast = file(params.contrast) } else { exit 1, 'Contrast samplesheet not specified!' }
+
+        // if vars_to_regress is null, set it to 'NULL' for R to evaluate
+        def vars_to_regress = params.vars_to_regress ?: 'NULL'
+
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
         // Run Seurat for individual samples
@@ -86,7 +89,7 @@ workflow GEX_EXQC {
             ch_input,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.script_merge,
             params.script_functions
         )
@@ -96,7 +99,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.script_bc_harmony,
             params.script_functions
@@ -107,7 +110,7 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.script_bc_rpca,
             params.script_functions
@@ -118,29 +121,31 @@ workflow GEX_EXQC {
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.script_bc_cca,
             params.script_functions
         )
 
+/* BLOCKING SCVI FOR FUTURE RELEASE
         // Run batch corrections
         BATCH_CORRECT_SCVI (
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.script_scvi,
             params.script_functions
         )
+*/
 
-        // Run batch corrections
+       // Run batch corrections
         BATCH_CORRECT_LIGER (
             SEURAT_MERGE.out.rds,
             params.species,
             params.npcs,
-            params.vars_to_regress,
+            vars_to_regress,
             params.resolution_list,
             params.script_liger,
             params.script_functions
@@ -152,7 +157,7 @@ workflow GEX_EXQC {
             BATCH_CORRECT_HARMONY.out.rds,
             BATCH_CORRECT_RPCA.out.rds,
             BATCH_CORRECT_CCA.out.rds,
-            BATCH_CORRECT_SCVI.out.rds,
+//            BATCH_CORRECT_SCVI.out.rds,
             BATCH_CORRECT_LIGER.out.rds,
             params.species,
             params.npcs,

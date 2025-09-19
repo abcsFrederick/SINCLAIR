@@ -2,7 +2,7 @@ process SEURAT_PREPROCESS {
     tag "${id}"
     label 'process_medium'
 
-    container "${params.containers.seurat_preproc}"
+    container "${params.containers_seurat_preproc}"
 
     input:
     tuple val(id), val(inDir), path(h5)
@@ -21,7 +21,7 @@ process SEURAT_PREPROCESS {
 
     output:
     tuple val(id), path ("*.rds")                 , emit:rds
-    tuple val(id), path ("*.pdf")                 , emit:logs
+    tuple val(id), path ("*.html")                 , emit:logs
 
     script:
     def args = task.ext.args ?: ''
@@ -42,13 +42,12 @@ process SEURAT_PREPROCESS {
             run_doublet_finder="$run_doublet_finder",
             npcs=$npcs,
             scRNA_functions="$scRNA_functions"),
-        output_file = "${id}_seurat_preprocess.pdf"
-    )
+        output_file = "${id}_seurat_preprocess.html")
     """
 
     stub:
     """
     touch ${id}_seurat_preprocess.rds
-    touch ${id}_seurat_preprocess.pdf
+    touch ${id}_seurat_preprocess.html
     """
 }

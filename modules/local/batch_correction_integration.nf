@@ -2,14 +2,14 @@ process BATCH_CORRECT_INTEGRATION {
     tag "${gid}"
     label 'process_high'
 
-    container "${params.containers.integ}"
+    container "${params.containers_integ}"
 
     input:
     tuple val(gid), path(rds_m)
     tuple val(gid), path(rds_h)
     tuple val(gid), path(rds_r)
     tuple val(gid), path(rds_c)
-    tuple val(gid), path(rds_s)
+//    tuple val(gid), path(rds_s)
     tuple val(gid), path(rds_l)
     val(species)
     val(npcs)
@@ -29,7 +29,6 @@ process BATCH_CORRECT_INTEGRATION {
             harmonyObj="$rds_h",
             ccaObj="$rds_c",
             rpcaObj="$rds_r",
-            scviObj="$rds_s",
             ligerObj="$rds_l",
             npcs="$npcs",
             resolution_list="$resolution_list",
@@ -39,7 +38,9 @@ process BATCH_CORRECT_INTEGRATION {
             testing="N"),
         output_file = "${gid}_batch_correction_integration.html")'
     """
-
+/*
+    This was removed from the params in the Rscript and will be reintroduced in a later version       # scviObj="$rds_s",
+*/
     stub:
     """
     touch ${gid}_batch_correction_integration.html

@@ -46,7 +46,7 @@ RUN_SINGLEr_AVERAGE <- function(obj, refFile, fineORmain) {
 }
 
 #' batch correction function used in multiple rmarkdown notebooks
-MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, v_list) {
+MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, v_list = NULL) {
   # set assay to RNA to avoid double transform/norm
   DefaultAssay(so_in) <- "RNA"
 
@@ -74,17 +74,13 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
     so_norm <- NormalizeData(so_in)
     so_norm <- FindVariableFeatures(so_norm)
     so_norm <- ScaleData(so_norm, do.center = FALSE)
-    so_norm <- RunOptimizeALS(so_norm, k = 20, lambda = 5)
+    so_norm <- RunOptimizeALS(so_norm, k = npcs, lambda = 5)
     so_integrate <- RunQuantileNorm(so_norm)
   } else {
     print("--running SCT")
 
-    # use variables to regress, if provided by user
-    if (length(v_list) > 0) {
-      so_transform <- SCTransform(so_in, vars.to.regress = v_list)
-    } else {
-      so_transform <- SCTransform(so_in)
-    }
+    # vars.to.regress is NULL by default
+    so_transform <- SCTransform(so_in, vars.to.regress = v_list)
 
     # runPCA
     so_pca <- RunPCA(so_transform)

@@ -2,7 +2,7 @@ process SAMPLESHEET_CHECK {
     tag "$samplesheet"
     label 'process_low'
 
-    container "${params.containers.base}"
+    container "${params.container_base}"
 
     input:
     path (samplesheet)
@@ -17,7 +17,7 @@ process SAMPLESHEET_CHECK {
 
     script:
     """
-    if [[ $run_cellranger == N ]]; then
+    if [[ $run_cellranger == 'false' ]]; then
         check_samplesheet_input_cellranger.py \\
         $samplesheet \\
         $contrast_samplesheet \\

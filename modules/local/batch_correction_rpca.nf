@@ -2,7 +2,7 @@ process BATCH_CORRECT_RPCA {
     tag "${gid}"
     label 'process_high'
 
-    container "${params.containers.harmony}"
+    container "${params.containers_harmony}"
 
     input:
     tuple val(gid), path(mergedObj)
