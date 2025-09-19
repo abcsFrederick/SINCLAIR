@@ -1,3 +1,5 @@
+## SINCLAIR development version
+
 ## SINCLAIR 0.3.5
 
 - Fix samplesheet check to allow multi-digit sample IDs. (#189, @kelly-sovacool)
