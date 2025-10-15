@@ -45,7 +45,8 @@ process SEURAT_PREPROCESS {
             scRNA_functions="$scRNA_functions",
             celldex_cache="$celldex_path"
             ),
-        output_file = "${id}_seurat_preprocess.html")'
+        output_file = "${id}_seurat_preprocess.html"
+    )
     """
 
     stub:
