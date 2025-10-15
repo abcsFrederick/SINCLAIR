@@ -15,6 +15,7 @@ Assign local subworkflows
 Assign Local Modules
 =======================================================================================================
 */
+include { COPY_DIR as GYPSUM_CACHE } from '../modules/local/cp/main.nf'
 include { SEURAT_PREPROCESS                             } from '../modules/local/seurat_preprocess.nf'
 include { SEURAT_MERGE                                  } from '../modules/local/seurat_merge.nf'
 include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
@@ -47,7 +48,7 @@ workflow GEX_EXQC {
 
 
         // Set celldex cache
-        ch_celldex_path = Channel.fromPath(params.celldex_path)
+        ch_celldex_path = Channel.fromPath(params.celldex_path) | GYPSUM_CACHE
 
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
