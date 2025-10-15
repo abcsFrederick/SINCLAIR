@@ -15,6 +15,7 @@ params:
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/conf/Rpack.config"
   scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/bin/scRNA_functions.R"
+  celldex_cache: NULL
   testing: "Y"
 ---
 
@@ -36,6 +37,7 @@ Rlib_dir <- params$Rlib_dir
 Rpkg_config <- params$Rpkg_config
 testing <- params$testing
 scRNA_functions <- params$scRNA_functions
+celldex_cache <- params$celldex_cache
 ```
 
 ```{r, handle_pkg, message=FALSE}
@@ -74,7 +76,7 @@ so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 # integrate
 so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution,
   method_in = "CCAIntegration", reduction_in = "CCA",
-  v_list = vars_to_regress_list
+  v_list = vars_to_regress_list, cache_path = celldex_cache
 )
 ```
 

@@ -14,6 +14,7 @@ process BATCH_CORRECT_SCVI {
     path(Rpkg_config)
     path(rmd)
     path(scRNA_functions)
+    path(celldex_path)
 
     output:
     tuple val(gid), path ("*.rds")                 , emit:rds
@@ -34,7 +35,9 @@ process BATCH_CORRECT_SCVI {
             Rlib_dir="$Rlib_dir",
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",
-            testing="N"),
+            celldex_cache="$celldex_path",
+            testing="N"
+        ),
         output_file = "${gid}_batch_correction_scvi.html")'
     """
 

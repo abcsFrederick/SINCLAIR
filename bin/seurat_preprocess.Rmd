@@ -21,6 +21,7 @@ params:
   Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8/"
   Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/conf/Rpack.config"
   scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/bin/scRNA_functions.R"
+  celldex_cache: NULL
   testing: "N"
 ---
 
@@ -43,7 +44,7 @@ npcs_val <- as.numeric(params$npcs)
 Rlib_dir <- params$Rlib_dir
 Rpkg_config <- params$Rpkg_config
 scRNA_functions <- params$scRNA_functions
-
+celldex_cache <- params$celldex_cache
 testing <- params$testing
 ```
 
@@ -163,7 +164,7 @@ VlnPlot(so_qc_select, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
 so_processed <- MAIN_PROCESS_SO(so_qc_select, species, npcs_val)
 
 # Label data
-so_labeled <- MAIN_SINGLER(so_processed, species)
+so_labeled <- MAIN_SINGLER(so_processed, species, celldex_cache)
 
 # ID doublets
 so_doublet <- MAIN_DOUBLETS(so_labeled, run_doublet_finder)

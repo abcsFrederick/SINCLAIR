@@ -90,7 +90,12 @@ RUN_SINGLEr <- function(obj, refFile, fineORmain) {
   return(s$pruned.labels)
 }
 
-MAIN_SINGLER <- function(so_in, species) {
+MAIN_SINGLER <- function(so_in, species, cache_path= NULL) {
+
+  if (dir.exists(cache_path)){
+    gypsum::cacheDirectory(cache_path)
+  }
+
   if (species == "hg38" || species == "hg19") {
     so_in$HPCA_main <- RUN_SINGLEr(so_in, celldex::HumanPrimaryCellAtlasData(), "label.main")
     so_in$HPCA <- RUN_SINGLEr(so_in, celldex::HumanPrimaryCellAtlasData(), "label.fine")
@@ -170,7 +175,7 @@ RUN_SINGLEr_AVERAGE <- function(obj, refFile, fineORmain) {
   return(annotVect)
 }
 
-MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, v_list = NULL, conda_env = "") {
+MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_in, reduction_in, v_list = NULL, conda_env = "", cache_path = NULL) {
   # set assay to RNA to avoid double transform/norm
   DefaultAssay(so_in) <- "RNA"
 
@@ -225,7 +230,12 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
   # reduction
   so <- RunUMAP(so, reduction = reduction_in, dims = 1:npcs)
 
-  # relabel
+
+  # relabel with cluster-level annotations (uses averaged expression within each cluster)
+  if (dir.exists(cache_path)){
+    gypsum::cacheDirectory(cache_path)
+  }
+
   if (species == "hg38" || species == "hg19") {
     so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so, celldex::HumanPrimaryCellAtlasData(), "label.main")
     so$clustAnnot_HPCA <- RUN_SINGLEr_AVERAGE(so, celldex::HumanPrimaryCellAtlasData(), "label.fine")

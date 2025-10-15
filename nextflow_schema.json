@@ -217,6 +217,12 @@
           "default": "/data/CCBR_Pipeliner/db/PipeDB/Conda/envs/scvi-env/bin",
           "hidden": true
         },
+        "celldex_path": {
+          "type": "string",
+          "format": "directory-path",
+          "default": "/data/CCBR_Pipeliner/db/PipeDB/celldex_cache",
+          "hidden": true
+        },
         "Rpkg": {
           "type": "string",
           "format": "file-path",

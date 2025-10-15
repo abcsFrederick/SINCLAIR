@@ -18,6 +18,7 @@ process SEURAT_PREPROCESS {
     path(Rpkg_config)
     path(rmd)
     path(scRNA_functions)
+    path(celldex_path)
 
     output:
     tuple val(id), path ("*.rds")                 , emit:rds
@@ -42,7 +43,9 @@ process SEURAT_PREPROCESS {
             npcs=$npcs,
             Rlib_dir="$Rlib_dir",
             Rpkg_config="$Rpkg_config",
-            scRNA_functions="$scRNA_functions"),
+            scRNA_functions="$scRNA_functions",
+            celldex_cache="$celldex_path"
+            ),
         output_file = "${id}_seurat_preprocess.html")'
     """
 

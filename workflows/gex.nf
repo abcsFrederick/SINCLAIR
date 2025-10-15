@@ -45,6 +45,10 @@ workflow GEX_EXQC {
         // if vars_to_regress is null, set it to 'NULL' for R to evaluate
         def vars_to_regress = params.vars_to_regress ?: 'NULL'
 
+
+        // Set celldex cache
+        celldex_path = Channel.fromPath(params.celldex_path)
+
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
         // Run Seurat for individual samples
@@ -63,7 +67,8 @@ workflow GEX_EXQC {
             params.Rlib_dir,
             params.Rpkg,
             params.script_preprocess,
-            params.script_functions
+            params.script_functions,
+            params.celldex_path
         )
 
         // creates metadata
@@ -108,7 +113,8 @@ workflow GEX_EXQC {
             params.Rlib_dir,
             params.Rpkg,
             params.script_bc_harmony,
-            params.script_functions
+            params.script_functions,
+            params.celldex_path
         )
 
         // Run batch corrections
@@ -121,7 +127,8 @@ workflow GEX_EXQC {
             params.Rlib_dir,
             params.Rpkg,
             params.script_bc_rpca,
-            params.script_functions
+            params.script_functions,
+            params.celldex_path
         )
 
         // Run batch corrections
@@ -134,7 +141,8 @@ workflow GEX_EXQC {
             params.Rlib_dir,
             params.Rpkg,
             params.script_bc_cca,
-            params.script_functions
+            params.script_functions,
+            params.celldex_path
         )
 
 /* BLOCKING SCVI FOR FUTURE RELEASE
@@ -150,7 +158,8 @@ workflow GEX_EXQC {
             params.Rlib_dir,
             params.Rpkg,
             params.script_scvi,
-            params.script_functions
+            params.script_functions,
+            params.celldex_path
         )
 */
 
@@ -164,7 +173,8 @@ workflow GEX_EXQC {
             params.Rlib_dir,
             params.Rpkg,
             params.script_liger,
-            params.script_functions
+            params.script_functions,
+            params.celldex_path
         )
 
         // Integrate batch corrections

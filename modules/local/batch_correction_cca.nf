@@ -12,6 +12,7 @@ process BATCH_CORRECT_CCA {
     path(Rpkg_config)
     path(rmd)
     path(scRNA_functions)
+    path(celldex_path)
 
     output:
     tuple val(gid), path ("*.rds")                 , emit:rds
@@ -30,7 +31,9 @@ process BATCH_CORRECT_CCA {
             Rlib_dir="$Rlib_dir",
             Rpkg_config="$Rpkg_config",
             scRNA_functions="$scRNA_functions",
-            testing="N"),
+            testing="N",
+            celldex_cache="$celldex_path"
+        ),
         output_file = "${gid}_batch_correction_cca.html")'
     """
 
