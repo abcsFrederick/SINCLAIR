@@ -19,6 +19,7 @@ params:
   run_doublet_finder: "N"
   npcs: 30
   scRNA_functions: "bin/scRNA_functions.R"
+  celldex_cache: NULL
   testing: "N"
 ---
 
@@ -43,6 +44,7 @@ percent_mt_max <- as.numeric(params$percent_mt_max)
 percent_mt_min <- as.numeric(params$percent_mt_min)
 run_doublet_finder <- params$run_doublet_finder # Y, N
 npcs_val <- as.numeric(params$npcs)
+celldex_cache <- params$celldex_cache
 testing <- params$testing
 
 source(params$scRNA_functions)
@@ -172,69 +174,8 @@ so_processed <- MAIN_PROCESS_SO(so_qc_select, species, npcs_val)
 ```
 
 ```{r label}
-MAIN_SINGLER <- function(so_in, species) {
-  if (species == "hg38" || species == "hg19") {
-    so_in$HPCA_main <- RUN_SINGLEr(so_in, celldex::HumanPrimaryCellAtlasData(), "label.main")
-    so_in$HPCA <- RUN_SINGLEr(so_in, celldex::HumanPrimaryCellAtlasData(), "label.fine")
-    so_in$BP_encode_main <- RUN_SINGLEr(so_in, celldex::BlueprintEncodeData(), "label.main")
-    so_in$BP_encode <- RUN_SINGLEr(so_in, celldex::BlueprintEncodeData(), "label.fine")
-    so_in$monaco_main <- RUN_SINGLEr(so_in, celldex::MonacoImmuneData(), "label.main")
-    so_in$monaco <- RUN_SINGLEr(so_in, celldex::MonacoImmuneData(), "label.fine")
-    so_in$immu_cell_exp_main <- RUN_SINGLEr(
-      so_in, celldex::DatabaseImmuneCellExpressionData(),
-      "label.main"
-    )
-    so_in$immu_cell_exp <- RUN_SINGLEr(
-      so_in, celldex::DatabaseImmuneCellExpressionData(),
-      "label.fine"
-    )
-    so_in$annot <- so_in$HPCA_main
-  } else if (species == "mm10") {
-    so_in$immgen_main <- RUN_SINGLEr(so_in, celldex::ImmGenData(), "label.main")
-    so_in$immgen <- RUN_SINGLEr(so_in, celldex::ImmGenData(), "label.fine")
-    so_in$mouseRNAseq_main <- RUN_SINGLEr(so_in, celldex::MouseRNAseqData(), "label.main")
-    so_in$mouseRNAseq <- RUN_SINGLEr(so_in, celldex::MouseRNAseqData(), "label.fine")
-    so_in$annot <- so_in$immgen_main
-  }
-  return(so_in)
-}
-
 # Label data
-so_labeled <- MAIN_SINGLER(so_processed, species)
-```
-```{r doublets}
-MAIN_DOUBLETS <- function(so_in, run_doublet_finder) {
-  if (run_doublet_finder == "Y") {
-    sweep.res.list_kidney <- paramSweep_v3(so_in, PCs = 1:10, sct = T)
-    sweep.stats_kidney <- summarizeSweep(sweep.res.list_kidney, GT = FALSE)
-    bcmvn_kidney <- find.pK(sweep.stats_kidney)
-
-    ## Homotypic Doublet Proportion Estimate
-    homotypic.prop <- modelHomotypic(so_in$annot)
-    perc <- 0.005 * (length(colnames(so_in)) / 1000)
-    nExp_poi <- round(perc * length(colnames(so_in))) # dfso@cell.names
-    nExp_poi.adj <- round(nExp_poi * (1 - homotypic.prop))
-
-    ## Run DoubletFinder with varying classification stringencies
-    dfso <- doubletFinder_v3(so_in,
-      pN = 0.25, pK = 0.09,
-      nExp = nExp_poi,
-      reuse.pANN = FALSE, PCs = 1:10, sct = T
-    )
-
-    pAAN <- tail(names(dfso@meta.data), 2)[1]
-    dfso <- doubletFinder_v3(dfso,
-      pN = 0.25, pK = 0.09,
-      nExp = nExp_poi.adj,
-      reuse.pANN = pAAN, PCs = 1:10, sct = T
-    )
-    so_in$DF_hi.lo <- dfso[[tail(names(dfso@meta.data), 1)]]
-    so_in <- subset(so_in, cells = names(so_in$DF_hi.lo)[so_in$DF_hi.lo == "Singlet"])
-  }
-
-  return(so_in)
-}
-
+so_labeled <- MAIN_SINGLER(so_processed, species, celldex_cache)
 
 # ID doublets
 so_doublet <- MAIN_DOUBLETS(so_labeled, run_doublet_finder)

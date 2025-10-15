@@ -180,6 +180,12 @@
       "description": "",
       "default": "",
       "properties": {
+        "celldex_path": {
+          "type": "string",
+          "format": "directory-path",
+          "default": "/data/CCBR_Pipeliner/db/PipeDB/celldex_cache",
+          "hidden": true
+        },
         "script_functions": {
           "type": "string",
           "format": "file-path",

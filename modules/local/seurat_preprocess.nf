@@ -18,6 +18,7 @@ process SEURAT_PREPROCESS {
     val(npcs)
     path(rmd)
     path(scRNA_functions)
+    path(celldex_path)
 
     output:
     tuple val(id), path ("*.rds")                 , emit:rds
@@ -41,8 +42,10 @@ process SEURAT_PREPROCESS {
             percent_mt_min=$percent_mt_min,
             run_doublet_finder="$run_doublet_finder",
             npcs=$npcs,
-            scRNA_functions="$scRNA_functions"),
-        output_file = "${id}_seurat_preprocess.html")
+            scRNA_functions="$scRNA_functions",
+            celldex_cache="$celldex_path"
+            ),
+        output_file = "${id}_seurat_preprocess.html")'
     """
 
     stub:

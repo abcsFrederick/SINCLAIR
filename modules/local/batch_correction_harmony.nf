@@ -12,6 +12,7 @@ process BATCH_CORRECT_HARMONY {
     val(resolution_list)
     path(rmd)
     path(scRNA_functions)
+    path(celldex_path)
 
     output:
     tuple val(gid), path ("*.rds")                 , emit:rds
@@ -28,7 +29,10 @@ process BATCH_CORRECT_HARMONY {
             vars_to_regress="$vars_to_regress",
             resolution_list="$resolution_list",
             scRNA_functions="$scRNA_functions",
-            testing="N"),
+            testing="N",
+            celldex_cache="$celldex_path"
+
+        ),
         output_file = "${gid}_batch_correction_harmony.html")'
     """
 

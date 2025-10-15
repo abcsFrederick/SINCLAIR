@@ -13,6 +13,7 @@ params:
   npcs: "50"
   vars_to_regress: NULL
   scRNA_functions: "bin/scRNA_functions.R"
+  celldex_cache: NULL
   testing: "Y"
 ---
 
@@ -41,6 +42,7 @@ vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress)
 } else {
   unlist(strsplit(gsub(" ", "", vars_to_regress), ","))
 }
+celldex_cache <- params$celldex_cache
 
 options(future.globals.maxSize = 96000 * 1024^2)
 ```
@@ -57,7 +59,7 @@ so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 # integrate
 so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution,
   method_in = "HarmonyIntegration", reduction_in = "harmony",
-  v_list = vars_to_regress_list
+  v_list = vars_to_regress_list, cache_path = celldex_cache
 )
 ```
 
