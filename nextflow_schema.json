@@ -248,7 +248,7 @@
         },
         "container_seurat": {
           "type": "string",
-          "default": "nciccbr/sinclair_seurat_5:v1"
+          "default": "nciccbr/seurat_5:v1"
         }
       }
     }
