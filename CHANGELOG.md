@@ -1,5 +1,7 @@
 ## SINCLAIR development version
 
+- All nextflow processes now use containers rather than environment modules for dependencies. (#95, @kelly-sovacool)
+
 ## SINCLAIR 0.3.5
 
 - Fix samplesheet check to allow multi-digit sample IDs. (#189, @kelly-sovacool)
