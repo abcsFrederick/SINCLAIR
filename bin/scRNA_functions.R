@@ -77,25 +77,19 @@ MAIN_DOUBLETS <- function(so_in, run_doublet_finder) {
 
     ## Run DoubletFinder with varying classification stringencies
     dfso <- doubletFinder(so_in,
-      pN = 0.25,
-      pK = 0.09,
+      pN = 0.25, pK = 0.09,
       nExp = nExp_poi,
-      # reuse.pANN = NULL, # https://github.com/chris-mcginnis-ucsf/DoubletFinder/issues/244
+      reuse.pANN = NULL, # https://github.com/chris-mcginnis-ucsf/DoubletFinder/issues/244
       PCs = 1:10,
       sct = TRUE
     )
 
-    # cannot use pANN due to bug in DoubletFinder
-    # https://github.com/chris-mcginnis-ucsf/DoubletFinder/issues/244
-    # pANN <- tail(names(dfso@meta.data), 2)[1]
-    # dfso <- doubletFinder(dfso,
-    #   pN = 0.25,
-    #   pK = 0.09,
-    #   nExp = nExp_poi.adj,
-    #   reuse.pANN = pANN,
-    #   PCs = 1:10,
-    #   sct = TRUE
-    # )
+    pAAN <- tail(names(dfso@meta.data), 2)[1]
+    dfso <- doubletFinder(dfso,
+      pN = 0.25, pK = 0.09,
+      nExp = nExp_poi.adj,
+      reuse.pANN = pAAN, PCs = 1:10, sct = T
+    )
     so_in$DF_hi.lo <- dfso[[tail(names(dfso@meta.data), 1)]]
     so_in <- subset(so_in, cells = names(so_in$DF_hi.lo)[so_in$DF_hi.lo == "Singlet"])
   }
