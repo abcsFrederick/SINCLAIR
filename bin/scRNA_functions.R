@@ -79,7 +79,9 @@ MAIN_DOUBLETS <- function(so_in, run_doublet_finder) {
     dfso <- doubletFinder(so_in,
       pN = 0.25, pK = 0.09,
       nExp = nExp_poi,
-      reuse.pANN = FALSE, PCs = 1:10, sct = T
+      reuse.pANN = NULL, # https://github.com/chris-mcginnis-ucsf/DoubletFinder/issues/244
+      PCs = 1:10,
+      sct = TRUE
     )
 
     pAAN <- tail(names(dfso@meta.data), 2)[1]
