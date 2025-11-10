@@ -65,7 +65,7 @@ MAIN_SINGLER <- function(so_in, species, cache_path = NULL) {
 
 MAIN_DOUBLETS <- function(so_in, run_doublet_finder) {
   if (run_doublet_finder == "Y") {
-    sweep.res.list_kidney <- paramSweep(so_in, PCs = 1:10, sct = T)
+    sweep.res.list_kidney <- paramSweep_v3(so_in, PCs = 1:10, sct = TRUE)
     sweep.stats_kidney <- summarizeSweep(sweep.res.list_kidney, GT = FALSE)
     bcmvn_kidney <- find.pK(sweep.stats_kidney)
 
@@ -76,7 +76,7 @@ MAIN_DOUBLETS <- function(so_in, run_doublet_finder) {
     nExp_poi.adj <- round(nExp_poi * (1 - homotypic.prop))
 
     ## Run DoubletFinder with varying classification stringencies
-    dfso <- doubletFinder(so_in,
+    dfso <- doubletFinder_v3(so_in,
       pN = 0.25, pK = 0.09,
       nExp = nExp_poi,
       reuse.pANN = NULL, # https://github.com/chris-mcginnis-ucsf/DoubletFinder/issues/244
@@ -85,7 +85,7 @@ MAIN_DOUBLETS <- function(so_in, run_doublet_finder) {
     )
 
     pAAN <- tail(names(dfso@meta.data), 2)[1]
-    dfso <- doubletFinder(dfso,
+    dfso <- doubletFinder_v3(dfso,
       pN = 0.25, pK = 0.09,
       nExp = nExp_poi.adj,
       reuse.pANN = pAAN, PCs = 1:10, sct = T
