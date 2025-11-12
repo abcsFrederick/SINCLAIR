@@ -29,34 +29,49 @@ RUN_SINGLEr <- function(obj, refFile, fineORmain) {
   return(s$pruned.labels)
 }
 
+fetch_celldex_ref <- function(ref_name) {
+  ref <- switch(ref_name,
+    "hpca" = ,
+    "HumanPrimaryCellAtlasData" = fetchReference("hpca",version="2024-02-26", realize.assays = TRUE, cache = "./"),
+    "blueprint_encode" = ,
+    "BP_encode" = ,
+    "bpencode" = ,
+    "BlueprintEncodeData" = fetchReference("blueprint_encode", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "monaco" = ,
+    "MonacoImmuneData" = fetchReference("monaco_immune", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "immu_cell_exp" = ,
+    "DatabaseImmuneCellExpressionData" = ,
+    "dice" = fetchReference("dice", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "immgen" = ,
+    "ImmGenData" = fetchReference("immgen", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "mouseRNAseq" = ,
+    "MouseRNAseqData" = fetchReference("mouse_rnaseq", "2024-02-26", realize.assays = TRUE, cache = "./")
+  )
+  return(ref)
+}
 
 MAIN_SINGLER <- function(so_in, species, cache_path = NULL) {
-  if (dir.exists(cache_path)) {
-    gypsum::cacheDirectory(cache_path)
-  }
-  message(paste("gypsum cache dir:", gypsum::cacheDirectory()))
-
   if (species == "hg38" || species == "hg19") {
-    so_in$HPCA_main <- RUN_SINGLEr(so_in, celldex::HumanPrimaryCellAtlasData(), "label.main")
-    so_in$HPCA <- RUN_SINGLEr(so_in, celldex::HumanPrimaryCellAtlasData(), "label.fine")
-    so_in$BP_encode_main <- RUN_SINGLEr(so_in, celldex::BlueprintEncodeData(), "label.main")
-    so_in$BP_encode <- RUN_SINGLEr(so_in, celldex::BlueprintEncodeData(), "label.fine")
-    so_in$monaco_main <- RUN_SINGLEr(so_in, celldex::MonacoImmuneData(), "label.main")
-    so_in$monaco <- RUN_SINGLEr(so_in, celldex::MonacoImmuneData(), "label.fine")
+    so_in$HPCA_main <- RUN_SINGLEr(so_in, fetch_celldex_ref("hpca"), "label.main")
+    so_in$HPCA <- RUN_SINGLEr(so_in, fetch_celldex_ref("hpca"), "label.fine")
+    so_in$BP_encode_main <- RUN_SINGLEr(so_in, fetch_celldex_ref("BP_encode"), "label.main")
+    so_in$BP_encode <- RUN_SINGLEr(so_in, fetch_celldex_ref("BP_encode"), "label.fine")
+    so_in$monaco_main <- RUN_SINGLEr(so_in, fetch_celldex_ref("monaco"), "label.main")
+    so_in$monaco <- RUN_SINGLEr(so_in, fetch_celldex_ref("monaco"), "label.fine")
     so_in$immu_cell_exp_main <- RUN_SINGLEr(
-      so_in, celldex::DatabaseImmuneCellExpressionData(),
+      so_in, fetch_celldex_ref("dice"),
       "label.main"
     )
     so_in$immu_cell_exp <- RUN_SINGLEr(
-      so_in, celldex::DatabaseImmuneCellExpressionData(),
+      so_in, fetch_celldex_ref("dice"),
       "label.fine"
     )
     so_in$annot <- so_in$HPCA_main
   } else if (species == "mm10") {
-    so_in$immgen_main <- RUN_SINGLEr(so_in, celldex::ImmGenData(), "label.main")
-    so_in$immgen <- RUN_SINGLEr(so_in, celldex::ImmGenData(), "label.fine")
-    so_in$mouseRNAseq_main <- RUN_SINGLEr(so_in, celldex::MouseRNAseqData(), "label.main")
-    so_in$mouseRNAseq <- RUN_SINGLEr(so_in, celldex::MouseRNAseqData(), "label.fine")
+    so_in$immgen_main <- RUN_SINGLEr(so_in, fetch_celldex_ref("immgen"), "label.main")
+    so_in$immgen <- RUN_SINGLEr(so_in, fetch_celldex_ref("immgen"), "label.fine")
+    so_in$mouseRNAseq_main <- RUN_SINGLEr(so_in, fetch_celldex_ref("mouseRNAseq"), "label.main")
+    so_in$mouseRNAseq <- RUN_SINGLEr(so_in, fetch_celldex_ref("mouseRNAseq"), "label.fine")
     so_in$annot <- so_in$immgen_main
   }
   return(so_in)
