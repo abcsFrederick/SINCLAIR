@@ -2,6 +2,10 @@
 
 - All nextflow processes now use containers rather than environment modules for dependencies. (#95, @kelly-sovacool)
 
+### Bug fixes
+- Creates cache for celldex reference downloads in working directory (#203, @wong-nw)
+
+
 ## SINCLAIR 0.3.5
 
 - Fix samplesheet check to allow multi-digit sample IDs. (#189, @kelly-sovacool)
@@ -20,9 +24,6 @@
 
 - Re-ordering of batch correction report. (#174 @wong-nw)
 - Rename 'output' directory to 'results' for the nextflow workflow. (#186, @kelly-sovacool)
-
-### Bug fixes
-- Creates cache for celldex reference downloads in working directory (#203, @wong-nw)
 
 ## SINCLAIR 0.3.4
 
