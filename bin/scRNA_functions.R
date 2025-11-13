@@ -129,6 +129,7 @@ RUN_SINGLEr_AVERAGE <- function(obj, refFile, fineORmain) {
   clustAnnot <- s$labels
   names(clustAnnot) <- colnames(avg)
   names(clustAnnot) <- gsub("SCT.", "", names(clustAnnot))
+  names(clustAnnot) <- gsub("^g","", names(clustAnnot))
 
   annotVect <- clustAnnot[match(obj$seurat_clusters, names(clustAnnot))]
   names(annotVect) <- colnames(obj)
@@ -199,19 +200,19 @@ MAIN_BATCH_CORRECTION <- function(so_in, npcs, species, resolution_list, method_
   }
 
   if (species == "hg38" || species == "hg19") {
-    so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so, celldex::HumanPrimaryCellAtlasData(), "label.main")
-    so$clustAnnot_HPCA <- RUN_SINGLEr_AVERAGE(so, celldex::HumanPrimaryCellAtlasData(), "label.fine")
-    so$clustAnnot_BP_encode_main <- RUN_SINGLEr_AVERAGE(so, celldex::BlueprintEncodeData(), "label.main")
-    so$clustAnnot_BP_encode <- RUN_SINGLEr_AVERAGE(so, celldex::BlueprintEncodeData(), "label.fine")
-    so$clustAnnot_monaco_main <- RUN_SINGLEr_AVERAGE(so, celldex::MonacoImmuneData(), "label.main")
-    so$clustAnnot_monaco <- RUN_SINGLEr_AVERAGE(so, celldex::MonacoImmuneData(), "label.fine")
-    so$clustAnnot_immu_cell_exp_main <- RUN_SINGLEr_AVERAGE(so, celldex::DatabaseImmuneCellExpressionData(), "label.main")
-    so$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(so, celldex::DatabaseImmuneCellExpressionData(), "label.fine")
+    so$clustAnnot_HPCA_main <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("hpca"), "label.main")
+    so$clustAnnot_HPCA <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("hpca"), "label.fine")
+    so$clustAnnot_BP_encode_main <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("BP_encode"), "label.main")
+    so$clustAnnot_BP_encode <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("BP_encode"), "label.fine")
+    so$clustAnnot_monaco_main <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("monaco"), "label.main")
+    so$clustAnnot_monaco <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("monaco"), "label.fine")
+    so$clustAnnot_immu_cell_exp_main <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("dice"), "label.main")
+    so$clustAnnot_immu_cell_exp <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("dice"), "label.fine")
   } else if (species == "mm10") {
-    so$clustAnnot_immgen_main <- RUN_SINGLEr_AVERAGE(so, celldex::ImmGenData(), "label.main")
-    so$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(so, celldex::ImmGenData(), "label.fine")
-    so$clustAnnot_mouseRNAseq_main <- RUN_SINGLEr_AVERAGE(so, celldex::MouseRNAseqData(), "label.main")
-    so$clustAnnot_mouseRNAseq <- RUN_SINGLEr_AVERAGE(so, celldex::MouseRNAseqData(), "label.fine")
+    so$clustAnnot_immgen_main <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("immgen"), "label.main")
+    so$clustAnnot_immgen <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("immgen"), "label.fine")
+    so$clustAnnot_mouseRNAseq_main <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("mouseRNAseq"), "label.main")
+    so$clustAnnot_mouseRNAseq <- RUN_SINGLEr_AVERAGE(so, fetch_celldex_ref("mouseRNAseq"), "label.fine")
   }
   return(so)
 }
