@@ -32,20 +32,20 @@ RUN_SINGLEr <- function(obj, refFile, fineORmain) {
 fetch_celldex_ref <- function(ref_name) {
   ref <- switch(ref_name,
     "hpca" = ,
-    "HumanPrimaryCellAtlasData" = fetchReference("hpca",version="2024-02-26", realize.assays = TRUE, cache = "./"),
+    "HumanPrimaryCellAtlasData" = celldex::fetchReference("hpca", version = "2024-02-26", realize.assays = TRUE, cache = "./"),
     "blueprint_encode" = ,
     "BP_encode" = ,
     "bpencode" = ,
-    "BlueprintEncodeData" = fetchReference("blueprint_encode", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "BlueprintEncodeData" = celldex::fetchReference("blueprint_encode", "2024-02-26", realize.assays = TRUE, cache = "./"),
     "monaco" = ,
-    "MonacoImmuneData" = fetchReference("monaco_immune", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "MonacoImmuneData" = celldex::fetchReference("monaco_immune", "2024-02-26", realize.assays = TRUE, cache = "./"),
     "immu_cell_exp" = ,
     "DatabaseImmuneCellExpressionData" = ,
-    "dice" = fetchReference("dice", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "dice" = celldex::fetchReference("dice", "2024-02-26", realize.assays = TRUE, cache = "./"),
     "immgen" = ,
-    "ImmGenData" = fetchReference("immgen", "2024-02-26", realize.assays = TRUE, cache = "./"),
+    "ImmGenData" = celldex::fetchReference("immgen", "2024-02-26", realize.assays = TRUE, cache = "./"),
     "mouseRNAseq" = ,
-    "MouseRNAseqData" = fetchReference("mouse_rnaseq", "2024-02-26", realize.assays = TRUE, cache = "./")
+    "MouseRNAseqData" = celldex::fetchReference("mouse_rnaseq", "2024-02-26", realize.assays = TRUE, cache = "./")
   )
   return(ref)
 }
@@ -129,7 +129,7 @@ RUN_SINGLEr_AVERAGE <- function(obj, refFile, fineORmain) {
   clustAnnot <- s$labels
   names(clustAnnot) <- colnames(avg)
   names(clustAnnot) <- gsub("SCT.", "", names(clustAnnot))
-  names(clustAnnot) <- gsub("^g","", names(clustAnnot))
+  names(clustAnnot) <- gsub("^g", "", names(clustAnnot))
 
   annotVect <- clustAnnot[match(obj$seurat_clusters, names(clustAnnot))]
   names(annotVect) <- colnames(obj)
