@@ -5,6 +5,7 @@
 ### Bug fixes
 
 - Creates cache for celldex reference downloads in working directory (#203, @wong-nw)
+- Set main job memory to 2 GB for slurm mode. (#205, @kelly-sovacool)
 
 ## SINCLAIR 0.3.5
 
