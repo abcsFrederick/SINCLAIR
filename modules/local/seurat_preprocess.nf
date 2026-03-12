@@ -5,7 +5,7 @@ process SEURAT_PREPROCESS {
     container "${params.container_seurat}"
 
     input:
-    tuple val(id), val(inDir), path(h5)
+    tuple val(id), val(inDir), path(h5), path(celldex_path)
     val(species)
     val(qc_filtering)
     val(nCount_RNA_max)
@@ -18,7 +18,6 @@ process SEURAT_PREPROCESS {
     val(npcs)
     path(rmd)
     path(scRNA_functions)
-    path(celldex_path)
 
     output:
     tuple val(id), path ("*.rds")                 , emit:rds

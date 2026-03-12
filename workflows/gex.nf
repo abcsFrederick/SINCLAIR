@@ -54,7 +54,7 @@ workflow GEX_EXQC {
         outdir_path = Channel.fromPath(params.outdir,relative:true)
         // Run Seurat for individual samples
         SEURAT_PREPROCESS (
-            ch_fqdir_h5,
+            ch_fqdir_h5.combine(ch_celldex_path),
             params.species,
             params.qc_filtering,
             params.nCount_RNA_max,
@@ -66,8 +66,7 @@ workflow GEX_EXQC {
             params.run_doublet_finder,
             params.npcs,
             params.script_preprocess,
-            params.script_functions,
-            ch_celldex_path
+            params.script_functions
         )
 
         // creates metadata
