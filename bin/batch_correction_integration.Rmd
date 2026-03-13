@@ -267,7 +267,6 @@ resSil_merged <- matrix(ncol = 2, nrow = length(resolution))
 resSil_merged[] <- 0
 
 # Initial loop through batch correction methods
-
 # objList = c("rpca","integrated","harmony","scvi","liger") #INCLUDE SCVI IN LATER RELEASE
 objList <- c("rpca", "integrated", "harmony", "liger")
 for (i in 1:length(objList)) {
@@ -303,7 +302,6 @@ for (i in 1:length(objList)) {
       resMod <- as.numeric(res)
 
       # set coluumn resolution name
-
       slm_name <- paste0("SCT_snn_res.", res)
 
       # if the resolution column is not available, create this column
@@ -324,7 +322,6 @@ for (i in 1:length(objList)) {
       # if there is only one cluster, fail
       if (length(unique(clusters)) > 1) {
         # generate silhouette
-
         sil <- silhouette(clusters, dist = dist)
 
         # generate palette colors based on sil cluster IDs
@@ -337,7 +334,6 @@ for (i in 1:length(objList)) {
         sil.cols[sil.cols %in% unique.sils] <- palette[match(sil.cols, unique.sils, nomatch = 0)]
 
         # arrange sil based on the clusters, then width
-
         testdf$pal <- sil.cols
         sil.cols <- dplyr::arrange(testdf, desc(cluster), sil_width)$pal
 
