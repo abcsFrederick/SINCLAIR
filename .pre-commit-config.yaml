@@ -3,8 +3,10 @@ default_stages: [pre-commit]
 exclude: |
   (?x)(
       ^assets/|
-      ^docs/.*.html|
+      ^.*.html|
+      ^.*.svg|
       ^_extensions/|
+      ^fullWorkflow_202304/|
       ^nextflow_schema.json
    )
 repos:

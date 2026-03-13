@@ -314,7 +314,7 @@ for (i in 1:length(objList)) {
       # set coluumn resolution name
       slm_name <- paste0("SCT_snn_res.", res)
 
-      # if the resolution column is not avaialble, create this column
+      # if the resolution column is not available, create this column
       if ((slm_name %in% colnames(obj@meta.data)) == FALSE) {
         print(paste0("----Missing SCT_res column ", resMod, "; creating now"))
         obj <- FindClusters(obj, algorithm = 3, resolution = resMod)
