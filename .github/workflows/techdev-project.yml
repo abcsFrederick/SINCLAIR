@@ -4,7 +4,6 @@ on:
   issues:
     types:
       - opened
-      - labeled
   pull_request:
     types:
       - opened
@@ -20,7 +19,6 @@ jobs:
     steps:
       - name: Generate a token
         id: generate-token
-        if: ${{ inputs.github-token == '' }}
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.CCBR_BOT_APP_ID }}
@@ -36,4 +34,8 @@ jobs:
         uses: actions/add-to-project@v1.0.2
         with:
           project-url: https://github.com/orgs/CCBR/projects/41
+          github-token: ${{ steps.generate-token.outputs.token }}
+      - name: add label
+        uses: CCBR/actions/label-issue-repo-name@latest
+        with:
           github-token: ${{ steps.generate-token.outputs.token }}
