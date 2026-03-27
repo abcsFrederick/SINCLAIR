@@ -58,7 +58,7 @@ jobs:
       - name: pytest
         if: always()
         run: |
-          pytest tests
+          python -m pytest
       - name: lint nxf
         if: always()
         run: |
