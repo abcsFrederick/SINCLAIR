@@ -3,11 +3,11 @@ default_stages: [pre-commit]
 exclude: |
   (?x)(
       ^assets/|
-      ^.*.html|
-      ^.*.svg|
       ^_extensions/|
       ^fullWorkflow_202304/|
-      ^nextflow_schema.json
+      ^nextflow_schema.json|
+      ^.*.html|
+      ^.*.svg
    )
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
