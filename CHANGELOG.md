@@ -1,3 +1,5 @@
+## SINCLAIR development version
+
 ## SINCLAIR 0.3.6
 
 - Set main job memory to 2 GB for slurm mode. (#205, @kelly-sovacool)
