@@ -1,8 +1,12 @@
 ---
 title: "Batch Correction: Harmony"
-author: "Samantha Sevilla"
+author: "CCR Collaborative Bioinformatics Resource"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  html_document:
+    toc: true
+    code_folding: hide
+    downlit_highlight: true
 editor_options:
   chunk_output_type: console
 params:
@@ -47,7 +51,7 @@ celldex_cache <- params$celldex_cache
 options(future.globals.maxSize = 96000 * 1024^2)
 ```
 
-```{r, processing, message=FALSE}
+```{r, processing}
 # read in merged object
 so <- readRDS(mergedObj)
 
@@ -64,7 +68,7 @@ so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution,
 )
 ```
 
-```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
+```{r saveoutputs, include=FALSE}
 fpath <- paste0(gid, "_batch_correction_harmony.rds")
 saveRDS(so_corrected, fpath)
 ```

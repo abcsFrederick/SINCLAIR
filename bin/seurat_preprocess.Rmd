@@ -1,5 +1,7 @@
 ---
 title: "scRNA Notebook"
+author: "CCR Collaborative Bioinformatics Resource"
+date: "`r Sys.Date()`"
 output:
   html_document:
     toc: true
@@ -22,6 +24,12 @@ params:
   celldex_cache: NULL
   testing: "N"
 ---
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
 
 ```{r setup}
 options(rlang_trace_top_env = rlang::current_env())
@@ -70,7 +78,7 @@ library(SingleR)
 library(tinytex)
 ```
 
-```{r, pre-processing, message=FALSE}
+```{r, pre-processing}
 # read in h5 file
 rnaCounts <- Read10X_h5(h5)
 

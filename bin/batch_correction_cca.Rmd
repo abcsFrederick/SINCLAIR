@@ -1,8 +1,12 @@
 ---
 title: "Batch Correction: CCA"
-author: "Samantha Sevilla"
+author: "CCR Collaborative Bioinformatics Resource"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  html_document:
+    toc: true
+    code_folding: hide
+    downlit_highlight: true
 editor_options:
   chunk_output_type: console
 params:
@@ -16,23 +20,16 @@ params:
   celldex_cache: NULL
   testing: "Y"
 ---
+```{r, setup, include=FALSE}
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
 
 
 ```{r setup,  message=FALSE}
 options(future.globals.maxSize = 96000 * 1024^2)
-# set up params
-species <- params$species
-gid <- params$gid
-mergedObj <- params$mergedObj
-resolution <- as.numeric(strsplit(params$resolution_list, ",")[[1]])
-npcs <- as.numeric(params$npcs)
-
-vars_to_regress <- params$vars_to_regress
-vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress) == "NULL") {
-  NULL
-} else {
-  unlist(strsplit(gsub(" ", "", vars_to_regress), ","))
-}
 
 celldex_cache <- params$celldex_cache
 testing <- params$testing
@@ -48,7 +45,7 @@ library(Orthology.eg.db)
 library(harmony)
 ```
 
-```{r, processing, message=FALSE}
+```{r, processing}
 # read in merged object
 so <- readRDS(mergedObj)
 
@@ -65,7 +62,7 @@ so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution,
 )
 ```
 
-```{r saveoutputs, message=FALSE, include=FALSE, echo=FALSE}
+```{r saveoutputs, include=FALSE}
 fpath <- paste0(gid, "_batch_correction_cca.rds")
 saveRDS(so_corrected, fpath)
 ```

@@ -1,8 +1,12 @@
 ---
 title: "merge Notebook"
+author: "CCR Collaborative Bioinformatics Resource"
+date: "`r Sys.Date()`"
 output:
   html_document:
-    toc: yes
+    toc: true
+    code_folding: hide
+    downlit_highlight: true
 editor_options:
   chunk_output_type: console
 params:
@@ -51,7 +55,7 @@ library(org.Mm.eg.db)
 library(Orthology.eg.db)
 ```
 
-```{r, processing, message=FALSE}
+```{r, processing}
 # print group info
 print(paste0("This merged object includes groups: ", gid))
 
@@ -80,7 +84,7 @@ for (p in readObj) { # TODO use map instead of a for loop
 }
 ```
 
-```{r merge_objs, message=FALSE}
+```{r merge_objs}
 # create ref list
 reference.list <- combinedObj.list[unlist(readObj)]
 
@@ -95,7 +99,7 @@ combinedObj.integratedRNA <- merge(reference.list[[1]], reference.list[2:length(
 VariableFeatures(combinedObj.integratedRNA) <- selectFeatures
 ```
 
-```{r mergedObjDims, message=FALSE, echo=FALSE}
+```{r mergedObjDims }
 # vars.to.regress is NULL by default
 so_merged <- SCTransform(combinedObj.integratedRNA, vars.to.regress = vars_to_regress_list, assay = "RNA")
 
@@ -113,7 +117,7 @@ so_merged <- RunUMAP(so_merged,
 so_merged <- JoinLayers(so_merged, assay = "RNA")
 ```
 
-```{r}
+```{r save_rds}
 # save RDS files
 so_merged
 fpath <- paste0(gid, "_seurat_merged.rds")

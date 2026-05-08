@@ -7,12 +7,26 @@ from ccbr_tools.shell import shell_run
 
 
 def extract_command_line(output):
-    """Extract the command line from nextflow LOG output."""
-    return {
-        line.split(":")[0].strip(): line.split(":")[1].strip()
-        for line in output.split("\n")
-        if ":" in line
-    }["cmd line"]
+    """Extract the nextflow command line from sinclair run output."""
+    cmd_line = None
+
+    # Nextflow 26+ format: ccbr_tools echoes the command as 'nextflow run ...'
+    for line in output.split("\n"):
+        stripped = line.strip()
+        if stripped.startswith("nextflow run") and cmd_line is None:
+            cmd_line = stripped
+
+    # Fallback for older Nextflow format: 'cmd line: nextflow run ...'
+    if cmd_line is None:
+        for line in output.split("\n"):
+            if ":" in line and line.split(":")[0].strip() == "cmd line":
+                cmd_line = line.split(":", 1)[1].strip()
+                break
+
+    if cmd_line is None:
+        raise ValueError(f"Could not extract command line from output:\n{output}")
+
+    return cmd_line
 
 
 def test_help():
@@ -46,13 +60,14 @@ def test_preview():
 
 
 def test_forceall():
-    output = subprocess.run(
+    result = subprocess.run(
         "./bin/sinclair run --forceall -preview -profile ci_stub --mode local",
         capture_output=True,
         shell=True,
         text=True,
         check=True,
-    ).stdout
+    )
+    output = f"{result.stdout}\n{result.stderr}"
     cmd_line = extract_command_line(output)
     assert "-preview" in cmd_line and "-resume" not in cmd_line
 
