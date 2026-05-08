@@ -7,7 +7,7 @@ exclude: |
       ^fullWorkflow_202304/|
       ^nextflow_schema.json|
       ^.*.html|
-      ^.*.svg
+      ^.*.svg|
       ^.github/CONTRIBUTING.md
    )
 repos:
