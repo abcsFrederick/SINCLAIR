@@ -21,8 +21,14 @@ params:
   testing: "Y"
 ---
 
-```{r setup,  message=FALSE, echo=FALSE, include=FALSE}
+```{r setup, include=FALSE}
 options(future.globals.maxSize = 96000 * 1024^2)
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+```{r deps}
 # set up params
 species <- params$species
 gid <- params$gid
@@ -47,8 +53,6 @@ vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress)
   unlist(strsplit(gsub(" ", "", vars_to_regress), ","))
 }
 celldex_cache <- params$celldex_cache
-
-options(future.globals.maxSize = 96000 * 1024^2)
 ```
 
 ```{r, processing}

@@ -20,8 +20,15 @@ params:
   scRNA_functions: "bin/scRNA_functions.R"
 ---
 
-```{r setup,  message=FALSE, echo=FALSE, include=FALSE}
+```{r setup,  include=FALSE}
 options(future.globals.maxSize = 96000 * 1024^2)
+knitr::opts_chunk$set(
+  message = FALSE,
+  echo = TRUE
+)
+```
+
+```{r deps}
 # set up params
 species <- params$species
 gid <- params$gid
@@ -40,11 +47,9 @@ source(params$scRNA_functions)
 library(Seurat)
 library(SeuratWrappers)
 library(SingleR)
-
-options(future.globals.maxSize = 96000 * 1024^2)
 ```
 
-```{r, processing, include=FALSE}
+```{r, processing}
 # read in merged object
 so <- readRDS(mergedObj)
 
@@ -62,7 +67,7 @@ so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution,
 so_corrected
 ```
 
-```{r saveoutputs, include=FALSE}
+```{r save-outputs}
 fpath <- paste0(gid, "_batch_correction_scvi.rds")
 saveRDS(so_corrected, fpath)
 ```

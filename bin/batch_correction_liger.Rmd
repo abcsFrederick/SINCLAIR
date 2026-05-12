@@ -20,16 +20,15 @@ params:
   celldex_cache: NULL
   testing: "Y"
 ---
-```{r, setup, include=FALSE}
+```{r setup, include=FALSE}
+options(future.globals.maxSize = 96000 * 1024^2)
 knitr::opts_chunk$set(
   message = FALSE,
   echo = TRUE
 )
 ```
 
-
-```{r, prep_args}
-options(future.globals.maxSize = 96000 * 1024^2)
+```{r deps}
 # set up params
 species <- params$species
 gid <- params$gid
@@ -53,7 +52,7 @@ library(rliger)
 options(future.globals.maxSize = 96000 * 1024^2)
 ```
 
-```{r, processing}
+```{r processing}
 # read in merged object
 so <- readRDS(mergedObj)
 
@@ -76,7 +75,7 @@ so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution,
 )
 ```
 
-```{r, save_outputs, include=FALSE}
+```{r save-outputs, include=FALSE}
 fpath <- paste0(gid, "_batch_correction_liger.rds")
 saveRDS(so_corrected, fpath)
 ```

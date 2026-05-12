@@ -23,13 +23,13 @@ params:
   scRNA_functions: "bin/scRNA_functions.R"
   testing: "Y"
 ---
-```{r, setup, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   message = FALSE,
   echo = TRUE
 )
 ```
-```{r, prep_args, include=FALSE}
+```{r deps}
 # set up params
 # species= params$species
 gid <- params$gid
@@ -63,7 +63,7 @@ unlink(tmp_images, recursive = TRUE)
 dir.create(file.path("tmp_images"), showWarnings = FALSE)
 ```
 
-```{r, processing, message=FALSE, echo=FALSE, include=FALSE}
+```{r processing}
 # read in merged objects
 so_merged <- readRDS(mergedObj)
 so_rpca <- readRDS(rpcaObj)

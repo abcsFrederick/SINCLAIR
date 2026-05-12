@@ -20,17 +20,28 @@ params:
   celldex_cache: NULL
   testing: "Y"
 ---
-```{r, setup, include=FALSE}
+
+```{r setup,  include=FALSE}
+options(future.globals.maxSize = 96000 * 1024^2)
 knitr::opts_chunk$set(
   message = FALSE,
   echo = TRUE
 )
 ```
 
-
-```{r setup,  message=FALSE}
-options(future.globals.maxSize = 96000 * 1024^2)
-
+```{r deps}
+species <- params$species
+gid <- params$gid
+mergedObj <- params$mergedObj
+resolution_list <- as.numeric(strsplit(params$resolution_list, ",")[[1]])
+npcs <- params$npcs
+vars_to_regress <- params$vars_to_regress
+vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress) == "NULL") {
+  NULL
+} else {
+  unlist(strsplit(gsub(" ", "", vars_to_regress), ","))
+}
+scRNA_functions <- params$scRNA_functions
 celldex_cache <- params$celldex_cache
 testing <- params$testing
 
@@ -45,7 +56,7 @@ library(Orthology.eg.db)
 library(harmony)
 ```
 
-```{r, processing}
+```{r processing}
 # read in merged object
 so <- readRDS(mergedObj)
 
@@ -56,13 +67,13 @@ if ("counts" %in% Layers(so)) {
   so[["RNA"]] <- split(so[["RNA"]], f = so$Sample)
 }
 # integrate
-so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution,
+so_corrected <- MAIN_BATCH_CORRECTION(so, npcs, species, resolution_list,
   method_in = "CCAIntegration", reduction_in = "CCA",
   v_list = vars_to_regress_list, cache_path = celldex_cache
 )
 ```
 
-```{r saveoutputs, include=FALSE}
+```{r save-outputs, include=FALSE}
 fpath <- paste0(gid, "_batch_correction_cca.rds")
 saveRDS(so_corrected, fpath)
 ```
