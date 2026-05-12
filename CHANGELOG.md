@@ -4,6 +4,9 @@
 - Creates cache for celldex reference downloads in working directory (#203, @wong-nw)
 - Checks for joined RNA "layers" in Seurat v5 object (#224, @wong-nw)
 - Support `rliger` versions < 2.0 and >= 2.0. (#228, @wong-nw)
+
+## SINCLAIR 0.3.7
+
 - Improvements to R Markdown reports: (#216, @kelly-sovacool)
   - Link to function documentation websites.
   - Use code folding to include code in output, but set it to 'hide' by default.
