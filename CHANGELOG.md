@@ -1,3 +1,5 @@
+## SINCLAIR development version
+
 ## SINCLAIR 0.3.7
 
 - Improvements to R Markdown reports: (#216, @kelly-sovacool)
