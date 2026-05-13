@@ -12,28 +12,24 @@ editor_options:
 always_allow_html: true
 params:
   gid: "text"
-  mergedObj: "/data/sevillas2/sinclair/dev/results/seurat/merge/group1-group2_seurat_merged.rds"
-  ccaObj: "/data/sevillas2/sinclair/dev/results/batch_correct/group1-group2_batch_correction_cca.rds"
-  rpcaObj: "/data/sevillas2/sinclair/dev/results/batch_correct/group1-group2_batch_correction_rpca.rds"
-  harmonyObj: "/data/sevillas2/sinclair/dev/results/batch_correct/group1-group2_batch_correction_harmony.rds"
-  # scviObj: "/data/sevillas2/sinclair/dev/results/batch_correct/group1-group2_batch_correction_scvi.rds"
-  ligerObj: "/data/sevillas2/sinclair/dev/results/batch_correct/group1-group2_batch_correction_liger.rds"
+  mergedObj: "results/seurat/merge/group1-group2_seurat_merged.rds"
+  ccaObj: "results/batch_correct/group1-group2_batch_correction_cca.rds"
+  rpcaObj: "results/batch_correct/group1-group2_batch_correction_rpca.rds"
+  harmonyObj: "results/batch_correct/group1-group2_batch_correction_harmony.rds"
+  scviObj: "results/batch_correct/group1-group2_batch_correction_scvi.rds"
+  ligerObj: "results/batch_correct/group1-group2_batch_correction_liger.rds"
   resolution_list: "0.1,0.2,0.3,0.5,0.6,0.8,1"
-  citeseq: "text"
-  annot: "text"
-  npcs: "20"
-  Rlib_dir: "/data/CCBR_Pipeliner/db/PipeDB/Rlibrary_4.3_scRNA_RHEL8"
-  Rpkg_config: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/conf/Rpack.config"
-  scRNA_functions: "/data/CCBR_Pipeliner/Pipelines/SINCLAIR/dev/bin/scRNA_functions.R"
+  npcs: 20
+  scRNA_functions: "bin/scRNA_functions.R"
   testing: "Y"
 ---
-```{r, setup, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   message = FALSE,
   echo = TRUE
 )
 ```
-```{r, prep_args, include=FALSE}
+```{r deps}
 # set up params
 # species= params$species
 gid <- params$gid
@@ -47,12 +43,19 @@ ligerObj <- params$ligerObj
 resolution <- as.numeric(strsplit(params$resolution_list, ",")[[1]])
 npcs <- as.numeric(params$npcs)
 
-citeseq <- params$citeseq
-annot <- params$annot
 
-Rlib_dir <- params$Rlib_dir
-Rpkg_config <- params$Rpkg_config
-scRNA_functions <- params$scRNA_functions
+source(params$scRNA_functions)
+library(Seurat)
+library(R.utils)
+library(cluster)
+library(SeuratWrappers)
+library(ggplot2)
+library(ggpubr)
+library(DT)
+library(scales)
+library(png)
+library(gridExtra)
+library(cowplot)
 
 # create tmp image directory
 tmp_images <- "tmp_images"
@@ -60,27 +63,7 @@ unlink(tmp_images, recursive = TRUE)
 dir.create(file.path("tmp_images"), showWarnings = FALSE)
 ```
 
-```{r, handle_pkg, include=FALSE}
-# source functions
-source(scRNA_functions)
-
-# set library dir, load this and remove any other dirs to avoid confusion
-# between personally created pkgs and the pipeline package
-## saving old path "/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/library"
-print(paste0("Using the lib.loc location: ", Rlib_dir))
-assign(".lib.loc", Rlib_dir, envir = environment(.libPaths))
-.libPaths()
-
-# read in package info
-pkg_df <- read.csv(Rpkg_config)
-pkg_df <- subset(pkg_df, int == "Y")
-pkg_df
-
-# for each package check installation, if present then load library
-scRNA_handle_packages(pkg_df)
-```
-
-```{r, processing, include=FALSE}
+```{r processing}
 # read in merged objects
 so_merged <- readRDS(mergedObj)
 so_rpca <- readRDS(rpcaObj)
@@ -164,6 +147,7 @@ plot_list_annot <- list()
 for (i in 1:length(objList)) {
   obj <- OBJECT_SELECT(objList[i])
   title <- NAME_SELECT(objList[i])
+  obj$annot[is.na(obj$annot)] <- "Undetermined"
   sampleImage <- DimPlot(obj, group.by = "annot") +
     ggtitle(title) +
     theme(legend.position = "bottom", legend.text = element_text(size = 12)) +
@@ -309,7 +293,12 @@ for (i in 1:length(objList)) {
       print("----Running harmony")
       dist <- dist(Embeddings(obj, reduction = "harmony")[, 1:npcs])
     } else if (objList[[i]] == "liger") {
-      dist <- dist(Embeddings(obj, reduction = "iNMF")[, 1:npcs])
+      print("----Running LIGER iNMF")
+      reduction_liger <- "iNMF"
+      if ("inmfNorm" %in% names(obj@reductions)){
+        reduction_liger <- "inmfNorm"
+      }
+      dist <- dist(Embeddings(obj, reduction = reduction_liger)[, 1:npcs])
     } else {
       print("----Running PCA")
       dist <- dist(Embeddings(obj, reduction = "pca")[, 1:npcs])
@@ -355,6 +344,34 @@ for (i in 1:length(objList)) {
         # arrange sil based on the clusters, then width
         testdf$pal <- sil.cols
         sil.cols <- dplyr::arrange(testdf, desc(cluster), sil_width)$pal
+
+        # create silhouette plots
+        fileName <- paste0(tmp_images, "/silhouette_", objList[[i]], "_res_", res, ".png")
+        png(fileName)
+        plot(sil,
+          col = sil.cols,
+          border = sil.cols,
+          main = paste0(objList[[i]], " clustering | resolution: ", resMod),
+          lty = 2,
+          sub = paste(
+            "Average silhouette width:",
+            format(round(mean(sil[, 3]), 4), nsmall = 4)
+          )
+        )
+        abline(v = mean(sil[, 3]), col = "red4", lty = 2)
+        dev.off()
+
+        # create cluster plots
+        clusterPlot <- DimPlot(obj,
+          group.by = slm_name,
+          label = T, repel = T,
+          order = sort(as.numeric(as.character(unique(obj[[slm_name]][, 1]))),
+            decreasing = T
+          )
+        ) +
+          ggtitle(paste0(objList[[i]], " clusters | resolution: ", resMod))
+        fileName <- paste0(tmp_images, "/clusters_", objList[[i]], "_res_", res, ".png")
+        ggsave(fileName, clusterPlot)
 
         # create silhouette plots
         fileName <- paste0(tmp_images, "/silhouette_", objList[[i]], "_res_", res, ".png")

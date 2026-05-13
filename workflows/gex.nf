@@ -15,6 +15,7 @@ Assign local subworkflows
 Assign Local Modules
 =======================================================================================================
 */
+include { COPY_DIR as GYPSUM_CACHE } from '../modules/local/cp/main.nf'
 include { SEURAT_PREPROCESS                             } from '../modules/local/seurat_preprocess.nf'
 include { SEURAT_MERGE                                  } from '../modules/local/seurat_merge.nf'
 include { BATCH_CORRECT_HARMONY                         } from '../modules/local/batch_correction_harmony.nf'
@@ -39,11 +40,15 @@ workflow GEX_EXQC {
         // if vars_to_regress is null, set it to 'NULL' for R to evaluate
         def vars_to_regress = params.vars_to_regress ?: 'NULL'
 
+
+        // Set celldex cache
+        ch_celldex_path = Channel.fromPath(params.celldex_path) | GYPSUM_CACHE
+
         // Set output path to relative, species
         outdir_path = Channel.fromPath(params.outdir,relative:true)
         // Run Seurat for individual samples
         SEURAT_PREPROCESS (
-            ch_fqdir_h5,
+            ch_fqdir_h5.combine(ch_celldex_path),
             params.species,
             params.qc_filtering,
             params.nCount_RNA_max,
@@ -54,8 +59,6 @@ workflow GEX_EXQC {
             params.percent_mt_min,
             params.run_doublet_finder,
             params.npcs,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_preprocess,
             params.script_functions
         )
@@ -86,8 +89,6 @@ workflow GEX_EXQC {
             params.species,
             params.npcs,
             vars_to_regress,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_merge,
             params.script_functions
         )
@@ -99,10 +100,9 @@ workflow GEX_EXQC {
             params.npcs,
             vars_to_regress,
             params.resolution_list,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_bc_harmony,
-            params.script_functions
+            params.script_functions,
+            ch_celldex_path
         )
 
         // Run batch corrections
@@ -112,10 +112,9 @@ workflow GEX_EXQC {
             params.npcs,
             vars_to_regress,
             params.resolution_list,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_bc_rpca,
-            params.script_functions
+            params.script_functions,
+            ch_celldex_path
         )
 
         // Run batch corrections
@@ -125,10 +124,9 @@ workflow GEX_EXQC {
             params.npcs,
             vars_to_regress,
             params.resolution_list,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_bc_cca,
-            params.script_functions
+            params.script_functions,
+            ch_celldex_path
         )
 
 /* BLOCKING SCVI FOR FUTURE RELEASE
@@ -139,12 +137,9 @@ workflow GEX_EXQC {
             params.npcs,
             vars_to_regress,
             params.resolution_list,
-            params.conda_path,
-            params.python_path,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_scvi,
-            params.script_functions
+            params.script_functions,
+            ch_celldex_path
         )
 */
 
@@ -155,10 +150,9 @@ workflow GEX_EXQC {
             params.npcs,
             vars_to_regress,
             params.resolution_list,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_liger,
-            params.script_functions
+            params.script_functions,
+            ch_celldex_path
         )
 
         // Integrate batch corrections
@@ -172,8 +166,6 @@ workflow GEX_EXQC {
             params.species,
             params.npcs,
             params.resolution_list,
-            params.Rlib_dir,
-            params.Rpkg,
             params.script_bc_integration,
             params.script_functions
         )
