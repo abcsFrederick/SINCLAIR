@@ -34,7 +34,7 @@ species <- params$species
 gid <- params$gid
 mergedObj <- params$mergedObj
 resolution_list <- as.numeric(strsplit(params$resolution_list, ",")[[1]])
-npcs <- params$npcs
+npcs <- as.numeric(params$npcs)
 vars_to_regress <- params$vars_to_regress
 vars_to_regress_list <- if (is.null(vars_to_regress) || toupper(vars_to_regress) == "NULL") {
   NULL
