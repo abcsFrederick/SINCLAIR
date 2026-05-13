@@ -1,4 +1,4 @@
-## SINCLAIR development version
+## SINCLAIR 0.4.0
 
 - All nextflow processes now use containers rather than environment modules for dependencies. (#95, @kelly-sovacool)
 - Creates cache for celldex reference downloads in working directory (#203, @wong-nw)
